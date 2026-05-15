@@ -6,11 +6,12 @@ Prompts de ativação para os papéis definidos no `.ai-core/`. Esta pasta é a 
 
 ```
 .ai-core/commands/
-  back.md     ← agente backend
-  front.md    ← agente frontend
-  spec.md     ← planner em Modo Spec (gera spec + aguarda aprovação)
-  plan.md     ← planner em Modo Plan (cria plano a partir de spec aprovado)
-  review.md   ← reviewer em dois estágios
+  init-project.md  ← inicializa o projeto preenchendo todos os arquivos de contexto
+  back.md          ← agente backend
+  front.md         ← agente frontend
+  spec.md          ← planner em Modo Spec (gera spec + aguarda aprovação)
+  plan.md          ← planner em Modo Plan (cria plano a partir de spec aprovado)
+  review.md        ← reviewer em dois estágios
 ```
 
 O diretório `.claude/commands/` contém arquivos que referenciam esta pasta — são os adaptadores para o Claude Code (slash commands via `/`). Para outros tools, use os arquivos aqui diretamente.
@@ -21,6 +22,7 @@ O diretório `.claude/commands/` contém arquivos que referenciam esta pasta —
 Disponível automaticamente via `/comando`. O Claude Code lê `.claude/commands/`, que delega para este diretório.
 
 ```
+/init-project [descrição do produto]   ← use ao iniciar um projeto novo
 /back implementar endpoint de criação de pedido
 /front criar página de listagem de pedidos
 /spec notificações por email

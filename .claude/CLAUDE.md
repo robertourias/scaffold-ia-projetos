@@ -59,6 +59,7 @@ packages/
 
 ## Slash commands disponíveis
 ```
+/init-project [descrição]  ← preenche todos os arquivos de contexto (use ao iniciar)
 /spec   [requisito]        ← gera spec com gate humano (Modo Spec)
 /plan   [caminho-do-spec]  ← cria plano técnico de spec aprovado (Modo Plan)
 /back   [tarefa]           ← agente backend
