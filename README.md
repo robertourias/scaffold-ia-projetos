@@ -124,53 +124,77 @@ Sem o gate, o agente assume o escopo e você descobre o desvio tarde — após c
 
 ## Como usar no dia a dia
 
-### Iniciar uma feature nova
+### Slash commands (Claude Code)
 
+Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega automaticamente os arquivos `.ai-core/` relevantes para o papel.
+
+| Comando | Exemplo | O que faz |
+|---------|---------|-----------|
+| `/spec [requisito]` | `/spec notificações por email` | Planner conduz levantamento, gera spec draft e para — aguarda sua aprovação |
+| `/plan [caminho-spec]` | `/plan .ai-core/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
+| `/back [tarefa]` | `/back implementar use case de envio de email` | Backend agent com contexto completo carregado |
+| `/front [tarefa]` | `/front criar página de preferências de notificação` | Frontend agent com contexto completo carregado |
+| `/review [diff]` | `/review [cole o diff aqui]` | Revisão em dois estágios — Funcional → Qualidade |
+
+O revisor aplica o checklist em **dois estágios sequenciais**: Estágio 1 (Funcional) primeiro — um 🔴 BLOCKER encerra a revisão sem avançar para o Estágio 2 (Qualidade).
+
+Referência completa e uso em outros tools (Cursor, Copilot Workspace): [`.ai-core/commands/README.md`](.ai-core/commands/README.md)
+
+### Fluxo completo de uma feature com slash commands
+
+```
+/spec notificações por email
+  → planner gera .ai-core/specs/2026-05-20-email-notifications.md (Status: draft)
+  → você edita o arquivo e altera Status: draft → Status: approved
+
+/plan .ai-core/specs/2026-05-20-email-notifications.md
+  → planner decompõe em tarefas técnicas com contrato de API
+
+/back implementar use case de envio de email
+/front criar página de preferências de notificação
+
+/review [diff do backend]
+/review [diff do frontend]
+```
+
+### Sem slash commands (Cursor, Copilot, outros)
+
+Use os prompts abaixo copiando diretamente no chat da ferramenta:
+
+**Spec:**
 ```
 Você é o PLANNER deste projeto.
-Leia .ai-core/agents/planner.agent.md e .ai-core/context/architecture.md.
-
-Quero implementar notificações por email. Não há spec aprovado ainda.
+Leia .ai-core/agents/planner.agent.md, .ai-core/context/architecture.md e .ai-core/specs/spec-template.md.
+Feature: notificações por email. Não há spec aprovado ainda.
 ```
 
-O planner entra no **Modo Spec**: faz perguntas uma por vez, gera `.ai-core/specs/YYYY-MM-DD-email-notifications.md` com `Status: draft` e para. Você revisa, ajusta e muda para `Status: approved`. Só então solicita o plano técnico.
-
-### Criar o plano após spec aprovado
-
+**Plan** (após spec aprovado):
 ```
 Você é o PLANNER deste projeto.
 Leia .ai-core/agents/planner.agent.md e .ai-core/specs/2026-05-20-email-notifications.md.
-
 O spec está aprovado. Gere o plano técnico.
 ```
 
-### Implementar (backend)
-
+**Backend:**
 ```
 Você é o agente de BACKEND deste projeto.
-Leia .ai-core/agents/backend.agent.md e .ai-core/decisions/backend.md.
+Leia .ai-core/agents/backend.agent.md, .ai-core/context/conventions.md e .ai-core/decisions/backend.md.
 Tarefa: implementar o use case de envio de notificação por email.
 ```
 
-### Implementar (frontend)
-
+**Frontend:**
 ```
 Você é o agente de FRONTEND deste projeto.
-Leia .ai-core/agents/frontend.agent.md e .ai-core/decisions/frontend.md.
+Leia .ai-core/agents/frontend.agent.md, .ai-core/context/conventions.md e .ai-core/decisions/frontend.md.
 Tarefa: criar a página de preferências de notificação.
 ```
 
-### Revisar código
-
+**Review:**
 ```
 Você é o REVIEWER deste projeto.
 Leia .ai-core/agents/reviewer.agent.md e .ai-core/decisions/backend.md.
 Revise o seguinte diff: [cole o diff]
 ```
-
-O reviewer aplica o checklist em **dois estágios sequenciais**:
-- **Estágio 1 — Funcional:** lógica correta, segurança, testes, migrations. Um 🔴 BLOCKER aqui encerra a revisão — sem avançar para o Estágio 2.
-- **Estágio 2 — Qualidade:** naming, convenções, N+1, bundle, acessibilidade. Só executado após o Estágio 1 passar limpo.
 
 ---
 
