@@ -201,25 +201,27 @@ Revise o seguinte diff: [cole o diff]
 ## Como adotar em um projeto novo
 
 ```bash
-# 1. Copie o .ai-core/ para o seu projeto
-cp -r scaffold-ia/.ai-core  meu-projeto/
-cp -r scaffold-ia/.claude   meu-projeto/
-cp    scaffold-ia/AGENTS.md meu-projeto/
+# 1. Copiar o scaffold
+cp -r scaffold-ia-projetos/.ai-core  meu-projeto/
+cp -r scaffold-ia-projetos/.claude   meu-projeto/
+cp    scaffold-ia-projetos/AGENTS.md meu-projeto/
+cp    scaffold-ia-projetos/.gitignore meu-projeto/
 
-# 2. Preencha os arquivos de contexto (únicos que exigem edição manual)
-#    .ai-core/context/architecture.md  → sua stack e decisões reais
-#    .ai-core/context/product.md       → seu domínio e regras de negócio
-#    .ai-core/context/ui-guidelines.md → seu design system
-
-# 3. Preencha as decisões
-#    .ai-core/decisions/frontend.md    → suas libs (Tailwind? shadcn? Zustand?)
-#    .ai-core/decisions/backend.md     → seu ORM, auth, cache
-
-# 4. Adicione termos do domínio
-#    .ai-core/GLOSSARY.md
+# 2. Inicializar
+/init-project sistema de gestão de pedidos para restaurantes
 ```
 
-Os arquivos de `agents/`, `specs/` e `workflows/` funcionam sem edição. Ajuste só se seus processos divergirem do padrão.
+O comando conduz uma entrevista em 5 blocos sequenciais, uma pergunta por vez:
+
+| Bloco | Perguntas | Preenche
+|------|-----------|---------|
+| 1 — Produto | nome, estágio, usuários, features, regras de negócio, glossário | context/product.md |
+| 2 — Arquitetura | ORM, auth, banco, filas, cache, hospedagem, CI/CD | context/architecture.md |
+| 3 — Backend | confirmação de decisões + extras | decisions/backend.md |
+| 4 — Frontend | styling, componentes, estado, forms, data fetching, ícones, tokens | decisions/frontend.md + ui-guidelines.md |
+| 5 — Glossário | usa termos coletados no Bloco 1 | GLOSSARY.md | 
+
+Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e sugere o primeiro /spec para começar a entregar.
 
 ---
 
