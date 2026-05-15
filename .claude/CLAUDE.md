@@ -60,6 +60,8 @@ packages/
 ## Slash commands disponíveis
 ```
 /init-project [descrição]  ← preenche todos os arquivos de contexto (use ao iniciar)
+/retomar                   ← reconstrói contexto da sessão anterior (use ao voltar)
+/checkpoint                ← salva estado atual antes de encerrar a sessão
 /spec   [requisito]        ← gera spec com gate humano (Modo Spec)
 /plan   [caminho-do-spec]  ← cria plano técnico de spec aprovado (Modo Plan)
 /back   [tarefa]           ← agente backend

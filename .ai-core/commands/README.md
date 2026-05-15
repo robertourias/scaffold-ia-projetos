@@ -7,6 +7,8 @@ Prompts de ativação para os papéis definidos no `.ai-core/`. Esta pasta é a 
 ```
 .ai-core/commands/
   init-project.md  ← inicializa o projeto preenchendo todos os arquivos de contexto
+  retomar.md       ← reconstrói contexto da sessão anterior para retomar o trabalho
+  checkpoint.md    ← salva estado atual em STATUS.md antes de encerrar a sessão
   back.md          ← agente backend
   front.md         ← agente frontend
   spec.md          ← planner em Modo Spec (gera spec + aguarda aprovação)

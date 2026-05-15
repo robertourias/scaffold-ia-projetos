@@ -130,7 +130,10 @@ Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega a
 
 | Comando | Exemplo | O que faz |
 |---------|---------|-----------|
-| `/spec [requisito]` | `/spec notificações por email` | Planner conduz levantamento, gera spec draft e para — aguarda sua aprovação |
+| `/init-project [desc]` | `/init-project sistema de pedidos` | Preenche todos os arquivos de contexto interativamente (use ao iniciar) |
+| `/retomar` | `/retomar` | Reconstrói contexto da sessão anterior — use ao voltar ao projeto |
+| `/checkpoint` | `/checkpoint` | Salva estado atual em `STATUS.md` — use antes de encerrar a sessão |
+| `/spec [requisito]` | `/spec notificações por email` | Planner conduz levantamento, gera spec draft e para — aguarda aprovação |
 | `/plan [caminho-spec]` | `/plan .ai-core/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
 | `/back [tarefa]` | `/back implementar use case de envio de email` | Backend agent com contexto completo carregado |
 | `/front [tarefa]` | `/front criar página de preferências de notificação` | Frontend agent com contexto completo carregado |
@@ -140,12 +143,38 @@ O revisor aplica o checklist em **dois estágios sequenciais**: Estágio 1 (Func
 
 Referência completa e uso em outros tools (Cursor, Copilot Workspace): [`.ai-core/commands/README.md`](.ai-core/commands/README.md)
 
+### Retomando o trabalho após uma interrupção
+
+Quando você volta a um projeto depois de horas ou dias, o agente não tem memória da sessão anterior. O par `/checkpoint` + `/retomar` resolve isso.
+
+**Antes de fechar:**
+```
+/checkpoint
+  → agente lê git log + contexto da conversa
+  → escreve .ai-core/STATUS.md com tasks prontas, em progresso e próximos passos
+  → faz commit do STATUS.md
+```
+
+**Ao voltar:**
+```
+/retomar
+  → agente lê STATUS.md + git log + spec ativo + plano ativo
+  → apresenta resumo: o que está pronto, onde parou, próxima ação concreta
+  → pergunta: "Continuar de onde paramos?"
+```
+
+O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a partir do git log e dos specs aprovados. Mas com o checkpoint ele recupera também decisões verbais e trabalho não commitado.
+
 ### Fluxo completo de uma feature com slash commands
 
 ```
+# Iniciar o projeto (uma vez)
+/init-project [descrição do produto]
+
+# Feature nova
 /spec notificações por email
   → planner gera .ai-core/specs/2026-05-20-email-notifications.md (Status: draft)
-  → você edita o arquivo e altera Status: draft → Status: approved
+  → você edita o arquivo: Status: draft → Status: approved
 
 /plan .ai-core/specs/2026-05-20-email-notifications.md
   → planner decompõe em tarefas técnicas com contrato de API
@@ -155,6 +184,12 @@ Referência completa e uso em outros tools (Cursor, Copilot Workspace): [`.ai-co
 
 /review [diff do backend]
 /review [diff do frontend]
+
+# Antes de fechar
+/checkpoint
+
+# Ao voltar
+/retomar
 ```
 
 ### Sem slash commands (Cursor, Copilot, outros)
