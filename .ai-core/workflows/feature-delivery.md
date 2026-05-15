@@ -5,13 +5,37 @@
 ## Overview
 
 ```
-Requirement → Plan → Backend → Frontend → Integration → Review → Deploy
+Requirement → [Fase 0: Spec] → ⛔ GATE: aprovação humana → [Fase 1: Plan] → Backend → Frontend → Integration → Review → Deploy
 ```
+
+> O gate entre Fase 0 e Fase 1 é obrigatório. Nenhuma fase de implementação começa sem um spec com `Status: approved` em `.ai-core/specs/`.
+
+## Phase 0: Spec (Planner Agent — Modo Spec)
+
+**Input:** Requisito de produto, user story, ou pedido verbal
+**Output:** `.ai-core/specs/YYYY-MM-DD-<topic>.md` com `Status: draft`
+
+1. Ler `.ai-core/context/architecture.md` e `.ai-core/context/product.md`
+2. Conduzir levantamento com o solicitante (uma pergunta por vez)
+3. Gerar spec usando `.ai-core/specs/spec-template.md` como base
+4. Salvar em `.ai-core/specs/YYYY-MM-DD-<nome-do-topico>.md`
+5. **Parar e aguardar** — informar o caminho do arquivo ao solicitante
+
+**⛔ GATE — Aprovação Humana Obrigatória**
+
+O solicitante deve:
+- Revisar o spec gerado
+- Corrigir ambiguidades, escopos incorretos ou requisitos faltantes
+- Alterar `Status: draft` → `Status: approved` no arquivo
+
+**Nenhuma fase subsequente começa antes deste gate ser cumprido.**
+
+---
 
 ## Phase 1: Planning (Planner Agent)
 
-**Input**: Product requirement or user story
-**Output**: Technical spec with tasks and API contract
+**Input:** Spec aprovado em `.ai-core/specs/YYYY-MM-DD-<topic>.md` (campo `Status: approved` obrigatório)
+**Output:** Tarefas técnicas ordenadas com contrato de API definido
 
 1. Read `context/architecture.md` and `context/product.md`
 2. Identify affected modules (backend and frontend)
