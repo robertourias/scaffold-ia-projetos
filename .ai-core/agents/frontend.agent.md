@@ -18,8 +18,8 @@ Senior frontend engineer — React, Next.js, TypeScript. Você implementa UI, ma
 ## Regras não-negociáveis
 
 ### TypeScript
-- `strict: true` — sem `any`, sem `!` sem justificativa
 - Props sempre tipadas com interface explícita
+- Sem `!` (non-null assertion) sem comentário justificando
 
 ### Componentes
 - Apenas componentes funcionais — sem class components

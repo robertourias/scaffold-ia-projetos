@@ -59,13 +59,13 @@ O design de carregamento sob demanda é intencional. Cada arquivo existe para se
 
 ### Quanto contexto cada papel usa
 
-| Papel | Arquivos carregados | Tokens estimados |
-|-------|--------------------|-----------------:|
-| Backend | `backend.agent.md` + `decisions/backend.md` | ~1.5k |
-| Frontend | `frontend.agent.md` + `decisions/frontend.md` | ~1.5k |
-| Planner (Modo Spec) | `planner.agent.md` + `context/architecture.md` + `context/product.md` | ~2.5k |
-| Planner (Modo Plan) | idem + spec aprovado da feature | ~3–4k |
-| Reviewer | `reviewer.agent.md` + `decisions/<domínio>.md` | ~1.5k |
+| Papel | Arquivos carregados | Tokens est. |
+|-------|--------------------|-----------:|
+| Backend | `backend.agent.md` + `conventions.md` + `decisions/backend.md` | ~1.1k |
+| Frontend | `frontend.agent.md` + `conventions.md` + `ui-guidelines.md` + `decisions/frontend.md` | ~1.5k |
+| Planner (Modo Spec) | `planner.agent.md` + `context/architecture.md` + `context/product.md` | ~2k |
+| Planner (Modo Plan) | idem + spec aprovado da feature | ~3k |
+| Reviewer | `reviewer.agent.md` + `decisions/<domínio>.md` | ~1k |
 
 ### O que não carregar por padrão
 
@@ -79,11 +79,20 @@ Estes arquivos são carregados **sob demanda**, não em toda sessão:
 | `GLOSSARY.md` | Quando surgir termo de domínio ambíguo |
 | `context/product.md` | Quando o planner precisar de regras de negócio |
 
-### Por que funciona
+### Princípio: delta, não tutorial
 
-O agente já sabe como usar Next.js, NestJS, TypeScript e Clean Architecture. O que ele **não** sabe é que *você escolheu* Tailwind em vez de styled-components, ou que pedidos acima de R$ 500 exigem aprovação manual. Esse delta é o que o `.ai-core/` entrega — e é pequeno o suficiente para caber sem custo relevante.
+O agente já sabe como usar Next.js, NestJS, TypeScript e Clean Architecture. O que ele **não** sabe é que *você escolheu* Tailwind em vez de styled-components, ou que pedidos acima de R$ 500 exigem aprovação manual. Esse delta é o que o `.ai-core/` entrega.
 
-Carregar tudo de uma vez desperdiça contexto com informação irrelevante para a tarefa em curso. Um agente de backend não precisa dos tokens do `ui-guidelines.md`.
+Por isso os arquivos foram enxugados para conter apenas:
+- **Decisões** (o que o projeto escolheu, não como a tecnologia funciona)
+- **Regras não-óbvias** (restrições que divergem do comportamento padrão)
+- **Contexto de domínio** (o que só existe no seu produto)
+
+Naming óbvio (PascalCase, camelCase, snake_case para DB), breakpoints padrão do Tailwind, type scale padrão — tudo isso foi removido porque o LLM já sabe. Cada token deve entregar informação que o modelo não teria sem o arquivo.
+
+### Status dos arquivos de contexto
+
+`context/architecture.md` e `context/product.md` contêm seções `<!-- TODO -->` a preencher. Enquanto vazios, carregá-los desperdiça tokens sem entregar valor. Ambos têm um aviso de **Status do arquivo** no topo — preencha antes de usar com agentes.
 
 ---
 

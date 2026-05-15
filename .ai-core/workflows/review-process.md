@@ -5,7 +5,7 @@
 ## Principles
 - Review the code, not the person
 - Every comment must be actionable or informational (no vague feedback)
-- Use the severity labels from `agents/reviewer.agent.md`
+- Severity labels and review checklist: see `agents/reviewer.agent.md`
 - Default to approval — the goal is to ship, not to block
 
 ## PR Requirements (Author)

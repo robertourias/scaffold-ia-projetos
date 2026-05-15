@@ -87,13 +87,13 @@ O solicitante deve:
 - [ ] Set up MSW handler for local development mocking
 
 ### Step 3b: Components
-- [ ] Build new components following `skills/react.skill.md`
+- [ ] Build new components following `agents/frontend.agent.md`
 - [ ] Apply design tokens from `context/ui-guidelines.md`
 - [ ] Handle all states: loading, empty, error, data
 - [ ] Write component tests
 
 ### Step 3c: Page / Route
-- [ ] Create or update Next.js page following `skills/nextjs.skill.md`
+- [ ] Create or update Next.js page following `agents/frontend.agent.md` and `decisions/frontend.md`
 - [ ] Set up proper metadata
 - [ ] Add `loading.tsx` and `error.tsx` if data-fetching route
 

@@ -25,7 +25,7 @@ Infrastructure          → ORM, APIs externas, implementações
 ## Regras não-negociáveis
 
 ### Código
-- `strict: true` — sem `any`, tipos de retorno explícitos em métodos públicos
+- Tipos de retorno explícitos em métodos públicos
 - Controllers delegam imediatamente — zero lógica de negócio
 - Services retornam DTOs — nunca entidades brutas
 - Todo endpoint público tem decorators Swagger

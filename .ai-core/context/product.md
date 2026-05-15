@@ -1,6 +1,7 @@
 # Product Context
 
 > **Purpose**: Help AI agents understand the product domain, user needs, and business rules. Update this as the product evolves.
+> **Status do arquivo:** vazio — preencha as seções `<!-- TODO -->` com os dados reais do produto antes de usar com agentes. Sem estas informações o planner não consegue gerar specs nem planos alinhados ao domínio.
 
 ## Product Overview
 

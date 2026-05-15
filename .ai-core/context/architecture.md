@@ -1,6 +1,7 @@
 # Architecture Context
 
 > **Maintainer**: Update this file whenever a significant architectural decision is made or the system structure changes.
+> **Status do arquivo:** vazio — preencha as seções `<!-- TODO -->` com os dados reais do projeto antes de usar com agentes. Agentes que receberem este arquivo sem preenchimento não terão contexto real para trabalhar.
 
 ## System Overview
 
