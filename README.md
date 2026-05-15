@@ -1,16 +1,18 @@
 # Scaffold IA — Next.js & NestJS
 
 Configuração agnóstica de IA para projetos com stack **Next.js + NestJS + Turborepo**.
-Define papéis de agentes, decisões de projeto, padrões de código e fluxos de entrega.
+Define papéis de agentes, fluxo de entrega spec-driven, decisões de projeto, padrões de código e processo de revisão em dois estágios.
 Compatível com Claude Code, Codex, Cursor, Copilot Workspace e qualquer ferramenta que leia arquivos de contexto.
 
 ---
 
 ## O problema que isso resolve
 
-Agentes de IA não sabem nada sobre o seu projeto: stack, convenções, decisões tomadas, regras de negócio. O `.ai-core/` é a memória persistente que preenche essa lacuna — sem reensinar o que o agente já sabe.
+Agentes de IA não sabem nada sobre o seu projeto: stack, convenções, decisões tomadas, regras de negócio. Sem contexto, eles inventam convenções, repetem perguntas e divergem do que foi decidido.
 
-**Princípio central**: coloque no contexto apenas o que o agente não pode inferir sozinho.
+O `.ai-core/` é a memória persistente que preenche essa lacuna — sem reensinar o que o agente já sabe sobre a tecnologia em si.
+
+**Princípio central:** coloque no contexto apenas o que o agente não pode inferir sozinho. Carregue apenas o que é relevante para a tarefa em curso.
 
 ---
 
@@ -19,10 +21,14 @@ Agentes de IA não sabem nada sobre o seu projeto: stack, convenções, decisõe
 ```
 .ai-core/
 ├── agents/               ← Papel, regras e checklist por tipo de trabalho
+│   ├── planner.agent.md  ← Spec-driven: Modo Spec e Modo Plan separados
 │   ├── frontend.agent.md
 │   ├── backend.agent.md
-│   ├── reviewer.agent.md
-│   └── planner.agent.md
+│   └── reviewer.agent.md ← Revisão em dois estágios: Funcional → Qualidade
+│
+├── specs/                ← Specs aprovados por feature (gerados pelo planner)
+│   ├── spec-template.md  ← Template híbrido para novos specs
+│   └── YYYY-MM-DD-<topic>.md  ← Spec de cada feature (Status: draft → approved)
 │
 ├── decisions/            ← Escolhas específicas do projeto (não tutoriais)
 │   ├── frontend.md       ← Stack, libs, padrões de teste do frontend
@@ -35,7 +41,7 @@ Agentes de IA não sabem nada sobre o seu projeto: stack, convenções, decisõe
 │   └── ui-guidelines.md  ← Design system, tokens, componentes
 │
 ├── workflows/            ← Processos (carregados sob demanda)
-│   ├── feature-delivery.md
+│   ├── feature-delivery.md  ← Fase 0: Spec → gate → Plan → implementação
 │   ├── review-process.md
 │   └── release-process.md
 │
@@ -47,6 +53,118 @@ AGENTS.md                 ← Adaptador para Codex / Cursor / Copilot Workspace
 
 ---
 
+## Economia de tokens
+
+O design de carregamento sob demanda é intencional. Cada arquivo existe para ser lido **apenas quando relevante** — não em toda sessão.
+
+### Quanto contexto cada papel usa
+
+| Papel | Arquivos carregados | Tokens estimados |
+|-------|--------------------|-----------------:|
+| Backend | `backend.agent.md` + `decisions/backend.md` | ~1.5k |
+| Frontend | `frontend.agent.md` + `decisions/frontend.md` | ~1.5k |
+| Planner (Modo Spec) | `planner.agent.md` + `context/architecture.md` + `context/product.md` | ~2.5k |
+| Planner (Modo Plan) | idem + spec aprovado da feature | ~3–4k |
+| Reviewer | `reviewer.agent.md` + `decisions/<domínio>.md` | ~1.5k |
+
+### O que não carregar por padrão
+
+Estes arquivos são carregados **sob demanda**, não em toda sessão:
+
+| Arquivo | Quando carregar |
+|---------|----------------|
+| `workflows/feature-delivery.md` | Ao iniciar planejamento de feature |
+| `workflows/review-process.md` | Ao abrir PR ou revisão formal |
+| `workflows/release-process.md` | Ao preparar deploy |
+| `GLOSSARY.md` | Quando surgir termo de domínio ambíguo |
+| `context/product.md` | Quando o planner precisar de regras de negócio |
+
+### Por que funciona
+
+O agente já sabe como usar Next.js, NestJS, TypeScript e Clean Architecture. O que ele **não** sabe é que *você escolheu* Tailwind em vez de styled-components, ou que pedidos acima de R$ 500 exigem aprovação manual. Esse delta é o que o `.ai-core/` entrega — e é pequeno o suficiente para caber sem custo relevante.
+
+Carregar tudo de uma vez desperdiça contexto com informação irrelevante para a tarefa em curso. Um agente de backend não precisa dos tokens do `ui-guidelines.md`.
+
+---
+
+## Fluxo de entrega (spec-driven)
+
+O fluxo completo de uma feature vai da ideia ao deploy em seis fases. A novidade é a **Fase 0** com gate humano — nenhum plano técnico começa sem spec aprovado.
+
+```
+Ideia/requisito
+      ↓
+[Fase 0: Spec]  ← planner conduz levantamento, gera .ai-core/specs/YYYY-MM-DD-<topic>.md
+      ↓
+⛔ GATE: você altera Status: draft → Status: approved no arquivo
+      ↓
+[Fase 1: Plan]  ← planner lê o spec aprovado e decompõe em tarefas técnicas
+      ↓
+[Fase 2: Backend] → [Fase 3: Frontend] → [Fase 4: Integration]
+      ↓
+[Fase 5: Review]  ← revisor aplica checklist em dois estágios
+      ↓
+[Fase 6: Deploy]
+```
+
+### Por que o gate importa
+
+Sem o gate, o agente assume o escopo e você descobre o desvio tarde — após código já escrito. O spec obriga o alinhamento **antes** de qualquer implementação. Se o spec estiver errado, você edita um arquivo Markdown; se o plano estiver errado, você reverte código.
+
+---
+
+## Como usar no dia a dia
+
+### Iniciar uma feature nova
+
+```
+Você é o PLANNER deste projeto.
+Leia .ai-core/agents/planner.agent.md e .ai-core/context/architecture.md.
+
+Quero implementar notificações por email. Não há spec aprovado ainda.
+```
+
+O planner entra no **Modo Spec**: faz perguntas uma por vez, gera `.ai-core/specs/YYYY-MM-DD-email-notifications.md` com `Status: draft` e para. Você revisa, ajusta e muda para `Status: approved`. Só então solicita o plano técnico.
+
+### Criar o plano após spec aprovado
+
+```
+Você é o PLANNER deste projeto.
+Leia .ai-core/agents/planner.agent.md e .ai-core/specs/2026-05-20-email-notifications.md.
+
+O spec está aprovado. Gere o plano técnico.
+```
+
+### Implementar (backend)
+
+```
+Você é o agente de BACKEND deste projeto.
+Leia .ai-core/agents/backend.agent.md e .ai-core/decisions/backend.md.
+Tarefa: implementar o use case de envio de notificação por email.
+```
+
+### Implementar (frontend)
+
+```
+Você é o agente de FRONTEND deste projeto.
+Leia .ai-core/agents/frontend.agent.md e .ai-core/decisions/frontend.md.
+Tarefa: criar a página de preferências de notificação.
+```
+
+### Revisar código
+
+```
+Você é o REVIEWER deste projeto.
+Leia .ai-core/agents/reviewer.agent.md e .ai-core/decisions/backend.md.
+Revise o seguinte diff: [cole o diff]
+```
+
+O reviewer aplica o checklist em **dois estágios sequenciais**:
+- **Estágio 1 — Funcional:** lógica correta, segurança, testes, migrations. Um 🔴 BLOCKER aqui encerra a revisão — sem avançar para o Estágio 2.
+- **Estágio 2 — Qualidade:** naming, convenções, N+1, bundle, acessibilidade. Só executado após o Estágio 1 passar limpo.
+
+---
+
 ## Como adotar em um projeto novo
 
 ```bash
@@ -55,8 +173,7 @@ cp -r scaffold-ia/.ai-core  meu-projeto/
 cp -r scaffold-ia/.claude   meu-projeto/
 cp    scaffold-ia/AGENTS.md meu-projeto/
 
-# 2. Preencha os arquivos de contexto
-#    São os únicos que exigem edição manual:
+# 2. Preencha os arquivos de contexto (únicos que exigem edição manual)
 #    .ai-core/context/architecture.md  → sua stack e decisões reais
 #    .ai-core/context/product.md       → seu domínio e regras de negócio
 #    .ai-core/context/ui-guidelines.md → seu design system
@@ -69,37 +186,7 @@ cp    scaffold-ia/AGENTS.md meu-projeto/
 #    .ai-core/GLOSSARY.md
 ```
 
-Os arquivos de `agents/` e `workflows/` funcionam sem edição. Ajuste só se seus processos divergirem do padrão.
-
----
-
-## Como usar no dia a dia
-
-Diga ao agente qual papel assumir e quais arquivos ler:
-
-```
-Você é o agente de BACKEND deste projeto.
-Leia .ai-core/agents/backend.agent.md e .ai-core/decisions/backend.md.
-Tarefa: implementar o endpoint de criação de pedido.
-```
-
-```
-Você é o agente de FRONTEND deste projeto.
-Leia .ai-core/agents/frontend.agent.md e .ai-core/decisions/frontend.md.
-Tarefa: criar a página de listagem de pedidos.
-```
-
-```
-Você é o PLANNER deste projeto.
-Leia .ai-core/agents/planner.agent.md, context/architecture.md e context/product.md.
-Quero implementar notificações por email. Quebre em tarefas.
-```
-
-```
-Você é o REVIEWER deste projeto.
-Leia .ai-core/agents/reviewer.agent.md e decisions/backend.md.
-Revise o seguinte diff: [cole o diff]
-```
+Os arquivos de `agents/`, `specs/` e `workflows/` funcionam sem edição. Ajuste só se seus processos divergirem do padrão.
 
 ---
 
@@ -107,7 +194,14 @@ Revise o seguinte diff: [cole o diff]
 
 ### `agents/`
 Define **papel, responsabilidades e regras não-negociáveis** por tipo de trabalho.
-Inclui os padrões de código — o agente não precisa de arquivos de standards separados.
+O planner tem dois modos mutuamente exclusivos (Spec e Plan). O reviewer tem checklist em dois estágios.
+
+### `specs/`
+Specs gerados pelo planner durante o levantamento de features. O campo `Status` controla o gate:
+- `draft` → spec em revisão, planner bloqueado para criar tasks
+- `approved` → planner pode criar o plano técnico
+
+Use `spec-template.md` como base. Specs aprovados ficam versionados como histórico de decisão de produto.
 
 ### `decisions/`
 Lista **escolhas do projeto** — não tutoriais de tecnologia.
@@ -119,7 +213,7 @@ Informações **únicas do seu produto**. São os únicos arquivos que você pre
 
 ### `workflows/`
 Processos de trabalho carregados **sob demanda**, não em toda sessão.
-Úteis em planejamento de features, revisões e releases.
+O `feature-delivery.md` descreve o fluxo completo com Fase 0 (Spec) e todos os gates.
 
 ### `GLOSSARY.md`
 Termos do domínio com definições precisas.
@@ -146,6 +240,7 @@ O `.ai-core/` é um documento vivo. Atualize quando:
 - Regra de negócio for definida → `context/product.md`
 - Nova lib/stack for adotada → `decisions/frontend.md` ou `decisions/backend.md`
 - Novo termo do domínio surgir → `GLOSSARY.md`
+- Feature nova for aprovada → `specs/YYYY-MM-DD-<topic>.md`
 
 Trate com o mesmo cuidado que código de produção: versionado no Git, revisado em PR.
 
