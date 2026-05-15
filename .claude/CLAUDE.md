@@ -57,6 +57,18 @@ packages/
   utils/      → Funções utilitárias compartilhadas
 ```
 
+## Slash commands disponíveis
+```
+/spec   [requisito]        ← gera spec com gate humano (Modo Spec)
+/plan   [caminho-do-spec]  ← cria plano técnico de spec aprovado (Modo Plan)
+/back   [tarefa]           ← agente backend
+/front  [tarefa]           ← agente frontend
+/review [diff ou contexto] ← revisão em dois estágios
+```
+Referência completa e uso em outros tools: `.ai-core/commands/README.md`
+
+---
+
 ## Princípios-chave
 1. Clean Architecture — dependências apontam para dentro, domínio sem dependências de framework
 2. Testes junto com a implementação, não depois
