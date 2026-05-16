@@ -51,7 +51,8 @@ git push origin v[X.Y.Z]
 - [ ] Check database metrics (query times, connection pool)
 
 ### 4. Post-Deploy
-- [ ] Update CHANGELOG or release notes
+- [ ] Mover `[Unreleased]` para versão com data no `CHANGELOG.md` (ver `workflows/documentation.md`)
+- [ ] Criar ou atualizar `docs/features/<feature>.md` para cada feature entregue
 - [ ] Notify stakeholders (Slack, email, etc.)
 - [ ] Close related tasks/tickets
 - [ ] Celebrate 🎉

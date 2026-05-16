@@ -5,7 +5,7 @@
 ## Overview
 
 ```
-Requirement → [Fase 0: Spec] → ⛔ GATE: aprovação humana → [Fase 1: Plan] → Backend → Frontend → Integration → Review → Deploy
+Requirement → [Fase 0: Spec] → ⛔ GATE: aprovação humana → [Fase 1: Plan] → Backend → Frontend → Integration → Review → Deploy → Documentation
 ```
 
 > O gate entre Fase 0 e Fase 1 é obrigatório. Nenhuma fase de implementação começa sem um spec com `Status: approved` em `.ai-core/specs/`.
@@ -126,6 +126,17 @@ O solicitante deve:
 ## Phase 6: Deploy
 
 Follow `workflows/release-process.md`.
+
+---
+
+## Phase 7: Documentation (pós-merge para `main`)
+
+Follow `workflows/documentation.md`.
+
+Checklist mínimo após cada merge:
+- [ ] `docs/features/<feature>.md` criado ou atualizado
+- [ ] `CHANGELOG.md` — seção `[Unreleased]` atualizada
+- [ ] `.env.example` atualizado se novas variáveis foram adicionadas
 
 ---
 
