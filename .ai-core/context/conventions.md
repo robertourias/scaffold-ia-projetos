@@ -43,6 +43,16 @@ kebab-case           paths com múltiplas palavras (/user-profiles)
 - Commits: Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `test:`)
 - PRs: manter abaixo de 400 linhas — features grandes viram PRs sequenciais
 
+### Protocolo pré-commit (obrigatório)
+
+Antes de qualquer commit, sempre nesta ordem:
+
+1. **Atualizar `docs/CHANGELOG.md`** — adicionar ou completar a entrada na seção `[Unreleased]` com o que está sendo commitado (feat, fix, chore, etc.)
+2. **Atualizar `.ai-core/STATUS.md`** — refletir o estado atual: o que foi feito, o que está em progresso, próximos passos
+3. **Incluir ambos no commit** — `git add docs/CHANGELOG.md .ai-core/STATUS.md` junto com os demais arquivos
+
+Não pule este protocolo mesmo para commits pequenos ou de chore.
+
 ## Comentários
 
 - Comente o **POR QUÊ**, não o QUÊ — o código mostra o quê; comentários explicam restrições ocultas e regras de negócio não-óbvias.

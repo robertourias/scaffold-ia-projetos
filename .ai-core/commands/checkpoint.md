@@ -62,14 +62,18 @@ Reescreva `.ai-core/STATUS.md` com o seguinte conteúdo preenchido:
 - [item que precisa de resolução antes de continuar, ou "(nenhum)"]
 ```
 
-## Passo 3 — Commit
+## Passo 3 — Atualizar CHANGELOG
+
+Abra `docs/CHANGELOG.md` e adicione ou complemente a entrada na seção `[Unreleased]` com o que foi feito nesta sessão (siga o formato do `workflows/documentation.md`).
+
+## Passo 4 — Commit
 
 ```bash
-git add .ai-core/STATUS.md
+git add .ai-core/STATUS.md docs/CHANGELOG.md
 git commit -m "chore: checkpoint — [resumo em uma linha do que foi feito]"
 ```
 
-## Passo 4 — Confirmar
+## Passo 5 — Confirmar
 
 Exiba:
 

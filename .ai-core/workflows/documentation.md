@@ -102,7 +102,7 @@ Registrar no `CHANGELOG.md` em `### Removido` com o motivo. Se o código removid
 
 ## Referências
 
-- Formato de CHANGELOG: `apps/web-nico.dev.br/docs/CHANGELOG.md`
+- Formato de CHANGELOG: `docs/CHANGELOG.md`
 - Exemplo de feature doc: `apps/web-nico.dev.br/docs/features/ai-chat-widget.md`
 - Workflow de release: `.ai-core/workflows/release-process.md`
 - Workflow de entrega: `.ai-core/workflows/feature-delivery.md`
