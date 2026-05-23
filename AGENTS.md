@@ -1,53 +1,81 @@
-# Agent Context
+# Contexto para Agentes de IA
 
-Este repositório usa `.ai-core/` como contexto persistente para agentes de IA.
-Carregue os arquivos correspondentes ao seu papel antes de escrever qualquer código.
-
----
-
-## Papel: PLANNER
-- `.ai-core/context/architecture.md`
-- `.ai-core/context/product.md`
-- `.ai-core/workflows/feature-delivery.md`
-- `.ai-core/agents/planner.agent.md`
-
-## Papel: FRONTEND
-- `.ai-core/context/conventions.md`
-- `.ai-core/context/ui-guidelines.md`
-- `.ai-core/decisions/frontend.md`
-- `.ai-core/agents/frontend.agent.md`
-
-## Papel: BACKEND
-- `.ai-core/context/conventions.md`
-- `.ai-core/decisions/backend.md`
-- `.ai-core/agents/backend.agent.md`
-
-## Papel: REVIEWER
-- `.ai-core/agents/reviewer.agent.md`
-- `decisions/frontend.md` ou `decisions/backend.md` conforme o PR
-
-## Sob demanda (não carregar por padrão)
-- `.ai-core/GLOSSARY.md` — termos do domínio
-- `.ai-core/context/product.md` — regras de negócio
-- `.ai-core/workflows/review-process.md`
-- `.ai-core/workflows/release-process.md`
+Este projeto usa `docs/` como memória persistente de contexto.
+Leia apenas os arquivos do seu papel antes de qualquer tarefa.
 
 ---
 
-## Regras que se aplicam a todos os papéis
-1. TypeScript `strict: true` — sem `any`
-2. Nenhum segredo no código — apenas variáveis de ambiente
-3. Toda entrada de usuário é validada
-4. Testes para toda lógica não-trivial
-5. Sem breaking changes em contratos de API — versionar ou adicionar
-6. Em dúvida: declare a ambiguidade, não assuma
+## BACKEND
 
----
-
-## Estrutura do monorepo
 ```
-apps/web      → Next.js 14+ (App Router)
-apps/api      → NestJS
-packages/ui   → Componentes compartilhados
-packages/config, types, utils
+docs/skills/backend.md
+docs/context/conventions.md
+docs/context/decisions.md
+docs/agents/backend.agent.md
 ```
+
+## FRONTEND
+
+```
+docs/skills/frontend.md
+docs/context/conventions.md
+docs/context/ui-guidelines.md
+docs/context/decisions.md
+docs/agents/frontend.agent.md
+```
+
+## PLANNER
+
+```
+docs/context/product.md
+docs/architecture/overview.md
+docs/skills/architecture.md
+docs/agents/planner.agent.md
+docs/workflows/feature-delivery.md
+```
+
+## REVIEWER
+
+```
+docs/skills/quality.md
+docs/context/conventions.md
+docs/context/decisions.md
+docs/agents/reviewer.agent.md
+```
+
+---
+
+## Carregue sob demanda (não por padrão)
+
+```
+docs/context/current-state.md    ← estado atual do projeto (use /retomar)
+docs/context/product.md          ← regras de negócio (se não for PLANNER)
+docs/workflows/release-process.md
+```
+
+---
+
+## Comandos
+
+```
+/init-project [descrição]   ← preenche todos os arquivos de contexto
+/retomar                    ← reconstrói contexto da sessão anterior
+/checkpoint                 ← salva estado antes de encerrar
+/spec   [requisito]         ← gera spec com gate humano
+/plan   [caminho-do-spec]   ← cria plano técnico de spec aprovado
+/back   [tarefa]            ← agente backend
+/front  [tarefa]            ← agente frontend
+/review [diff ou contexto]  ← revisão em dois estágios
+/commit                     ← atualiza docs e faz commit
+```
+
+Referência completa: `docs/commands/README.md`
+
+---
+
+## Princípios
+
+1. Clean Architecture — dependências apontam para dentro, domínio sem framework
+2. Testes junto com a implementação, não depois
+3. Toda decisão rastreável a um arquivo em `docs/`
+4. Em caso de dúvida: pergunte antes de assumir
