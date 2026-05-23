@@ -1,1 +1,1 @@
-Leia .ai-core/commands/retomar.md e execute as instruções.
+Leia docs/commands/retomar.md e execute as instruções.

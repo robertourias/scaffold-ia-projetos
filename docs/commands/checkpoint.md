@@ -1,6 +1,6 @@
 # Checkpoint — Salvar estado da sessão
 
-Atualize `.ai-core/STATUS.md` com o estado atual antes de encerrar a sessão.
+Atualize `docs/context/current-state.md` com o estado atual antes de encerrar a sessão.
 
 ## Passo 1 — Coletar informações
 
@@ -11,12 +11,12 @@ git log --oneline -15
 ```
 
 Identifique também:
-- Quais specs em `.ai-core/specs/` têm `Status: approved` e estão sendo trabalhados
+- Quais specs em `docs/specs/` têm `Status: approved` e estão sendo trabalhados
 - O que foi feito nesta sessão com base no contexto da conversa e nos commits
 
-## Passo 2 — Atualizar STATUS.md
+## Passo 2 — Atualizar current-state.md
 
-Reescreva `.ai-core/STATUS.md` com o seguinte conteúdo preenchido:
+Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido:
 
 ```markdown
 # Status do Projeto
@@ -31,7 +31,7 @@ Reescreva `.ai-core/STATUS.md` com o seguinte conteúdo preenchido:
 
 ## Feature em andamento
 
-**Spec ativo:** [caminho do spec, ex: .ai-core/specs/2026-05-20-email-notifications.md]
+**Spec ativo:** [caminho do spec, ex: docs/specs/2026-05-20-email-notifications.md]
 **Plano ativo:** [caminho do plano, ex: docs/superpowers/plans/2026-05-20-email-notifications.md]
 
 ---
@@ -64,12 +64,12 @@ Reescreva `.ai-core/STATUS.md` com o seguinte conteúdo preenchido:
 
 ## Passo 3 — Atualizar CHANGELOG
 
-Abra `docs/CHANGELOG.md` e adicione ou complemente a entrada na seção `[Unreleased]` com o que foi feito nesta sessão (siga o formato do `workflows/documentation.md`).
+Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual) e adicione ou complemente a entrada com o que foi feito nesta sessão (siga o formato do `docs/commands/commit.md`).
 
 ## Passo 4 — Commit
 
 ```bash
-git add .ai-core/STATUS.md docs/CHANGELOG.md
+git add docs/context/current-state.md docs/changelog/
 git commit -m "chore: checkpoint — [resumo em uma linha do que foi feito]"
 ```
 
@@ -78,7 +78,7 @@ git commit -m "chore: checkpoint — [resumo em uma linha do que foi feito]"
 Exiba:
 
 ```
-✅ Checkpoint salvo em .ai-core/STATUS.md
+✅ Checkpoint salvo em docs/context/current-state.md
 📌 Última ação: [resumo]
 ⏭ Próxima sessão: /retomar
 ```

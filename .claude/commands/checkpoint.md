@@ -1,1 +1,1 @@
-Leia .ai-core/commands/checkpoint.md e execute as instruções.
+Leia docs/commands/checkpoint.md e execute as instruções.

@@ -6,12 +6,12 @@ Reconstrua o contexto completo do projeto para retomar o trabalho. **Não implem
 
 Leia os seguintes arquivos em ordem:
 
-1. `.ai-core/STATUS.md` — estado salvo da última sessão
+1. `docs/context/current-state.md` — estado salvo da última sessão
 2. `git log --oneline -15` — commits recentes
-3. O spec referenciado em STATUS.md (se existir e tiver `Status: approved`)
-4. O plano referenciado em STATUS.md (se existir)
+3. O spec referenciado em current-state.md (se existir e tiver `Status: approved`)
+4. O plano referenciado em current-state.md (se existir)
 
-Se o STATUS.md estiver vazio ou sem dados (última atualização: `—`), reconstrua apenas a partir do git log e de specs aprovados encontrados em `.ai-core/specs/`.
+Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua apenas a partir do git log e de specs aprovados encontrados em `docs/specs/`.
 
 ## Passo 2 — Apresentar resumo
 
@@ -49,15 +49,15 @@ Após exibir o resumo, pergunte:
 
 ## Casos especiais
 
-**Sem STATUS.md ou STATUS vazio:**
+**Sem current-state.md ou arquivo vazio:**
 > "Não há checkpoint salvo. Reconstruindo a partir do histórico git..."
 > Analise os commits e specs aprovados, apresente o resumo com o que for possível inferir, e sugira `/checkpoint` ao final desta sessão.
 
-**Sem commits recentes e sem STATUS:**
+**Sem commits recentes e sem current-state:**
 > "Nenhum contexto encontrado. Se o projeto ainda não foi inicializado, use `/init-project [descrição do produto]`."
 
-**Múltiplos specs aprovados sem STATUS:**
-> Liste todos os specs com `Status: approved` encontrados em `.ai-core/specs/` e pergunte qual está sendo trabalhado antes de apresentar o resumo.
+**Múltiplos specs aprovados sem current-state:**
+> Liste todos os specs com `Status: approved` encontrados em `docs/specs/` e pergunte qual está sendo trabalhado antes de apresentar o resumo.
 
 ## Regras
 

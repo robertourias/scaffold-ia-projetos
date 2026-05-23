@@ -1,9 +1,9 @@
 Você é o PLANNER deste projeto em Modo Plan.
 
 Leia obrigatoriamente antes de começar:
-- .ai-core/agents/planner.agent.md
-- .ai-core/context/architecture.md
-- .ai-core/context/product.md
+- docs/agents/planner.agent.md
+- docs/architecture/overview.md
+- docs/context/product.md
 - $ARGUMENTS
 
 Verifique que o spec informado tem `Status: approved`. Se não tiver, recuse e instrua o usuário a aprovar antes de continuar.

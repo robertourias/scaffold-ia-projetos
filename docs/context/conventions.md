@@ -47,11 +47,12 @@ kebab-case           paths com múltiplas palavras (/user-profiles)
 
 Antes de qualquer commit, sempre nesta ordem:
 
-1. **Atualizar `docs/CHANGELOG.md`** — adicionar ou completar a entrada na seção `[Unreleased]` com o que está sendo commitado (feat, fix, chore, etc.)
-2. **Atualizar `.ai-core/STATUS.md`** — refletir o estado atual: o que foi feito, o que está em progresso, próximos passos
-3. **Incluir ambos no commit** — `git add docs/CHANGELOG.md .ai-core/STATUS.md` junto com os demais arquivos
+1. **Atualizar `docs/context/current-state.md`** — refletir o que foi feito, o que está em progresso, próximos passos
+2. **Atualizar `docs/changelog/YYYY-MM-DD.md`** — adicionar entrada com o que está sendo commitado
+3. **Incluir ambos no commit** junto com os demais arquivos
 
 Não pule este protocolo mesmo para commits pequenos ou de chore.
+Use `/commit` para executar o protocolo completo com auxílio do agente.
 
 ## Comentários
 

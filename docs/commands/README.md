@@ -1,14 +1,15 @@
 # Comandos de Agente
 
-Prompts de ativação para os papéis definidos no `.ai-core/`. Esta pasta é a **fonte canônica** — cada arquivo de comando é agnóstico de ferramenta e pode ser usado com qualquer agente de IA.
+Prompts de ativação para os papéis definidos no `docs/`. Esta pasta é a **fonte canônica** — cada arquivo de comando é agnóstico de ferramenta e pode ser usado com qualquer agente de IA.
 
 ## Estrutura
 
 ```
-.ai-core/commands/
+docs/commands/
   init-project.md  ← inicializa o projeto preenchendo todos os arquivos de contexto
   retomar.md       ← reconstrói contexto da sessão anterior para retomar o trabalho
-  checkpoint.md    ← salva estado atual em STATUS.md antes de encerrar a sessão
+  checkpoint.md    ← salva estado atual em current-state.md antes de encerrar a sessão
+  commit.md        ← atualiza docs e faz commit seguindo o protocolo pré-commit
   back.md          ← agente backend
   front.md         ← agente frontend
   spec.md          ← planner em Modo Spec (gera spec + aguarda aprovação)
@@ -28,8 +29,9 @@ Disponível automaticamente via `/comando`. O Claude Code lê `.claude/commands/
 /back implementar endpoint de criação de pedido
 /front criar página de listagem de pedidos
 /spec notificações por email
-/plan .ai-core/specs/2026-05-20-email-notifications.md
+/plan docs/specs/2026-05-20-email-notifications.md
 /review [cole o diff aqui]
+/commit
 ```
 
 ### Cursor / Copilot / outros
@@ -39,10 +41,10 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 
 ```
 /spec notificações por email
-  → planner gera .ai-core/specs/YYYY-MM-DD-email-notifications.md (Status: draft)
+  → planner gera docs/specs/YYYY-MM-DD-email-notifications.md (Status: draft)
   → você edita o arquivo: Status: draft → Status: approved
 
-/plan .ai-core/specs/YYYY-MM-DD-email-notifications.md
+/plan docs/specs/YYYY-MM-DD-email-notifications.md
   → planner verifica Status: approved e decompõe em tarefas técnicas
 
 /back implementar use case de envio de email
@@ -50,13 +52,15 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 
 /review [diff do backend]
 /review [diff do frontend]
+
+/commit
 ```
 
 ## Adicionar novos comandos
 
-1. Crie `.ai-core/commands/<nome>.md` com o prompt agnóstico
+1. Crie `docs/commands/<nome>.md` com o prompt agnóstico
 2. Crie `.claude/commands/<nome>.md` com uma linha de referência:
    ```
-   Leia .ai-core/commands/<nome>.md e execute as instruções, substituindo $ARGUMENTS por: $ARGUMENTS
+   Leia docs/commands/<nome>.md e execute as instruções, substituindo $ARGUMENTS por: $ARGUMENTS
    ```
 3. Para outros tools, documente o novo comando neste README

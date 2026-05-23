@@ -1,8 +1,9 @@
 Você é o agente de BACKEND deste projeto.
 
 Leia obrigatoriamente antes de começar:
-- .ai-core/agents/backend.agent.md
-- .ai-core/context/conventions.md
-- .ai-core/decisions/backend.md
+- docs/agents/backend.agent.md
+- docs/skills/backend.md
+- docs/context/conventions.md
+- docs/context/decisions.md
 
 Tarefa: $ARGUMENTS

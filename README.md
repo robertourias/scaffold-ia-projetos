@@ -10,7 +10,7 @@ Compatível com Claude Code, Codex, Cursor, Copilot Workspace e qualquer ferrame
 
 Agentes de IA não sabem nada sobre o seu projeto: stack, convenções, decisões tomadas, regras de negócio. Sem contexto, eles inventam convenções, repetem perguntas e divergem do que foi decidido.
 
-O `.ai-core/` é a memória persistente que preenche essa lacuna — sem reensinar o que o agente já sabe sobre a tecnologia em si.
+O `docs/` é a memória persistente que preenche essa lacuna — sem reensinar o que o agente já sabe sobre a tecnologia em si.
 
 **Princípio central:** coloque no contexto apenas o que o agente não pode inferir sozinho. Carregue apenas o que é relevante para a tarefa em curso.
 
@@ -19,33 +19,55 @@ O `.ai-core/` é a memória persistente que preenche essa lacuna — sem reensin
 ## Estrutura
 
 ```
-.ai-core/
-├── agents/               ← Papel, regras e checklist por tipo de trabalho
+docs/
+├── agents/               ← Papel e responsabilidades por tipo de trabalho
 │   ├── planner.agent.md  ← Spec-driven: Modo Spec e Modo Plan separados
 │   ├── frontend.agent.md
 │   ├── backend.agent.md
 │   └── reviewer.agent.md ← Revisão em dois estágios: Funcional → Qualidade
 │
+├── skills/               ← Comportamentos e checklists técnicos reutilizáveis
+│   ├── backend.md
+│   ├── frontend.md
+│   ├── quality.md
+│   └── architecture.md
+│
 ├── specs/                ← Specs aprovados por feature (gerados pelo planner)
 │   ├── spec-template.md  ← Template híbrido para novos specs
 │   └── YYYY-MM-DD-<topic>.md  ← Spec de cada feature (Status: draft → approved)
 │
-├── decisions/            ← Escolhas específicas do projeto (não tutoriais)
-│   ├── frontend.md       ← Stack, libs, padrões de teste do frontend
-│   └── backend.md        ← ORM, auth, arquitetura, padrões de teste do backend
-│
 ├── context/              ← O que é único do seu produto (preencha estes)
-│   ├── architecture.md   ← Stack real, estrutura, decisões arquiteturais
-│   ├── product.md        ← Usuários, regras de negócio, glossário
+│   ├── architecture.md   ← Stack real, estrutura, decisões arquiteturais (legado)
+│   ├── product.md        ← Usuários, regras de negócio
 │   ├── conventions.md    ← Nomenclatura, Git, imports, comentários
-│   └── ui-guidelines.md  ← Design system, tokens, componentes
+│   ├── decisions.md      ← Escolhas de frontend e backend consolidadas
+│   ├── ui-guidelines.md  ← Design system, tokens, componentes
+│   └── current-state.md  ← Estado atual do projeto (atualizado por /checkpoint)
+│
+├── architecture/         ← Visão arquitetural detalhada
+│   ├── overview.md
+│   ├── backend.md
+│   ├── frontend.md
+│   └── infra.md
 │
 ├── workflows/            ← Processos (carregados sob demanda)
 │   ├── feature-delivery.md  ← Fase 0: Spec → gate → Plan → implementação
-│   ├── review-process.md
 │   └── release-process.md
 │
-└── GLOSSARY.md           ← Termos do domínio com definições precisas
+├── commands/             ← Prompts de ativação de papéis (fonte canônica)
+│   ├── README.md
+│   ├── init-project.md
+│   ├── retomar.md
+│   ├── checkpoint.md
+│   ├── commit.md
+│   ├── spec.md
+│   ├── plan.md
+│   ├── back.md
+│   ├── front.md
+│   └── review.md
+│
+└── changelog/            ← Changelog por data
+    └── YYYY-MM-DD.md
 
 .claude/CLAUDE.md         ← Adaptador para Claude Code (carregado automaticamente)
 AGENTS.md                 ← Adaptador para Codex / Cursor / Copilot Workspace
@@ -61,11 +83,11 @@ O design de carregamento sob demanda é intencional. Cada arquivo existe para se
 
 | Papel | Arquivos carregados | Tokens est. |
 |-------|--------------------|-----------:|
-| Backend | `backend.agent.md` + `conventions.md` + `decisions/backend.md` | ~1.1k |
-| Frontend | `frontend.agent.md` + `conventions.md` + `ui-guidelines.md` + `decisions/frontend.md` | ~1.5k |
-| Planner (Modo Spec) | `planner.agent.md` + `context/architecture.md` + `context/product.md` | ~2k |
+| Backend | `backend.agent.md` + `skills/backend.md` + `conventions.md` + `decisions.md` | ~1.2k |
+| Frontend | `frontend.agent.md` + `skills/frontend.md` + `conventions.md` + `ui-guidelines.md` + `decisions.md` | ~1.6k |
+| Planner (Modo Spec) | `planner.agent.md` + `architecture/overview.md` + `context/product.md` | ~2k |
 | Planner (Modo Plan) | idem + spec aprovado da feature | ~3k |
-| Reviewer | `reviewer.agent.md` + `decisions/<domínio>.md` | ~1k |
+| Reviewer | `reviewer.agent.md` + `skills/quality.md` + `decisions.md` | ~1.2k |
 
 ### O que não carregar por padrão
 
@@ -74,25 +96,18 @@ Estes arquivos são carregados **sob demanda**, não em toda sessão:
 | Arquivo | Quando carregar |
 |---------|----------------|
 | `workflows/feature-delivery.md` | Ao iniciar planejamento de feature |
-| `workflows/review-process.md` | Ao abrir PR ou revisão formal |
 | `workflows/release-process.md` | Ao preparar deploy |
-| `GLOSSARY.md` | Quando surgir termo de domínio ambíguo |
 | `context/product.md` | Quando o planner precisar de regras de negócio |
+| `context/current-state.md` | Ao usar /retomar |
 
 ### Princípio: delta, não tutorial
 
-O agente já sabe como usar Next.js, NestJS, TypeScript e Clean Architecture. O que ele **não** sabe é que *você escolheu* Tailwind em vez de styled-components, ou que pedidos acima de R$ 500 exigem aprovação manual. Esse delta é o que o `.ai-core/` entrega.
+O agente já sabe como usar Next.js, NestJS, TypeScript e Clean Architecture. O que ele **não** sabe é que *você escolheu* Tailwind em vez de styled-components, ou que pedidos acima de R$ 500 exigem aprovação manual. Esse delta é o que o `docs/` entrega.
 
 Por isso os arquivos foram enxugados para conter apenas:
 - **Decisões** (o que o projeto escolheu, não como a tecnologia funciona)
 - **Regras não-óbvias** (restrições que divergem do comportamento padrão)
 - **Contexto de domínio** (o que só existe no seu produto)
-
-Naming óbvio (PascalCase, camelCase, snake_case para DB), breakpoints padrão do Tailwind, type scale padrão — tudo isso foi removido porque o LLM já sabe. Cada token deve entregar informação que o modelo não teria sem o arquivo.
-
-### Status dos arquivos de contexto
-
-`context/architecture.md` e `context/product.md` contêm seções `<!-- TODO -->` a preencher. Enquanto vazios, carregá-los desperdiça tokens sem entregar valor. Ambos têm um aviso de **Status do arquivo** no topo — preencha antes de usar com agentes.
 
 ---
 
@@ -103,7 +118,7 @@ O fluxo completo de uma feature vai da ideia ao deploy em seis fases. A novidade
 ```
 Ideia/requisito
       ↓
-[Fase 0: Spec]  ← planner conduz levantamento, gera .ai-core/specs/YYYY-MM-DD-<topic>.md
+[Fase 0: Spec]  ← planner conduz levantamento, gera docs/specs/YYYY-MM-DD-<topic>.md
       ↓
 ⛔ GATE: você altera Status: draft → Status: approved no arquivo
       ↓
@@ -126,22 +141,23 @@ Sem o gate, o agente assume o escopo e você descobre o desvio tarde — após c
 
 ### Slash commands (Claude Code)
 
-Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega automaticamente os arquivos `.ai-core/` relevantes para o papel.
+Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega automaticamente os arquivos `docs/` relevantes para o papel.
 
 | Comando | Exemplo | O que faz |
 |---------|---------|-----------|
 | `/init-project [desc]` | `/init-project sistema de pedidos` | Preenche todos os arquivos de contexto interativamente (use ao iniciar) |
 | `/retomar` | `/retomar` | Reconstrói contexto da sessão anterior — use ao voltar ao projeto |
-| `/checkpoint` | `/checkpoint` | Salva estado atual em `STATUS.md` — use antes de encerrar a sessão |
+| `/checkpoint` | `/checkpoint` | Salva estado atual em `current-state.md` — use antes de encerrar a sessão |
+| `/commit` | `/commit` | Atualiza docs e faz commit seguindo o protocolo pré-commit |
 | `/spec [requisito]` | `/spec notificações por email` | Planner conduz levantamento, gera spec draft e para — aguarda aprovação |
-| `/plan [caminho-spec]` | `/plan .ai-core/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
+| `/plan [caminho-spec]` | `/plan docs/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
 | `/back [tarefa]` | `/back implementar use case de envio de email` | Backend agent com contexto completo carregado |
 | `/front [tarefa]` | `/front criar página de preferências de notificação` | Frontend agent com contexto completo carregado |
 | `/review [diff]` | `/review [cole o diff aqui]` | Revisão em dois estágios — Funcional → Qualidade |
 
 O revisor aplica o checklist em **dois estágios sequenciais**: Estágio 1 (Funcional) primeiro — um 🔴 BLOCKER encerra a revisão sem avançar para o Estágio 2 (Qualidade).
 
-Referência completa e uso em outros tools (Cursor, Copilot Workspace): [`.ai-core/commands/README.md`](.ai-core/commands/README.md)
+Referência completa e uso em outros tools (Cursor, Copilot Workspace): [`docs/commands/README.md`](docs/commands/README.md)
 
 ### Retomando o trabalho após uma interrupção
 
@@ -151,14 +167,14 @@ Quando você volta a um projeto depois de horas ou dias, o agente não tem memó
 ```
 /checkpoint
   → agente lê git log + contexto da conversa
-  → escreve .ai-core/STATUS.md com tasks prontas, em progresso e próximos passos
-  → faz commit do STATUS.md
+  → escreve docs/context/current-state.md com tasks prontas, em progresso e próximos passos
+  → faz commit do current-state.md
 ```
 
 **Ao voltar:**
 ```
 /retomar
-  → agente lê STATUS.md + git log + spec ativo + plano ativo
+  → agente lê current-state.md + git log + spec ativo + plano ativo
   → apresenta resumo: o que está pronto, onde parou, próxima ação concreta
   → pergunta: "Continuar de onde paramos?"
 ```
@@ -173,10 +189,10 @@ O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a
 
 # Feature nova
 /spec notificações por email
-  → planner gera .ai-core/specs/2026-05-20-email-notifications.md (Status: draft)
+  → planner gera docs/specs/2026-05-20-email-notifications.md (Status: draft)
   → você edita o arquivo: Status: draft → Status: approved
 
-/plan .ai-core/specs/2026-05-20-email-notifications.md
+/plan docs/specs/2026-05-20-email-notifications.md
   → planner decompõe em tarefas técnicas com contrato de API
 
 /back implementar use case de envio de email
@@ -184,6 +200,8 @@ O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a
 
 /review [diff do backend]
 /review [diff do frontend]
+
+/commit
 
 # Antes de fechar
 /checkpoint
@@ -199,35 +217,35 @@ Use os prompts abaixo copiando diretamente no chat da ferramenta:
 **Spec:**
 ```
 Você é o PLANNER deste projeto.
-Leia .ai-core/agents/planner.agent.md, .ai-core/context/architecture.md e .ai-core/specs/spec-template.md.
+Leia docs/agents/planner.agent.md, docs/architecture/overview.md e docs/specs/spec-template.md.
 Feature: notificações por email. Não há spec aprovado ainda.
 ```
 
 **Plan** (após spec aprovado):
 ```
 Você é o PLANNER deste projeto.
-Leia .ai-core/agents/planner.agent.md e .ai-core/specs/2026-05-20-email-notifications.md.
+Leia docs/agents/planner.agent.md e docs/specs/2026-05-20-email-notifications.md.
 O spec está aprovado. Gere o plano técnico.
 ```
 
 **Backend:**
 ```
 Você é o agente de BACKEND deste projeto.
-Leia .ai-core/agents/backend.agent.md, .ai-core/context/conventions.md e .ai-core/decisions/backend.md.
+Leia docs/agents/backend.agent.md, docs/skills/backend.md, docs/context/conventions.md e docs/context/decisions.md.
 Tarefa: implementar o use case de envio de notificação por email.
 ```
 
 **Frontend:**
 ```
 Você é o agente de FRONTEND deste projeto.
-Leia .ai-core/agents/frontend.agent.md, .ai-core/context/conventions.md e .ai-core/decisions/frontend.md.
+Leia docs/agents/frontend.agent.md, docs/skills/frontend.md, docs/context/conventions.md e docs/context/decisions.md.
 Tarefa: criar a página de preferências de notificação.
 ```
 
 **Review:**
 ```
 Você é o REVIEWER deste projeto.
-Leia .ai-core/agents/reviewer.agent.md e .ai-core/decisions/backend.md.
+Leia docs/agents/reviewer.agent.md, docs/skills/quality.md e docs/context/decisions.md.
 Revise o seguinte diff: [cole o diff]
 ```
 
@@ -237,8 +255,8 @@ Revise o seguinte diff: [cole o diff]
 
 ```bash
 # 1. Copiar o scaffold
-cp -r scaffold-ia-projetos/.ai-core  meu-projeto/
-cp -r scaffold-ia-projetos/.claude   meu-projeto/
+cp -r scaffold-ia-projetos/docs   meu-projeto/
+cp -r scaffold-ia-projetos/.claude  meu-projeto/
 cp    scaffold-ia-projetos/AGENTS.md meu-projeto/
 cp    scaffold-ia-projetos/.gitignore meu-projeto/
 
@@ -250,11 +268,11 @@ O comando conduz uma entrevista em 5 blocos sequenciais, uma pergunta por vez:
 
 | Bloco | Perguntas | Preenche
 |------|-----------|---------|
-| 1 — Produto | nome, estágio, usuários, features, regras de negócio, glossário | context/product.md |
-| 2 — Arquitetura | ORM, auth, banco, filas, cache, hospedagem, CI/CD | context/architecture.md |
-| 3 — Backend | confirmação de decisões + extras | decisions/backend.md |
-| 4 — Frontend | styling, componentes, estado, forms, data fetching, ícones, tokens | decisions/frontend.md + ui-guidelines.md |
-| 5 — Glossário | usa termos coletados no Bloco 1 | GLOSSARY.md | 
+| 1 — Produto | nome, estágio, usuários, features, regras de negócio | docs/context/product.md |
+| 2 — Arquitetura | ORM, auth, banco, filas, cache, hospedagem, CI/CD | docs/architecture/overview.md |
+| 3 — Backend | confirmação de decisões + extras | docs/context/decisions.md (seção Backend) |
+| 4 — Frontend | styling, componentes, estado, forms, data fetching, ícones, tokens | docs/context/decisions.md (seção Frontend) + docs/context/ui-guidelines.md |
+| 5 — Convenções | usa termos coletados no Bloco 1 | docs/context/conventions.md |
 
 Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e sugere o primeiro /spec para começar a entregar.
 
@@ -262,32 +280,33 @@ Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e 
 
 ## O que cada diretório faz
 
-### `agents/`
-Define **papel, responsabilidades e regras não-negociáveis** por tipo de trabalho.
-O planner tem dois modos mutuamente exclusivos (Spec e Plan). O reviewer tem checklist em dois estágios.
+### `docs/agents/`
+Define **papel e responsabilidades** por tipo de trabalho. Regras técnicas e checklists detalhados ficam em `docs/skills/`.
 
-### `specs/`
+### `docs/skills/`
+**Comportamentos técnicos reutilizáveis** — checklists, regras de implementação, padrões de qualidade. Carregados junto com o agente relevante.
+
+### `docs/specs/`
 Specs gerados pelo planner durante o levantamento de features. O campo `Status` controla o gate:
 - `draft` → spec em revisão, planner bloqueado para criar tasks
 - `approved` → planner pode criar o plano técnico
 
 Use `spec-template.md` como base. Specs aprovados ficam versionados como histórico de decisão de produto.
 
-### `decisions/`
-Lista **escolhas do projeto** — não tutoriais de tecnologia.
-Exemplo: `"Tailwind CSS — sem styled-components"`, `"Prisma com PostgreSQL"`.
-O agente já sabe usar Tailwind; ele precisa saber que *você escolheu* Tailwind.
-
-### `context/`
+### `docs/context/`
 Informações **únicas do seu produto**. São os únicos arquivos que você precisa preencher ao adotar o scaffold. Quanto mais detalhado, melhor o resultado.
 
-### `workflows/`
-Processos de trabalho carregados **sob demanda**, não em toda sessão.
-O `feature-delivery.md` descreve o fluxo completo com Fase 0 (Spec) e todos os gates.
+### `docs/architecture/`
+Visão arquitetural detalhada — overview, backend, frontend, infraestrutura.
 
-### `GLOSSARY.md`
-Termos do domínio com definições precisas.
-Pequeno arquivo, alto ROI: elimina ambiguidades de negócio que custam retrabalho.
+### `docs/workflows/`
+Processos de trabalho carregados **sob demanda**, não em toda sessão.
+
+### `docs/commands/`
+Prompts de ativação de papéis — fonte canônica usada pelos slash commands do `.claude/commands/`.
+
+### `docs/changelog/`
+Changelog organizado por data. Atualizado pelo protocolo pré-commit via `/commit`.
 
 ---
 
@@ -304,13 +323,12 @@ Pequeno arquivo, alto ROI: elimina ambiguidades de negócio que custam retrabalh
 
 ## Manutenção
 
-O `.ai-core/` é um documento vivo. Atualize quando:
+O `docs/` é um documento vivo. Atualize quando:
 
-- Decisão arquitetural for tomada → `context/architecture.md`
-- Regra de negócio for definida → `context/product.md`
-- Nova lib/stack for adotada → `decisions/frontend.md` ou `decisions/backend.md`
-- Novo termo do domínio surgir → `GLOSSARY.md`
-- Feature nova for aprovada → `specs/YYYY-MM-DD-<topic>.md`
+- Decisão arquitetural for tomada → `docs/architecture/overview.md`
+- Regra de negócio for definida → `docs/context/product.md`
+- Nova lib/stack for adotada → `docs/context/decisions.md`
+- Feature nova for aprovada → `docs/specs/YYYY-MM-DD-<topic>.md`
 
 Trate com o mesmo cuidado que código de produção: versionado no Git, revisado em PR.
 
