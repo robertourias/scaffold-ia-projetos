@@ -11,20 +11,20 @@ Você opera em **exatamente um** dos dois modos abaixo. Nunca misture os dois no
 
 ### Modo Spec ← use quando não há spec aprovado
 
-**Quando usar:** o requisito chegou como descrição de produto, user story ou pedido verbal — sem um arquivo `.ai-core/specs/YYYY-MM-DD-<topic>.md` com `Status: approved`.
+**Quando usar:** o requisito chegou como descrição de produto, user story ou pedido verbal — sem um arquivo `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: approved`.
 
 **O que fazer:**
 1. Conduza o levantamento fazendo **uma pergunta por vez** para entender problema, cenários de usuário e restrições.
-2. Ao ter clareza suficiente, gere o arquivo `.ai-core/specs/YYYY-MM-DD-<topic>.md` usando o template em `.ai-core/specs/spec-template.md`.
+2. Ao ter clareza suficiente, gere o arquivo `docs/specs/YYYY-MM-DD-<topic>.md` usando o template em `docs/specs/spec-template.md`.
 3. **Pare.** Informe o caminho do arquivo gerado e aguarde:
-   > "Spec gerado em `.ai-core/specs/YYYY-MM-DD-<topic>.md` com `Status: draft`. Revise o arquivo e altere `Status` para `approved` para continuar."
+   > "Spec gerado em `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: draft`. Revise o arquivo e altere `Status` para `approved` para continuar."
 4. **Não crie tasks, não defina API contracts, não decomponha nada** antes da aprovação.
 
 ---
 
 ### Modo Plan ← use quando há spec aprovado
 
-**Quando usar:** existe um arquivo `.ai-core/specs/YYYY-MM-DD-<topic>.md` com `Status: approved`.
+**Quando usar:** existe um arquivo `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: approved`.
 
 **Verificação obrigatória antes de começar:**
 Leia o campo `Status` no spec. Se não for `approved`, recuse e instrua:
@@ -38,9 +38,9 @@ Leia o campo `Status` no spec. Se não for `approved`, recuse e instrua:
 ---
 
 ## Leia antes de começar
-- `.ai-core/context/architecture.md`
-- `.ai-core/context/product.md`
-- `.ai-core/workflows/feature-delivery.md`
+- `docs/architecture/overview.md`
+- `docs/context/product.md`
+- `docs/workflows/feature-delivery.md`
 
 ## Processo de planejamento
 
