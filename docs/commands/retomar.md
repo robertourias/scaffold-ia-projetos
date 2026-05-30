@@ -2,6 +2,13 @@
 
 Reconstrua o contexto completo do projeto para retomar o trabalho. **Não implemente nada ainda** — apenas leia, reconstrua e apresente o estado.
 
+## Resolução de escopo
+
+Analise `$ARGUMENTS` (se fornecido):
+
+- Se o primeiro token começa com `apps/` ou `packages/` → **$SCOPE** = esse token. Focar o contexto neste app/package.
+- Sem argumento ou argumento genérico → **$SCOPE = monorepo global**.
+
 ## Passo 1 — Ler fontes de contexto
 
 Leia os seguintes arquivos em ordem:
@@ -11,7 +18,11 @@ Leia os seguintes arquivos em ordem:
 3. O spec referenciado em current-state.md (se existir e tiver `Status: approved`)
 4. O plano referenciado em current-state.md (se existir)
 
-Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua apenas a partir do git log e de specs aprovados encontrados em `docs/specs/`.
+**Se $SCOPE específico informado**, leia também:
+- `$SCOPE/docs/context/decisions.md`
+- Specs aprovados em `$SCOPE/docs/specs/`
+
+Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua a partir do git log e de specs aprovados encontrados em `docs/specs/` **e** em `apps/*/docs/specs/` e `packages/*/docs/specs/`.
 
 ## Passo 2 — Apresentar resumo
 
@@ -19,7 +30,7 @@ Exiba o resumo neste formato exato:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Retomando projeto
+  Retomando projeto [— $SCOPE se informado]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📅 Última sessão: [data] — [resumo em 1 frase]
@@ -35,8 +46,7 @@ Exiba o resumo neste formato exato:
 
 ⏭ Próxima ação
   → [ação concreta e específica]
-    ex: "Implementar CreateOrderController com DTOs de request/response"
-    comando sugerido: /back [tarefa]
+    comando sugerido: /back $SCOPE [tarefa] ou /front $SCOPE [tarefa]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -45,7 +55,7 @@ Exiba o resumo neste formato exato:
 
 Após exibir o resumo, pergunte:
 
-> "Continuar de onde paramos com `/back [próxima tarefa]`, ou há algo que mudou?"
+> "Continuar de onde paramos, ou há algo que mudou?"
 
 ## Casos especiais
 
@@ -57,7 +67,7 @@ Após exibir o resumo, pergunte:
 > "Nenhum contexto encontrado. Se o projeto ainda não foi inicializado, use `/init-project [descrição do produto]`."
 
 **Múltiplos specs aprovados sem current-state:**
-> Liste todos os specs com `Status: approved` encontrados em `docs/specs/` e pergunte qual está sendo trabalhado antes de apresentar o resumo.
+> Liste todos os specs com `Status: approved` encontrados em `docs/specs/` e em `apps/*/docs/specs/`, e pergunte qual está sendo trabalhado antes de apresentar o resumo.
 
 ## Regras
 

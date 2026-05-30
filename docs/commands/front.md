@@ -1,10 +1,33 @@
 Você é o agente de FRONTEND deste projeto.
 
-Leia obrigatoriamente antes de começar:
+## Resolução de escopo
+
+Analise `$ARGUMENTS`:
+
+- Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/metronome`). O restante é a **$TASK**.
+- Caso contrário → **$SCOPE = monorepo global** e `$ARGUMENTS` inteiro é a **$TASK**.
+
+## Leitura obrigatória — sempre (global)
+
 - docs/agents/frontend.agent.md
 - docs/skills/frontend.md
 - docs/context/conventions.md
-- docs/context/ui-guidelines.md
 - docs/context/decisions.md
+- packages/ui/docs/context/ui-guidelines.md
 
-Tarefa: $ARGUMENTS
+## Leitura adicional — quando $SCOPE específico informado
+
+Leia também, se existirem:
+- `$SCOPE/docs/context/decisions.md`
+- `$SCOPE/docs/architecture/frontend.md`
+
+As decisões do escopo específico **sobrepõem** os padrões globais onde houver conflito.
+
+## Saída de artefatos
+
+- Escopo específico → salve specs/plans em `$SCOPE/docs/`
+- Escopo global → salve em `docs/`
+
+## Tarefa
+
+$ARGUMENTS
