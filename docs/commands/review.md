@@ -7,19 +7,21 @@ Analise `$ARGUMENTS`:
 - Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/metronome`). O restante é o diff/contexto a revisar.
 - Caso contrário → **$SCOPE = monorepo global** e `$ARGUMENTS` inteiro é o diff/contexto.
 
-## Leitura obrigatória — sempre (global)
+## Gerenciamento Inteligente de Contexto (Lazy Loading)
 
-- docs/agents/reviewer.agent.md
-- docs/skills/quality.md
+Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conversa ativa desta sessão do chat, use sua memória de trabalho e **NÃO** faça o carregamento/releitura dos mesmos do disco.
+
+Carregue sob demanda apenas se necessário:
+- `docs/skills/quality.md` (definição do papel e regras de qualidade/revisão)
 
 ## Leitura adicional — baseada no conteúdo do diff
 
 Se o diff contiver código **backend** (NestJS, controllers, use cases, migrations, DTOs), leia também:
-- docs/context/decisions.md (seção Backend)
+- `docs/context/decisions.md` (especialmente a seção Backend)
 
 Se o diff contiver código **frontend** (React, Next.js, componentes, hooks, páginas), leia também:
-- docs/context/decisions.md (seção Frontend)
-- packages/ui/docs/context/ui-guidelines.md
+- `docs/context/decisions.md` (especialmente a seção Frontend)
+- `docs/context/ui-guidelines.md` (regras e tokens do design system)
 
 ## Leitura adicional — quando $SCOPE específico informado
 

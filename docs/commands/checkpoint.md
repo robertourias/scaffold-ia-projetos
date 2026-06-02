@@ -39,10 +39,10 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido:
 ## Tasks
 
 ### ✅ Concluídas
-- [cada task concluída nesta iteração]
+- [cada task concluída nesta iteração informando o projeto e o escopo]
 
 ### 🔄 Em progresso
-- [task atual] — [% estimado] — próximo passo: [ação concreta]
+- [nome do projeto/escopo] - [task atual] — [% estimado] — próximo passo: [ação concreta]
 
 ### ⏭ Próximos passos
 1. [próxima ação específica e acionável]
@@ -64,16 +64,9 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido:
 
 ## Passo 3 — Atualizar CHANGELOG
 
-Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual) e adicione ou complemente a entrada com o que foi feito nesta sessão (siga o formato do `docs/commands/commit.md`).
+Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual) e adicione ou complemente a entrada com o que foi feito nesta sessão.
 
-## Passo 4 — Commit
-
-```bash
-git add docs/context/current-state.md docs/changelog/
-git commit -m "chore: checkpoint — [resumo em uma linha do que foi feito]"
-```
-
-## Passo 5 — Confirmar
+## Passo 4 — Confirmar
 
 Exiba:
 

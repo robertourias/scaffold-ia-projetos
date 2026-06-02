@@ -20,24 +20,18 @@ O `docs/` é a memória persistente que preenche essa lacuna — sem reensinar o
 
 ```
 docs/
-├── agents/               ← Papel e responsabilidades por tipo de trabalho
-│   ├── planner.agent.md  ← Spec-driven: Modo Spec e Modo Plan separados
-│   ├── frontend.agent.md
-│   ├── backend.agent.md
-│   └── reviewer.agent.md ← Revisão em dois estágios: Funcional → Qualidade
-│
-├── skills/               ← Comportamentos e checklists técnicos reutilizáveis
+├── skills/               ← Papel, responsabilidades e padrões técnicos reutilizáveis
 │   ├── backend.md
 │   ├── frontend.md
-│   ├── quality.md
-│   └── architecture.md
+│   ├── planner.md        ← Spec-driven: Modo Spec e Modo Plan com checklist arquitetural
+│   ├── quality.md        ← Revisão em dois estágios: Funcional → Qualidade
+│   └── supabase.md       ← Padrões técnicos para a plataforma Supabase (Auth/DB/Storage)
 │
 ├── specs/                ← Specs aprovados por feature (gerados pelo planner)
 │   ├── spec-template.md  ← Template híbrido para novos specs
 │   └── YYYY-MM-DD-<topic>.md  ← Spec de cada feature (Status: draft → approved)
 │
 ├── context/              ← O que é único do seu produto (preencha estes)
-│   ├── architecture.md   ← Stack real, estrutura, decisões arquiteturais (legado)
 │   ├── product.md        ← Usuários, regras de negócio
 │   ├── conventions.md    ← Nomenclatura, Git, imports, comentários
 │   ├── decisions.md      ← Escolhas de frontend e backend consolidadas
@@ -83,11 +77,11 @@ O design de carregamento sob demanda é intencional. Cada arquivo existe para se
 
 | Papel | Arquivos carregados | Tokens est. |
 |-------|--------------------|-----------:|
-| Backend | `backend.agent.md` + `skills/backend.md` + `conventions.md` + `decisions.md` | ~1.2k |
-| Frontend | `frontend.agent.md` + `skills/frontend.md` + `conventions.md` + `ui-guidelines.md` + `decisions.md` | ~1.6k |
-| Planner (Modo Spec) | `planner.agent.md` + `architecture/overview.md` + `context/product.md` | ~2k |
-| Planner (Modo Plan) | idem + spec aprovado da feature | ~3k |
-| Reviewer | `reviewer.agent.md` + `skills/quality.md` + `decisions.md` | ~1.2k |
+| Backend | `skills/backend.md` + `conventions.md` + `decisions.md` | ~0.8k |
+| Frontend | `skills/frontend.md` + `conventions.md` + `ui-guidelines.md` + `decisions.md` | ~1.1k |
+| Planner (Modo Spec) | `skills/planner.md` + `context/product.md` + `architecture/overview.md` | ~1.3k |
+| Planner (Modo Plan) | idem + spec aprovado da feature | ~2.2k |
+| Reviewer | `skills/quality.md` + `conventions.md` + `decisions.md` | ~0.8k |
 
 ### O que não carregar por padrão
 
@@ -280,11 +274,8 @@ Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e 
 
 ## O que cada diretório faz
 
-### `docs/agents/`
-Define **papel e responsabilidades** por tipo de trabalho. Regras técnicas e checklists detalhados ficam em `docs/skills/`.
-
 ### `docs/skills/`
-**Comportamentos técnicos reutilizáveis** — checklists, regras de implementação, padrões de qualidade. Carregados junto com o agente relevante.
+Define o **papel, as responsabilidades e os padrões técnicos** reutilizáveis (checklists, regras de implementação, boas práticas e qualidade). É a única fonte de instrução técnica de papéis do projeto.
 
 ### `docs/specs/`
 Specs gerados pelo planner durante o levantamento de features. O campo `Status` controla o gate:

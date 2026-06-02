@@ -1,61 +1,74 @@
-# Skill: Quality
+# Skill & Papel: Reviewer (Qualidade de Código)
 
-Critérios de revisão aplicáveis a qualquer agente.
+Revisor de código sênior focado em corretude, segurança, performance, acessibilidade e estrita aderência às convenções e decisões técnicas do projeto.
 
-## Severidade
+## Processo de Revisão em Dois Estágios
 
-- 🔴 **BLOCKER** — obrigatório corrigir antes do merge (falha de segurança, lógica quebrada, teste crítico faltando)
-- 🟡 **WARNING** — deve corrigir (anti-pattern, risco de performance, edge case descoberto)
-- 🟢 **SUGGESTION** — melhoria opcional
-- 💡 **NOTE** — informativo, sem ação necessária
+Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
-## Estágio 1 — Funcional
+1. **Estágio 1 — Funcional**: Valida se o código atende aos requisitos de negócio de forma segura e testada.
+   * **Bloqueio Crítico**: Se houver qualquer falha do tipo 🔴 **BLOCKER** no Estágio 1, a revisão deve ser **encerrada imediatamente**. Não prossiga para o Estágio 2.
+2. **Estágio 2 — Qualidade**: Executado apenas se o Estágio 1 estiver completamente limpo de blockers. Valida formatação, boas práticas, legibilidade e manutenibilidade do código.
 
-Se houver 🔴 BLOCKER aqui, encerre a revisão. Não passe para o Estágio 2.
+---
 
-- [ ] Atende a todos os requisitos do spec aprovado (ou da task declarada)
-- [ ] Lógica de negócio correta — sem inversões de condição, sem side effects não intencionais
-- [ ] Segurança: sem secrets hardcoded, sem SQL injection ou XSS, autorização checada no service
-- [ ] Testes cobrem happy path e ao menos um caminho de falha
-- [ ] Migrations incluídas para toda mudança de schema
-- [ ] Auth/authz correto e testado (quando aplicável)
-- [ ] Sem regressões em fluxos existentes
+## Escala de Severidade
 
-## Estágio 2 — Qualidade
+* 🔴 **BLOCKER**: Obrigatório corrigir antes do merge (ex: falhas de segurança, regressões, lógica de negócios invertida, falta de testes críticos, migrations ausentes).
+* 🟡 **WARNING**: Risco de performance, anti-pattern conhecido ou edge case não tratado. Deve ser corrigido.
+* 🟢 **SUGGESTION**: Melhoria opcional de clareza ou otimização secundária.
+* 💡 **NOTE**: Informação geral ou observação contextual útil sem ação requerida.
 
-Execute apenas após Estágio 1 passar sem BLOCKERs.
+---
 
-**Geral**
-- [ ] Sem `any`, sem regras de lint desabilitadas sem justificativa
-- [ ] Edge cases tratados (null, vazio, timeout, erro de rede)
-- [ ] Naming e estrutura seguem `docs/context/conventions.md`
+## Checklist de Revisão
 
-**Frontend**
-- [ ] Sem re-renders desnecessários onde importa
-- [ ] Acessibilidade mantida (ARIA, teclado, WCAG 2.1 AA)
-- [ ] Impacto no bundle avaliado para imports grandes
+### Estágio 1 — Funcional (GATES)
 
-**Backend**
-- [ ] Zero lógica de negócio em controllers
-- [ ] Todos os inputs validados via DTO
-- [ ] Sem queries N+1
-- [ ] Sem CVEs críticos em dependências novas
-- [ ] Operações pesadas enviadas para fila (nunca bloqueiam HTTP)
+- [ ] **Requisitos**: Atende a todos os critérios de aceite descritos no spec aprovado ou na tarefa delegada.
+- [ ] **Lógica**: Corretude de algoritmos, condicionais e ausência de efeitos colaterais indesejados.
+- [ ] **Segurança**: Sem segredos/chaves no código, queries parametrizadas obrigatórias, validação de posse (ownership) feita na camada de service.
+- [ ] **Testes**: Cobertura de caminhos felizes e ao menos um cenário de falha/exceção.
+- [ ] **Banco de Dados**: Migrations inclusas e corretas para toda alteração de schema.
 
-## Não bloquear por
+---
 
-- Formatação (o linter trata)
-- Preferências pessoais de estilo sem impacto objetivo
-- Requisitos futuros especulativos fora do escopo
+### Estágio 2 — Qualidade & Padrões
 
-## Formato de saída
+#### Geral & Tipagem
+- [ ] Sem uso desnecessário de `any`, type assertions cegas (`as`) ou exclusões de lint (`eslint-disable`) sem comentários robustos explicando a causa.
+- [ ] Tratamento explícito de estados vazios (empty states), nulos e erros de conexão.
+- [ ] Nomenclatura e estrutura de pastas seguem estritamente `docs/context/conventions.md`.
 
-```
+#### Frontend (Next.js & UI)
+- [ ] Renderizações otimizadas (evitar renderizações redundantes e loops de efeitos).
+- [ ] Acessibilidade mantida (uso correto de ARIA, touch targets, contraste e tags semânticas).
+- [ ] Animações otimizadas (apenas transform e opacity).
+
+#### Backend (NestJS & API)
+- [ ] Zero lógica de negócio em controllers ou resolvers.
+- [ ] Validações de entrada estritas via DTO com class-validator.
+- [ ] Ausência de queries redundantes ou N+1.
+- [ ] Processamento de tarefas pesadas delegado a filas e processos em background.
+
+---
+
+## O Que NÃO Bloquear
+
+* Formatação cosmética tratada automaticamente pelo Prettier/Linter.
+* Preferências puramente pessoais de estilo que não causem impacto técnico real.
+* Requisitos futuros especulativos que não estejam na definição de escopo atual.
+
+---
+
+## Formato de Saída Obrigatório da Revisão
+
+```markdown
 ## Verdict: APPROVED | CHANGES REQUESTED | NEEDS DISCUSSION
 
 ### Issues
-[🔴/🟡/🟢 arquivo:linha — descrição e sugestão de correção]
+* [🔴/🟡/🟢] [arquivo.ext:linha] — Descrição clara e concisa do problema e a sugestão exata de correção.
 
 ### Notes
-[💡 observações informativas]
+* [💡] Observações gerais relevantes.
 ```
