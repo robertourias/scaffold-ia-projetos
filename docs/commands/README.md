@@ -8,8 +8,7 @@ Prompts de ativação para os papéis definidos no `docs/`. Esta pasta é a **fo
 docs/commands/
   init-project.md  ← inicializa o projeto preenchendo todos os arquivos de contexto
   retomar.md       ← reconstrói contexto da sessão anterior para retomar o trabalho
-  checkpoint.md    ← salva estado atual em current-state.md antes de encerrar a sessão
-  commit.md        ← atualiza docs e faz commit seguindo o protocolo pré-commit
+  checkpoint.md    ← salva estado atual e changelog de forma comprimida
   back.md          ← agente backend (suporta escopo de app)
   front.md         ← agente frontend (suporta escopo de app)
   spec.md          ← planner em Modo Spec (suporta escopo de app)
@@ -75,7 +74,9 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 
 /review apps/metronome [cole o diff aqui]
 
-/commit
+# Ao final, salve o checkpoint e comite manualmente no Git
+/checkpoint
+git commit -m "feat(metronome): ..."
 ```
 
 ## Fluxo típico de uma feature global (monorepo)
@@ -94,7 +95,9 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 /review [diff do backend]
 /review [diff do frontend]
 
-/commit
+# Ao final, salve o checkpoint e comite manualmente no Git
+/checkpoint
+git commit -m "feat: ..."
 ```
 
 ## Adicionar novos comandos

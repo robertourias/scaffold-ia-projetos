@@ -131,7 +131,7 @@ Follow `docs/workflows/release-process.md`.
 
 ## Phase 7: Documentation (pós-merge para `main`)
 
-Follow `docs/commands/commit.md`.
+Execute `/checkpoint` para consolidar o changelog e o estado atual do projeto, em seguida realize o commit manual das alterações de documentação.
 
 Checklist mínimo após cada merge:
 - [ ] `docs/features/<feature>.md` criado ou atualizado

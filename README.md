@@ -53,7 +53,6 @@ docs/
 │   ├── init-project.md
 │   ├── retomar.md
 │   ├── checkpoint.md
-│   ├── commit.md
 │   ├── spec.md
 │   ├── plan.md
 │   ├── back.md
@@ -141,8 +140,7 @@ Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega a
 |---------|---------|-----------|
 | `/init-project [desc]` | `/init-project sistema de pedidos` | Preenche todos os arquivos de contexto interativamente (use ao iniciar) |
 | `/retomar` | `/retomar` | Reconstrói contexto da sessão anterior — use ao voltar ao projeto |
-| `/checkpoint` | `/checkpoint` | Salva estado atual em `current-state.md` — use antes de encerrar a sessão |
-| `/commit` | `/commit` | Atualiza docs e faz commit seguindo o protocolo pré-commit |
+| `/checkpoint` | `/checkpoint` | Salva o estado atual e changelog de forma comprimida antes de encerrar |
 | `/spec [requisito]` | `/spec notificações por email` | Planner conduz levantamento, gera spec draft e para — aguarda aprovação |
 | `/plan [caminho-spec]` | `/plan docs/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
 | `/back [tarefa]` | `/back implementar use case de envio de email` | Backend agent com contexto completo carregado |
@@ -162,7 +160,7 @@ Quando você volta a um projeto depois de horas ou dias, o agente não tem memó
 /checkpoint
   → agente lê git log + contexto da conversa
   → escreve docs/context/current-state.md com tasks prontas, em progresso e próximos passos
-  → faz commit do current-state.md
+  → usuário realiza o commit manual de código e documentação no Git
 ```
 
 **Ao voltar:**
@@ -195,10 +193,9 @@ O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a
 /review [diff do backend]
 /review [diff do frontend]
 
-/commit
-
-# Antes de fechar
+# Salve o checkpoint e comite manualmente no Git
 /checkpoint
+git commit -m "feat: implementar notificações por email"
 
 # Ao voltar
 /retomar
@@ -211,35 +208,35 @@ Use os prompts abaixo copiando diretamente no chat da ferramenta:
 **Spec:**
 ```
 Você é o PLANNER deste projeto.
-Leia docs/agents/planner.agent.md, docs/architecture/overview.md e docs/specs/spec-template.md.
+Leia docs/skills/planner.md, docs/architecture/overview.md e docs/specs/spec-template.md.
 Feature: notificações por email. Não há spec aprovado ainda.
 ```
 
 **Plan** (após spec aprovado):
 ```
 Você é o PLANNER deste projeto.
-Leia docs/agents/planner.agent.md e docs/specs/2026-05-20-email-notifications.md.
+Leia docs/skills/planner.md e docs/specs/2026-05-20-email-notifications.md.
 O spec está aprovado. Gere o plano técnico.
 ```
 
 **Backend:**
 ```
 Você é o agente de BACKEND deste projeto.
-Leia docs/agents/backend.agent.md, docs/skills/backend.md, docs/context/conventions.md e docs/context/decisions.md.
+Leia docs/skills/backend.md, docs/context/conventions.md e docs/context/decisions.md.
 Tarefa: implementar o use case de envio de notificação por email.
 ```
 
 **Frontend:**
 ```
 Você é o agente de FRONTEND deste projeto.
-Leia docs/agents/frontend.agent.md, docs/skills/frontend.md, docs/context/conventions.md e docs/context/decisions.md.
+Leia docs/skills/frontend.md, docs/context/conventions.md e docs/context/decisions.md.
 Tarefa: criar a página de preferências de notificação.
 ```
 
 **Review:**
 ```
 Você é o REVIEWER deste projeto.
-Leia docs/agents/reviewer.agent.md, docs/skills/quality.md e docs/context/decisions.md.
+Leia docs/skills/quality.md, docs/context/conventions.md e docs/context/decisions.md.
 Revise o seguinte diff: [cole o diff]
 ```
 
@@ -297,7 +294,7 @@ Processos de trabalho carregados **sob demanda**, não em toda sessão.
 Prompts de ativação de papéis — fonte canônica usada pelos slash commands do `.claude/commands/`.
 
 ### `docs/changelog/`
-Changelog organizado por data. Atualizado pelo protocolo pré-commit via `/commit`.
+Changelog organizado por data. Atualizado pelo protocolo de checkpoint via `/checkpoint`.
 
 ---
 

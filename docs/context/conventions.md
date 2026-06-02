@@ -43,16 +43,14 @@ kebab-case           paths com múltiplas palavras (/user-profiles)
 - Commits: Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `test:`)
 - PRs: manter abaixo de 400 linhas — features grandes viram PRs sequenciais
 
-### Protocolo pré-commit (obrigatório)
+### Protocolo de Checkpoint (obrigatório)
 
-Antes de qualquer commit, sempre nesta ordem:
+Antes de encerrar a sessão de trabalho ou ao concluir marcos importantes:
 
-1. **Atualizar `docs/context/current-state.md`** — refletir o que foi feito, o que está em progresso, próximos passos
-2. **Atualizar `docs/changelog/YYYY-MM-DD.md`** — adicionar entrada com o que está sendo commitado
-3. **Incluir ambos no commit** junto com os demais arquivos
+1. **Executar `/checkpoint`** — para atualizar a memória persistente (`docs/context/current-state.md` e o changelog correspondente) e comprimir o contexto.
+2. **Commit manual** — inclua no seu commit do Git os arquivos de documentação atualizados por esta etapa junto com os arquivos de código.
 
-Não pule este protocolo mesmo para commits pequenos ou de chore.
-Use `/commit` para executar o protocolo completo com auxílio do agente.
+Não pule este protocolo para manter a IA sempre sintonizada com o estado real do projeto.
 
 ## Comentários
 

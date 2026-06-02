@@ -61,13 +61,12 @@ packages/
 ```
 /init-project [descrição]   ← preenche todos os arquivos de contexto
 /retomar                    ← reconstrói contexto da sessão anterior
-/checkpoint                 ← salva estado atual antes de encerrar
+/checkpoint                 ← atualiza docs e salva estado atual
 /spec   [requisito]         ← gera spec com gate humano (Modo Spec)
 /plan   [caminho-do-spec]   ← cria plano técnico de spec aprovado
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios
-/commit                     ← atualiza docs e faz commit
 ```
 Referência completa: `docs/commands/README.md`
 
