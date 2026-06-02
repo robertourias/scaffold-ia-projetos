@@ -45,12 +45,51 @@ Use a escala de complexidade correta para evitar stores globais inflados:
 3. React Context (compartilhamento simples na mesma árvore/feature)
 4. Store Externo (Zustand) — justificar a necessidade antes de criar
 
-## Performance do Cliente
+## Performance do Cliente e Otimizações de React
 
-- Utilizar sempre `next/image` com dimensões (`width`, `height`) explícitas ou `fill` (com sizes).
-- Fontes carregadas estritamente via `next/font` — proibido `@import` em arquivos CSS globais.
-- Manter o Core Web Vitals em níveis excelentes: LCP < 2.5s, CLS < 0.1, TBT < 200ms.
-- Bundle de carregamento inicial por rota deve ser mantido < 150kB gzipped.
+### 1. Prevenção de Re-renders Desnecessários
+- **Evitar Premature Optimization**: Não aplique `React.memo`, `useMemo` ou `useCallback` indiscriminadamente. Aplique quando:
+  - Um componente filho re-renderiza com alta frequência com props idênticas complexas (objetos, arrays ou funções).
+  - A computação interna de um valor for de alto custo computacional (> 1ms por render).
+- **Memoização Estratégica**:
+  - Use `React.memo` para evitar re-renders de componentes puros cujas props não mudaram frequentemente.
+  - Use `useCallback` para manter estabilidade referencial de funções passadas como props para filhos memoizados.
+  - Use `useMemo` para garantir estabilidade referencial de objetos/arrays passados como dependências ou props, e para salvar cálculos custosos.
+- **Colocalização de Estado**: Mantenha o estado o mais próximo possível de onde ele é consumido. Evite elevar o estado globalmente ou para pais distantes se apenas uma subárvore pequena o consome.
+
+### 2. Code Splitting & Lazy Loading (Carregamento sob Demanda)
+- **Divisão de Código Limpa**: Reduza o bundle inicial isolando partes pesadas e não críticas da UI (ex: modais/diálogos complexos, editores Rich Text, gráficos, tabelas pesadas).
+- **Next.js (App Router / Pages)**: Utilize `next/dynamic` com `{ ssr: false }` para componentes pesados do lado do cliente que não afetam o SEO do primeiro render.
+- **React Padrão / SPAs**: Use `React.lazy()` combinado com `<Suspense fallback={<LoadingSpinner />}>` para carregar dinamicamente componentes importados sob demanda ou em nível de rota secundária.
+
+### 3. Virtualização de Listas Grandes
+- **Evitar Sobrecarga do DOM**: Nunca renderize listas com grande quantidade de dados (> 100 itens) ou com componentes de linha pesados diretamente no DOM de uma só vez.
+- **Uso de `react-window`**:
+  - Implemente `FixedSizeList` ou `VariableSizeList` da biblioteca `react-window` para renderizar exclusivamente a janela visível de elementos (windowing) na tela.
+  - Garanta placeholders ou loaders de esqueleto suaves durante rolagem rápida se necessário.
+
+### 4. Concorrência e UI Altamente Responsiva (React 18+)
+- **`useTransition`**: Use para marcar transições de estado não urgentes (ex: aplicar filtros de busca complexos, trocar abas de relatórios). Isso permite que interações urgentes (ex: clique, digitação) interrompam a renderização pesada em segundo plano e mantenham a UI responsiva.
+  ```typescript
+  const [isPending, startTransition] = useTransition();
+  
+  const handleFilterChange = (val: string) => {
+    startTransition(() => {
+      setFilterTerm(val);
+    });
+  };
+  ```
+- **`useDeferredValue`**: Use para diferir um valor pesado derivado de entradas de alta velocidade (como inputs text), garantindo que a entrada do usuário não apresente latência de render.
+
+### 5. Medição de Desempenho ("Meça o que Importa")
+- **Análise do Peso Real (Bundle Analyzer)**: Utilize `@next/bundle-analyzer` (ou `webpack-bundle-analyzer`/`vite-bundle-visualizer`) regularmente para inspecionar os pacotes gerados, identificar dependências duplicadas, vazamentos de bibliotecas de terceiros ou oportunidades de code-splitting.
+- **Core Web Vitals & Lighthouse**:
+  - Monitore e otimize as métricas chave: LCP (Largest Contentful Paint) < 2.5s, INP (Interaction to Next Paint) < 200ms e CLS (Cumulative Layout Shift) < 0.1.
+  - Faça auditorias rotineiras via Lighthouse local ou no CI/CD simulando conexões móveis lentas para garantir consistência.
+- **Imagens e Fontes**:
+  - Utilizar sempre `next/image` com dimensões (`width`, `height`) explícitas ou `fill` (com sizes).
+  - Fontes carregadas estritamente via `next/font` — proibido `@import` em arquivos CSS globais.
+- **Limites de Tamanho**: O bundle de carregamento inicial por rota deve ser mantido < 150kB gzipped.
 
 ## Acessibilidade & Segurança (WCAG 2.1 AA)
 
