@@ -33,3 +33,29 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 ## Tarefa
 
 $ARGUMENTS
+
+## Finalização obrigatória ao concluir a tarefa
+
+Ao terminar a implementação, execute **sempre** estas etapas na ordem:
+
+### 1. Atualizar o plano técnico
+
+Identifique o arquivo de plano associado à tarefa (em `docs/plans/` ou `$SCOPE/docs/plans/`).
+
+Para cada critério de aceite implementado, marque o checkbox como concluído:
+- `- [ ]` → `- [x]`
+
+### 2. Verificar se é a última tarefa do plano
+
+Verifique se **todos** os checkboxes do plano estão marcados como `[x]`.
+
+Se sim → prossiga para o passo 3. Caso contrário → encerre aqui.
+
+### 3. Atualizar o status no product-backlog
+
+Abra `docs/context/product-backlog.md` e localize a linha da TASK correspondente ao plano concluído.
+
+Altere o valor da coluna `Status`:
+- `in-progress` → `done`
+
+Salve o arquivo.
