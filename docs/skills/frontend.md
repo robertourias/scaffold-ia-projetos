@@ -91,11 +91,44 @@ Use a escala de complexidade correta para evitar stores globais inflados:
   - Fontes carregadas estritamente via `next/font` — proibido `@import` em arquivos CSS globais.
 - **Limites de Tamanho**: O bundle de carregamento inicial por rota deve ser mantido < 150kB gzipped.
 
+## HTML Semântico
+
+Use sempre o elemento que descreve o **significado** do conteúdo, não apenas sua aparência. `<div>`/`<span>` são último recurso, quando não existe equivalente semântico.
+
+### Mapeamento por tipo de conteúdo
+
+| Conteúdo | Elemento |
+|---|---|
+| Estrutura da página (cabeçalho, navegação, conteúdo principal, rodapé, complementar) | `<header>`, `<nav>`, `<main>`, `<footer>`, `<aside>` |
+| Seção temática com título próprio | `<section>` (sempre acompanhada de um heading `h1`-`h6`) |
+| Conteúdo autônomo e reutilizável (post, card de produto, comentário) | `<article>` |
+| Lista de itens | `<ul>` / `<ol>` + `<li>` (nunca `<div>` repetido) |
+| Imagem, vídeo ou gráfico com legenda | `<figure>` + `<figcaption>` |
+| Dados tabulares | `<table>`, `<thead>`, `<tbody>`, `<th scope="col\|row">` |
+| Ação que dispara comportamento (JS) | `<button type="button">` |
+| Navegação para outra página/âncora | `<a href="...">` |
+| Campo de formulário | `<label htmlFor="...">` associado ao input |
+| Data ou hora | `<time dateTime="...">` |
+| Citação | `<blockquote>` / `<q>` + `<cite>` |
+| Destaque de texto | `<strong>` (importância) / `<em>` (ênfase) — nunca `<b>`/`<i>` |
+| Termo técnico com definição | `<dfn>` |
+| Diálogo ou modal | `<dialog>` |
+| Conteúdo expansível (FAQ, accordion) | `<details>` + `<summary>` |
+| Progresso ou medição | `<progress>` / `<meter>` |
+
+### Regras
+
+- Hierarquia de headings (`h1`→`h6`) sequencial e única por página — não pular níveis para fins de estilo.
+- Apenas um `<main>` por página; múltiplos `<nav>` exigem `aria-label` distinto.
+- `<a>` sempre navega (possui `href`); para disparar JS sem navegação, usar `<button>`.
+- Antes de criar um `<div>`/`<span>`, verificar se existe elemento semântico equivalente para o conteúdo.
+
 ## Acessibilidade & Segurança (WCAG 2.1 AA)
 
 - Todo componente interativo deve ser navegável via teclado e possuir tags ARIA semânticas.
 - Target de toque mínimo em dispositivos móveis: 44×44px.
 - Evitar `dangerouslySetInnerHTML` — se inevitável, higienizar com biblioteca de sanitização (ex: DOMPurify).
+- `alt` obrigatório em `<img>`; `alt=""` apenas para imagens puramente decorativas.
 
 ## Testes de UI
 
