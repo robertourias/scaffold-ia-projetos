@@ -111,11 +111,11 @@ Por isso os arquivos foram enxugados para conter apenas:
 O fluxo completo de uma feature vai da ideia ao deploy em seis fases. A novidade é a **Fase 0** com gate humano — nenhum plano técnico começa sem spec aprovado.
 
 ```
-Ideia/requisito
+Ideia/requisito global
       ↓
 [Fase 0: Init]   ← /init-project preenche product.md e arquivos de contexto
       ↓
-[Fase 0.5: Backlog] ← /backlog gera product-backlog.md com TASK01..TASKNN
+[Fase 0.5: Backlog] ← /backlog gera product-backlog.md com TASK01..TASKNN (Para features avulsas, use /groom)
       ↓
 [Fase 1: Spec]   ← /spec TASKXX conduz levantamento, gera docs/specs/YYYY-MM-DD-<topic>.md
       ↓
@@ -123,11 +123,11 @@ Ideia/requisito
       ↓
 [Fase 2: Plan]   ← planner lê o spec aprovado e decompõe em tarefas técnicas
       ↓
-[Fase 3: Backend] → [Fase 4: Frontend] → [Fase 5: Integration]
+[Fase 3: Backend] → [Fase 4: Frontend] → [Fase 5: Integration] (Use Batching para tarefas pequenas)
       ↓
 [Fase 6: Review]  ← revisor aplica checklist em dois estágios
       ↓
-[Fase 7: Deploy]
+[Fase 7: Deploy & Archiving] ← Mova specs e plans concluídos para docs/archive/
 ```
 
 ### Por que o gate importa
@@ -146,13 +146,14 @@ Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega a
 |---------|---------|-----------|
 | `/init-project [desc]` | `/init-project sistema de pedidos` | Preenche todos os arquivos de contexto interativamente (use ao iniciar) |
 | `/backlog` | `/backlog` | Gera product backlog (TASK01, TASK02...) a partir do product.md |
+| `/groom [feature]` | `/groom integração com pagarme` | Refina uma funcionalidade específica e adiciona ao backlog existente (muito mais barato que `/backlog`) |
 | `/retomar` | `/retomar` | Reconstrói contexto da sessão anterior — use ao voltar ao projeto |
-| `/checkpoint` | `/checkpoint` | Salva o estado atual e changelog de forma comprimida antes de encerrar |
-| `/spec [TASKXX]` | `/spec TASK01` | Spec a partir do backlog — lê a descrição da tarefa e conduz levantamento |
+| `/checkpoint` | `/checkpoint` | Salva o estado atual comprimido e changelog antes de encerrar |
+| `/spec [TASKXX]` | `/spec TASK01` | Spec a partir do backlog — lê a descrição da tarefa e domínios específicos |
 | `/spec [requisito]` | `/spec notificações por email` | Spec a partir de texto livre — sem consultar backlog |
 | `/plan [caminho-spec]` | `/plan docs/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
-| `/back [tarefa]` | `/back implementar use case de envio de email` | Backend agent com contexto completo carregado |
-| `/front [tarefa]` | `/front criar página de preferências de notificação` | Frontend agent com contexto completo carregado |
+| `/back [tarefa]` | `/back implementar use cases X, Y e Z` | Backend agent (suporta batching para economia de tokens) |
+| `/front [tarefa]` | `/front criar páginas A e B` | Frontend agent (suporta batching para economia de tokens) |
 | `/review [diff]` | `/review [cole o diff aqui]` | Revisão em dois estágios — Funcional → Qualidade |
 
 O revisor aplica o checklist em **dois estágios sequenciais**: Estágio 1 (Funcional) primeiro — um 🔴 BLOCKER encerra a revisão sem avançar para o Estágio 2 (Qualidade).
@@ -203,8 +204,8 @@ O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a
 /plan docs/specs/YYYY-MM-DD-<topic>.md
   → planner decompõe em tarefas técnicas com contrato de API
 
-/back implementar use case X
-/front criar página Y
+/back implementar tarefas 1, 2 e 3
+/front implementar telas X e Y
 
 /review [diff do backend]
 /review [diff do frontend]
@@ -213,7 +214,10 @@ O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a
 /checkpoint
 git commit -m "feat: ..."
 
-# Próxima tarefa
+# Arquive os documentos concluídos
+Mova os specs e plans finalizados para docs/archive/
+
+# Próxima tarefa (ou /groom para features isoladas)
 /spec TASK02
 ```
 
@@ -306,6 +310,26 @@ O comando conduz uma entrevista em 5 blocos sequenciais, uma pergunta por vez:
 | 5 — Convenções | usa termos coletados no Bloco 1 | docs/context/conventions.md |
 
 Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e sugere o próximo passo: `/backlog` para gerar o backlog do produto.
+
+---
+
+## Como atualizar projetos existentes (Migração para Economia de Tokens)
+
+Se você já possui um projeto rodando com a versão anterior do Scaffold-IA e quer se beneficiar da otimização de tokens (Fragmentação, Batching, Compressão Ativa e `/groom`), siga estes passos:
+
+1. **Atualize os comandos base:** Copie a pasta `docs/commands/`, `docs/workflows/` e `docs/skills/` deste repositório e substitua os equivalentes no seu projeto existente.
+2. **Crie os diretórios de organização:** Crie as pastas `docs/archive/` (para specs e plans concluídos) e `docs/context/domains/` (para a fragmentação de regras de negócio).
+
+### Instrução para reorganizar o contexto atual
+No seu projeto existente, abra o chat com a IA e envie o prompt abaixo para que ela automatize a migração do seu histórico:
+
+> **Prompt de Atualização:**
+> "Você é o PLANNER. Estamos atualizando nossa arquitetura de contexto para economizar tokens. Por favor, execute as seguintes ações:
+> 1. Analise o arquivo `docs/context/product.md`. Se ele estiver muito extenso, fragmente as regras de negócio em arquivos menores dentro de `docs/context/domains/` (ex: `auth.md`, `payments.md`), mantendo no `product.md` apenas a visão geral e links/apontamentos para os domínios.
+> 2. Mova todos os arquivos de `docs/specs/` e `docs/plans/` que já estão com suas tarefas totalmente concluídas no `product-backlog.md` para a nova pasta `docs/archive/`.
+> 3. Reescreva o arquivo `docs/context/current-state.md` removendo o histórico granular de tarefas concluídas e listas antigas, deixando o arquivo extremamente resumido, focado apenas no status de alto nível, na tarefa "Em Progresso" atual e nos próximos passos imediatos."
+
+Após a IA concluir, seu projeto estará otimizado. Para refinar novas features pontuais, use `/groom [feature]`. Nas implementações, agrupe as tarefas usando *batching* para enviar várias tarefas numa só chamada aos agentes.
 
 ---
 

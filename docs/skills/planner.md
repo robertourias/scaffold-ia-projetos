@@ -43,6 +43,11 @@ Você opera estritamente em **um de dois modos**, dependendo do status de aprova
    6. Telas, Rotas e Layouts de frontend.
    7. Testes de Integração e fluxos E2E.
 
+## Economia de Tokens e Respostas
+- Seja extremamente conciso. Evite explicações teóricas, jargões desnecessários ou preâmbulos.
+- Responda estritamente com o conteúdo do artefato (Spec ou Plan) usando a formatação correta.
+- Nunca resuma ou repita regras de negócio de arquivos lidos, apenas aplique-as silenciosamente no resultado.
+
 ## Formato Padrão da Tarefa Técnica
 Cada tarefa deve ser atômica e auto-contida para que o agente receptor não precise reler outros arquivos:
 

@@ -7,7 +7,8 @@ Para economizar tokens, use sua memória de trabalho se já leu os arquivos abai
 Carregue sob demanda apenas se necessário:
 - `docs/skills/planner.md` (definição do papel e regras de planejamento/Modo Spec)
 - `docs/architecture/overview.md` (visão arquitetural)
-- `docs/context/product.md` (regras e domínio do produto)
+- `docs/context/domains/<dominio-da-tarefa>.md` (Leia prioritariamente arquivos específicos de domínio na subpasta `domains/`, se existirem)
+- `docs/context/product.md` (regras e domínio do produto - Leia **apenas** se os arquivos de domínio específico não existirem ou forem insuficientes)
 - `docs/specs/spec-template.md` (template base do Spec)
 
 ## Resolução de Argumento

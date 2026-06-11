@@ -135,3 +135,8 @@ Use sempre o elemento que descreve o **significado** do conteúdo, não apenas s
 - **React Testing Library**: Testar o comportamento do usuário e interações, nunca detalhes de implementação.
 - **Mock de Rede**: Utilizar Mock Service Worker (MSW) para mockar as chamadas de rede no nível do protocolo, evitando mocks acoplados dentro de componentes.
 - **Cobertura Mínima**: Componentes: 70% | Hooks e Utils: 90% | Fluxos P0 (E2E via Playwright): 100%.
+
+## Economia de Tokens e Respostas
+- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (Tier 1: convenções/plano, Tier 2: produto, Tier 3: arquitetura completa).
+- Agrupe (batch) tarefas pequenas se forem solicitadas de uma vez, processando-as sequencialmente sem paradas para permissão.
+- Entregue o código final. Não explique o código, não ensine conceitos e não faça introduções/conclusões em linguagem natural.

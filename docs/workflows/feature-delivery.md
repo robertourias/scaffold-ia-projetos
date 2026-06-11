@@ -135,6 +135,7 @@ Execute `/checkpoint` para consolidar o changelog e o estado atual do projeto, e
 
 Checklist mínimo após cada merge:
 - [ ] `docs/features/<feature>.md` criado ou atualizado
+- [ ] Mover Specs e Plans desta feature concluída para a pasta `docs/archive/` (Arquivamento para economia de tokens)
 - [ ] `docs/changelog/YYYY-MM-DD.md` — entrada atualizada com o que foi mergeado
 - [ ] `.env.example` atualizado se novas variáveis foram adicionadas
 

@@ -30,11 +30,13 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 - Escopo específico → salve specs/plans em `$SCOPE/docs/`
 - Escopo global → salve em `docs/`
 
-## Tarefa
+## Tarefa (Batching Suportado)
 
 $ARGUMENTS
 
-## Finalização obrigatória ao concluir a tarefa
+*Se o $ARGUMENTS contiver múltiplas tarefas (batching), execute todas elas sequencialmente em uma única resposta para maximizar a economia de tokens, sem pedir permissão entre cada uma.*
+
+## Finalização obrigatória ao concluir a(s) tarefa(s)
 
 Ao terminar a implementação, execute **sempre** estas etapas na ordem:
 

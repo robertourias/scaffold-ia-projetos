@@ -59,3 +59,8 @@ Infrastructure          → ORM, APIs externas, cache, fila, implementações
 - **Unitários**: Mockar todas as dependências de infraestrutura via interfaces de repositório.
 - **Integração**: Testar chamadas HTTP contra a API real usando banco de dados de teste isolado.
 - **Cobertura Mínima**: Use Cases: 90% | Controllers: 80% | Repositories: 60%.
+
+## Economia de Tokens e Respostas
+- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (Tier 1: convenções/plano, Tier 2: produto, Tier 3: arquitetura completa).
+- Agrupe (batch) tarefas pequenas se forem solicitadas de uma vez, processando-as sequencialmente sem paradas para permissão.
+- Entregue o código final. Não explique o código, não ensine conceitos e não faça introduções/conclusões em linguagem natural.

@@ -16,7 +16,7 @@ Identifique também:
 
 ## Passo 2 — Atualizar current-state.md
 
-Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido:
+Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog).
 
 ```markdown
 # Status do Projeto
@@ -25,6 +25,7 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido:
 > Não edite manualmente durante uma sessão ativa — use `/checkpoint` antes de fechar.
 
 **Última atualização:** [data e hora atual]
+**Resumo de progresso global:** [Resumo de alto nível (2-3 frases) do que já está pronto]
 **Resumo da última sessão:** [1-2 frases do que foi feito]
 
 ---
@@ -36,15 +37,12 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido:
 
 ---
 
-## Tasks
-
-### ✅ Concluídas
-- [cada task concluída nesta iteração informando o projeto e o escopo]
+## Tasks (Foco no Presente)
 
 ### 🔄 Em progresso
 - [nome do projeto/escopo] - [task atual] — [% estimado] — próximo passo: [ação concreta]
 
-### ⏭ Próximos passos
+### ⏭ Próximos passos imediatos
 1. [próxima ação específica e acionável]
 2. [segunda ação]
 3. ...

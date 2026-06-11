@@ -10,11 +10,12 @@ docs/commands/
   backlog.md       ← gera product backlog com tarefas numeradas (TASK01, TASK02...)
   retomar.md       ← reconstrói contexto da sessão anterior para retomar o trabalho
   checkpoint.md    ← salva estado atual e changelog de forma comprimida
-  back.md          ← agente backend (suporta escopo de app)
-  front.md         ← agente frontend (suporta escopo de app)
-  spec.md          ← planner em Modo Spec (suporta escopo de app e ID de tarefa)
+  groom.md         ← refina uma nova feature isolada adicionando-a ao backlog sem reprocessá-lo inteiro
+  back.md          ← agente backend (suporta escopo e agrupamento/batching de tarefas)
+  front.md         ← agente frontend (suporta escopo e agrupamento/batching de tarefas)
+  spec.md          ← planner em Modo Spec (suporta escopo e ID de tarefa)
   plan.md          ← planner em Modo Plan (infere escopo do caminho do spec)
-  review.md        ← reviewer em dois estágios (suporta escopo de app)
+  review.md        ← reviewer em dois estágios (suporta escopo)
 ```
 
 O diretório `.claude/commands/` contém arquivos que referenciam esta pasta — são os adaptadores para o Claude Code (slash commands via `/`). Para outros tools, use os arquivos aqui diretamente.
@@ -82,9 +83,9 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 # 4. Criar plano técnico
 /plan docs/specs/YYYY-MM-DD-<topic>.md
 
-# 5. Implementar
-/back implementar use case X
-/front criar página Y
+# 5. Implementar (Use Batching para economizar tokens se as tarefas forem pequenas)
+/back implementar use case X, tarefa 1 e 2
+/front criar página Y, tarefa 3 e 4
 
 # 6. Revisar e commitar
 /review [diff]
