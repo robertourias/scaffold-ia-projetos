@@ -13,12 +13,9 @@ docs/commands/
   groom.md         ← refina uma nova feature isolada adicionando-a ao backlog sem reprocessá-lo inteiro
   back.md          ← agente backend (suporta escopo e agrupamento/batching de tarefas)
   front.md         ← agente frontend (suporta escopo e agrupamento/batching de tarefas)
-  spec.md          ← planner em Modo Spec (suporta escopo e ID de tarefa)
-  plan.md          ← planner em Modo Plan (infere escopo do caminho do spec)
+  spec.md          ← planner em Modo de Planejamento Unificado (gera regras + tarefas técnicas)
   review.md        ← reviewer em dois estágios (suporta escopo)
 ```
-
-O diretório `.claude/commands/` contém arquivos que referenciam esta pasta — são os adaptadores para o Claude Code (slash commands via `/`). Para outros tools, use os arquivos aqui diretamente.
 
 ## Sintaxe de escopo
 
@@ -47,12 +44,6 @@ Os comandos `back`, `front`, `spec`, `review` e `retomar` suportam um **escopo o
 /retomar
 ```
 
-O comando `plan` infere o escopo automaticamente do caminho do spec:
-```
-/plan apps/tools/docs/specs/2026-05-30-conversor.md   → salva em apps/tools/docs/plans/
-/plan docs/specs/2026-05-30-onboarding.md             → salva em docs/plans/
-```
-
 ## Como usar
 
 ### Claude Code (slash commands)
@@ -70,29 +61,25 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 # 2. Gerar o backlog do produto
 /backlog
   → planner analisa product.md e propõe tarefas TASK01..TASKNN
-  → você revisa e aprova
   → gera docs/context/product-backlog.md
 
-# 3. Especificar cada tarefa pelo ID
+# 3. Especificar Requisitos e Plano (Tudo junto!)
 /spec TASK01
   → planner lê a descrição de TASK01 no backlog
-  → conduz levantamento, gera spec draft
-  → atualiza backlog: Status → spec-draft, link do spec
-  → você edita: Status: draft → Status: approved no spec
+  → conduz levantamento (se necessário), gera spec + quebra de tarefas técnicas
+  → atualiza backlog: Status → spec-review, link da spec
+  → você edita: Status: review → Status: approved no documento
 
-# 4. Criar plano técnico
-/plan docs/specs/YYYY-MM-DD-<topic>.md
+# 4. Implementar (Use Batching para economizar tokens se as tarefas forem pequenas)
+/back implementar use case X, tarefa 1 e 2 da Spec
+/front criar página Y, tarefa 3 e 4 da Spec
 
-# 5. Implementar (Use Batching para economizar tokens se as tarefas forem pequenas)
-/back implementar use case X, tarefa 1 e 2
-/front criar página Y, tarefa 3 e 4
-
-# 6. Revisar e commitar
+# 5. Revisar e commitar
 /review [diff]
 /checkpoint
 git commit -m "feat: ..."
 
-# 7. Próxima tarefa do backlog
+# 6. Próxima tarefa do backlog
 /spec TASK02
 ```
 
@@ -100,14 +87,11 @@ git commit -m "feat: ..."
 
 ```
 /spec apps/metronome metrônomo com BPM, beats e timer
-  → planner gera apps/metronome/docs/specs/YYYY-MM-DD-metronome.md (Status: draft)
-  → você edita: Status: draft → Status: approved
+  → planner gera apps/metronome/docs/specs/YYYY-MM-DD-metronome.md (Status: review)
+  → você revisa as tarefas e regras, e edita: Status: review → Status: approved
 
-/plan apps/metronome/docs/specs/YYYY-MM-DD-metronome.md
-  → planner gera apps/metronome/docs/plans/YYYY-MM-DD-metronome.md
-
-/front apps/metronome implementar controle de BPM
-/front apps/metronome implementar Web Audio API
+/front apps/metronome implementar controle de BPM da Spec metronome
+/front apps/metronome implementar Web Audio API da Spec metronome
 
 /review apps/metronome [cole o diff aqui]
 
@@ -120,14 +104,11 @@ git commit -m "feat(metronome): ..."
 
 ```
 /spec notificações por email
-  → planner gera docs/specs/YYYY-MM-DD-email-notifications.md (Status: draft)
-  → você edita: Status: draft → Status: approved
+  → planner gera docs/specs/YYYY-MM-DD-email-notifications.md (Status: review)
+  → você edita: Status: review → Status: approved
 
-/plan docs/specs/YYYY-MM-DD-email-notifications.md
-  → planner gera docs/plans/YYYY-MM-DD-email-notifications.md
-
-/back implementar use case de envio de email
-/front criar página de preferências de notificação
+/back implementar use case de envio de email da Spec
+/front criar página de preferências de notificação da Spec
 
 /review [diff do backend]
 /review [diff do frontend]

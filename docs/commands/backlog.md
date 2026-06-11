@@ -55,8 +55,8 @@ Contexto adicional do usuário (opcional): $ARGUMENTS
 | Status | Significado |
 |--------|-------------|
 | backlog | Aguardando especificação |
-| spec-draft | Spec gerado, aguardando aprovação |
-| spec-approved | Spec aprovado, pronto para /plan |
+| spec-review | Spec + Tarefas geradas, aguardando aprovação |
+| spec-approved | Spec aprovado, pronto para implementação |
 | in-progress | Em implementação |
 | done | Concluído |
 

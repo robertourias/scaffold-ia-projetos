@@ -33,7 +33,6 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido. *
 ## Feature em andamento
 
 **Spec ativo:** [caminho do spec, ex: docs/specs/2026-05-20-email-notifications.md]
-**Plano ativo:** [caminho do plano, ex: docs/plans/2026-05-20-email-notifications.md]
 
 ---
 
