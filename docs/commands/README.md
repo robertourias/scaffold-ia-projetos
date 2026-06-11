@@ -7,11 +7,12 @@ Prompts de ativação para os papéis definidos no `docs/`. Esta pasta é a **fo
 ```
 docs/commands/
   init-project.md  ← inicializa o projeto preenchendo todos os arquivos de contexto
+  backlog.md       ← gera product backlog com tarefas numeradas (TASK01, TASK02...)
   retomar.md       ← reconstrói contexto da sessão anterior para retomar o trabalho
   checkpoint.md    ← salva estado atual e changelog de forma comprimida
   back.md          ← agente backend (suporta escopo de app)
   front.md         ← agente frontend (suporta escopo de app)
-  spec.md          ← planner em Modo Spec (suporta escopo de app)
+  spec.md          ← planner em Modo Spec (suporta escopo de app e ID de tarefa)
   plan.md          ← planner em Modo Plan (infere escopo do caminho do spec)
   review.md        ← reviewer em dois estágios (suporta escopo de app)
 ```
@@ -58,6 +59,41 @@ Disponível automaticamente via `/comando`. O Claude Code lê `.claude/commands/
 
 ### Cursor / Copilot / outros
 Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramenta. Substitua `$ARGUMENTS` pela sua tarefa (incluindo o escopo se necessário).
+
+## Fluxo completo com backlog (recomendado)
+
+```
+# 1. Inicializar o projeto
+/init-project sistema de gestão de pedidos
+
+# 2. Gerar o backlog do produto
+/backlog
+  → planner analisa product.md e propõe tarefas TASK01..TASKNN
+  → você revisa e aprova
+  → gera docs/context/product-backlog.md
+
+# 3. Especificar cada tarefa pelo ID
+/spec TASK01
+  → planner lê a descrição de TASK01 no backlog
+  → conduz levantamento, gera spec draft
+  → atualiza backlog: Status → spec-draft, link do spec
+  → você edita: Status: draft → Status: approved no spec
+
+# 4. Criar plano técnico
+/plan docs/specs/YYYY-MM-DD-<topic>.md
+
+# 5. Implementar
+/back implementar use case X
+/front criar página Y
+
+# 6. Revisar e commitar
+/review [diff]
+/checkpoint
+git commit -m "feat: ..."
+
+# 7. Próxima tarefa do backlog
+/spec TASK02
+```
 
 ## Fluxo típico de uma feature em app específico
 

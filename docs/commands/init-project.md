@@ -95,7 +95,7 @@ Após preencher todos os arquivos, exiba um resumo:
   - [liste seções que ficaram como "a definir"]
 
 Próximos passos:
-  /spec [primeira feature do produto]
+  /backlog → gerar o product backlog com tarefas numeradas (TASK01, TASK02...)
 ```
 
 ## Regras

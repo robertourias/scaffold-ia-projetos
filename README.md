@@ -33,6 +33,7 @@ docs/
 │
 ├── context/              ← O que é único do seu produto (preencha estes)
 │   ├── product.md        ← Usuários, regras de negócio
+│   ├── product-backlog.md← Backlog do produto (gerado por /backlog)
 │   ├── conventions.md    ← Nomenclatura, Git, imports, comentários
 │   ├── decisions.md      ← Escolhas de frontend e backend consolidadas
 │   ├── ui-guidelines.md  ← Design system, tokens, componentes
@@ -51,6 +52,7 @@ docs/
 ├── commands/             ← Prompts de ativação de papéis (fonte canônica)
 │   ├── README.md
 │   ├── init-project.md
+│   ├── backlog.md
 │   ├── retomar.md
 │   ├── checkpoint.md
 │   ├── spec.md
@@ -111,17 +113,21 @@ O fluxo completo de uma feature vai da ideia ao deploy em seis fases. A novidade
 ```
 Ideia/requisito
       ↓
-[Fase 0: Spec]  ← planner conduz levantamento, gera docs/specs/YYYY-MM-DD-<topic>.md
+[Fase 0: Init]   ← /init-project preenche product.md e arquivos de contexto
+      ↓
+[Fase 0.5: Backlog] ← /backlog gera product-backlog.md com TASK01..TASKNN
+      ↓
+[Fase 1: Spec]   ← /spec TASKXX conduz levantamento, gera docs/specs/YYYY-MM-DD-<topic>.md
       ↓
 ⛔ GATE: você altera Status: draft → Status: approved no arquivo
       ↓
-[Fase 1: Plan]  ← planner lê o spec aprovado e decompõe em tarefas técnicas
+[Fase 2: Plan]   ← planner lê o spec aprovado e decompõe em tarefas técnicas
       ↓
-[Fase 2: Backend] → [Fase 3: Frontend] → [Fase 4: Integration]
+[Fase 3: Backend] → [Fase 4: Frontend] → [Fase 5: Integration]
       ↓
-[Fase 5: Review]  ← revisor aplica checklist em dois estágios
+[Fase 6: Review]  ← revisor aplica checklist em dois estágios
       ↓
-[Fase 6: Deploy]
+[Fase 7: Deploy]
 ```
 
 ### Por que o gate importa
@@ -139,9 +145,11 @@ Os comandos abaixo estão disponíveis via `/` no Claude Code. Cada um carrega a
 | Comando | Exemplo | O que faz |
 |---------|---------|-----------|
 | `/init-project [desc]` | `/init-project sistema de pedidos` | Preenche todos os arquivos de contexto interativamente (use ao iniciar) |
+| `/backlog` | `/backlog` | Gera product backlog (TASK01, TASK02...) a partir do product.md |
 | `/retomar` | `/retomar` | Reconstrói contexto da sessão anterior — use ao voltar ao projeto |
 | `/checkpoint` | `/checkpoint` | Salva o estado atual e changelog de forma comprimida antes de encerrar |
-| `/spec [requisito]` | `/spec notificações por email` | Planner conduz levantamento, gera spec draft e para — aguarda aprovação |
+| `/spec [TASKXX]` | `/spec TASK01` | Spec a partir do backlog — lê a descrição da tarefa e conduz levantamento |
+| `/spec [requisito]` | `/spec notificações por email` | Spec a partir de texto livre — sem consultar backlog |
 | `/plan [caminho-spec]` | `/plan docs/specs/2026-05-20-email.md` | Planner cria plano técnico a partir do spec aprovado |
 | `/back [tarefa]` | `/back implementar use case de envio de email` | Backend agent com contexto completo carregado |
 | `/front [tarefa]` | `/front criar página de preferências de notificação` | Frontend agent com contexto completo carregado |
@@ -173,18 +181,50 @@ Quando você volta a um projeto depois de horas ou dias, o agente não tem memó
 
 O `/retomar` funciona mesmo sem `/checkpoint` anterior — ele infere o estado a partir do git log e dos specs aprovados. Mas com o checkpoint ele recupera também decisões verbais e trabalho não commitado.
 
-### Fluxo completo de uma feature com slash commands
+### Fluxo completo com backlog (recomendado)
 
 ```
 # Iniciar o projeto (uma vez)
 /init-project [descrição do produto]
 
-# Feature nova
+# Gerar o backlog do produto
+/backlog
+  → planner analisa product.md e propõe tarefas TASK01..TASKNN
+  → você revisa e aprova a lista
+  → gera docs/context/product-backlog.md
+
+# Especificar cada tarefa pelo ID
+/spec TASK01
+  → planner lê descrição de TASK01 no backlog
+  → conduz levantamento, gera docs/specs/YYYY-MM-DD-<topic>.md (Status: draft)
+  → atualiza backlog: Status → spec-draft, link do spec
+  → você edita: Status: draft → Status: approved no spec
+
+/plan docs/specs/YYYY-MM-DD-<topic>.md
+  → planner decompõe em tarefas técnicas com contrato de API
+
+/back implementar use case X
+/front criar página Y
+
+/review [diff do backend]
+/review [diff do frontend]
+
+# Salve o checkpoint e comite manualmente no Git
+/checkpoint
+git commit -m "feat: ..."
+
+# Próxima tarefa
+/spec TASK02
+```
+
+### Fluxo sem backlog (feature avulsa)
+
+```
 /spec notificações por email
-  → planner gera docs/specs/2026-05-20-email-notifications.md (Status: draft)
+  → planner gera docs/specs/YYYY-MM-DD-email-notifications.md (Status: draft)
   → você edita o arquivo: Status: draft → Status: approved
 
-/plan docs/specs/2026-05-20-email-notifications.md
+/plan docs/specs/YYYY-MM-DD-email-notifications.md
   → planner decompõe em tarefas técnicas com contrato de API
 
 /back implementar use case de envio de email
@@ -265,7 +305,7 @@ O comando conduz uma entrevista em 5 blocos sequenciais, uma pergunta por vez:
 | 4 — Frontend | styling, componentes, estado, forms, data fetching, ícones, tokens | docs/context/decisions.md (seção Frontend) + docs/context/ui-guidelines.md |
 | 5 — Convenções | usa termos coletados no Bloco 1 | docs/context/conventions.md |
 
-Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e sugere o primeiro /spec para começar a entregar.
+Ao final, exibe um resumo do que foi preenchido, o que ficou como "a definir" e sugere o próximo passo: `/backlog` para gerar o backlog do produto.
 
 ---
 

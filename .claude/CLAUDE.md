@@ -60,9 +60,10 @@ packages/
 ## Slash commands disponíveis
 ```
 /init-project [descrição]   ← preenche todos os arquivos de contexto
+/backlog                    ← gera product backlog (TASK01, TASK02...) a partir do product.md
 /retomar                    ← reconstrói contexto da sessão anterior
 /checkpoint                 ← atualiza docs e salva estado atual
-/spec   [requisito]         ← gera spec com gate humano (Modo Spec)
+/spec   [TASKXX | requisito]← gera spec (aceita ID do backlog ou texto livre)
 /plan   [caminho-do-spec]   ← cria plano técnico de spec aprovado
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
