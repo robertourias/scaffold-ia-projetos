@@ -15,8 +15,7 @@ Leia os seguintes arquivos em ordem:
 
 1. `docs/context/current-state.md` — estado salvo da última sessão
 2. `git log --oneline -15` — commits recentes
-3. O spec referenciado em current-state.md (se existir e tiver `Status: approved`)
-4. O plano referenciado em current-state.md (se existir)
+3. O spec/plano referenciado em current-state.md (se existir e tiver `Status: approved`)
 
 **Se $SCOPE específico informado**, leia também:
 - `$SCOPE/docs/context/decisions.md`
@@ -35,8 +34,7 @@ Exiba o resumo neste formato exato:
 
 📅 Última sessão: [data] — [resumo em 1 frase]
 🎯 Feature em andamento: [nome da feature]
-📄 Spec: [caminho]
-📋 Plano: [caminho, ou "não gerado ainda"]
+📄 Spec/Plano: [caminho]
 
 ✅ Concluído
   [lista de tasks prontas]
@@ -73,4 +71,4 @@ Após exibir o resumo, pergunte:
 
 - Não comece a implementar antes de o usuário confirmar.
 - Apresente apenas o que foi encontrado nos arquivos — sem inferências não fundamentadas.
-- Se o próximo passo não estiver claro, diga explicitamente e proponha como descobrir (ex: "leia o plano completo com `/plan`").
+- Se o próximo passo não estiver claro, diga explicitamente e proponha como descobrir (ex: "leia a seção de tarefas técnicas no spec/plano").

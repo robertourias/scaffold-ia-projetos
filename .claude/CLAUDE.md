@@ -63,8 +63,7 @@ packages/
 /backlog                    ← gera product backlog (TASK01, TASK02...) a partir do product.md
 /retomar                    ← reconstrói contexto da sessão anterior
 /checkpoint                 ← atualiza docs e salva estado atual
-/spec   [TASKXX | requisito]← gera spec (aceita ID do backlog ou texto livre)
-/plan   [caminho-do-spec]   ← cria plano técnico de spec aprovado
+/spec   [TASKXX | requisito]← gera spec + plano técnico (Status: review)
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios

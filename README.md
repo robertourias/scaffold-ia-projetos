@@ -99,26 +99,24 @@ Ideia/requisito
       ↓
 [1] /init-project (uma vez no início)
       ↓
-[2] /backlog (gera TASK01..TASKNN) ← ou pule para [4] se for feature avulsa
+[2] /backlog (gera TASK01..TASKNN) ← ou pule para [3] se for feature avulsa
       ↓
-[3] /spec TASK01 (gera spec draft)
+[3] /spec TASK01 (gera spec + plano de tarefas técnicas)
       ↓
-      ⛔ GATE: você edita spec → Status: approved
+      ⛔ GATE: você edita spec/plano → Status: approved
       ↓
-[4] /plan spec.md (decompõe em tarefas técnicas)
+[4] /back tarefa1, tarefa2, tarefa3
       ↓
-[5] /back tarefa1, tarefa2, tarefa3
+[5] /front tela1, tela2
       ↓
-[6] /front tela1, tela2
+[6] /review [diff]
       ↓
-[7] /review [diff]
+[7] /checkpoint (salva estado) → git commit
       ↓
-[8] /checkpoint (salva estado) → git commit
-      ↓
-[9] Mova specs/plans concluídos para docs/archive/
+[8] Mova specs concluídas para docs/archive/
 ```
 
-**Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. O spec obriga alinhamento **antes** de escrever código.
+**Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código.
 
 ---
 
@@ -128,8 +126,8 @@ Ideia/requisito
 |---------|---------|-------|
 | `/init-project` | `/init-project sistema de pedidos` | Entrevista, preenche contexto |
 | `/backlog` | `/backlog` | Gera TASK01..TASKNN do product.md |
-| `/spec` | `/spec TASK01` | Levantamento, gera spec (Status: draft) |
-| `/plan` | `/plan docs/specs/2026-05-20-*.md` | Decompõe spec aprovado em plano |
+| `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review) |
+| `/groom` | `/groom nova funcionalidade` | Refina uma nova feature isolada adicionando-a ao backlog |
 | `/back` | `/back implementar auth com JWT` | Agent backend |
 | `/front` | `/front criar modal de login` | Agent frontend |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
@@ -150,15 +148,14 @@ O design de **carregamento sob demanda** é proposital: cada arquivo existe para
 |-------|----------|--------|
 | Backend | `skills/backend.md` + `conventions.md` + `decisions.md` | ~0.8k |
 | Frontend | `skills/frontend.md` + `conventions.md` + `ui-guidelines.md` + `decisions.md` | ~1.1k |
-| Planner (Spec) | `skills/planner.md` + `product.md` + `architecture/overview.md` | ~1.3k |
-| Planner (Plan) | idem + spec aprovado | ~2.2k |
+| Planner (Spec + Plan) | `skills/planner.md` + `product.md` + `architecture/overview.md` | ~1.4k |
 | Reviewer | `skills/quality.md` + `conventions.md` + `decisions.md` | ~0.8k |
 
 ### Estratégias implementadas
 
 **1. Fragmentação por relevância**
 - Só carrega o que a tarefa precisa
-- Specs e plans vão para `archive/` quando concluídos
+- Specs vão para `archive/` quando concluídos
 - Regras de negócio fragmentadas em `context/domains/` (auth.md, payments.md, etc.)
 
 **2. Delta, não tutorial**
@@ -185,7 +182,7 @@ O contexto cresce apenas quando:
 - Você toma decisão arquitetural → `architecture/*.md` ou `decisions.md`
 - Você aprova nova feature → novo spec em `specs/`
 
-Tudo mais é descartado ao final de cada feature (specs/plans vão para archive).
+Tudo mais é descartado ao final de cada feature (specs vão para archive).
 
 ---
 
@@ -204,7 +201,7 @@ Quando você volta após horas ou dias, use o par `/checkpoint` + `/retomar`.
 **Ao voltar:**
 ```
 /retomar
-  → agente lê current-state.md + git log + specs/planos ativos
+  → agente lê current-state.md + git log + specs ativos
   → apresenta: o quê está pronto, onde parou, próxima ação
 ```
 
@@ -222,13 +219,9 @@ O `/retomar` funciona mesmo sem checkpoint anterior — ele infere estado do git
 /backlog
   → você aprova lista de tarefas
 
-# Especificar uma tarefa
+# Especificar e planejar uma tarefa (juntos!)
 /spec TASK01
-  → você aprova spec, edita Status: draft → Status: approved
-
-# Planejar implementação
-/plan docs/specs/YYYY-MM-DD-*.md
-  → agente decompõe em tarefas técnicas
+  → você aprova spec + plano técnico, edita Status: review → Status: approved
 
 # Implementar (batching)
 /back implementar use case 1, 2 e 3
@@ -242,9 +235,8 @@ O `/retomar` funciona mesmo sem checkpoint anterior — ele infere estado do git
 /checkpoint
 git commit -m "feat: descrição"
 
-# Arquivo
+# Arquivar
 mv docs/specs/YYYY-MM-DD-*.md docs/archive/
-mv docs/plans/YYYY-MM-DD-*.md docs/archive/
 
 # Próxima tarefa
 /spec TASK02
@@ -275,7 +267,7 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
    docs/context/domains/ (ex: auth.md, payments.md, reports.md),
    deixando product.md apenas com visão geral + links.
 
-2. Mova specs/ e plans/ finalizados para docs/archive/.
+2. Mova specs/ finalizadas para docs/archive/.
 
 3. Reescreva docs/context/current-state.md extremamente resumido:
    - Status geral (1 frase)
@@ -293,13 +285,13 @@ Após isso, seu projeto usa 30-40% menos tokens sem perder contexto.
 | Diretório | Responsabilidade |
 |-----------|------------------|
 | `skills/` | Papéis, checklist, boas práticas, qualidade |
-| `specs/` | Specs de features (Status: draft → approved) |
+| `specs/` | Specs de features (Status: review → approved) |
 | `context/` | Informações únicas do seu produto — **você preenche** |
 | `architecture/` | Visão técnica: backend, frontend, infra |
 | `workflows/` | Processos (feature-delivery, release) |
 | `commands/` | Prompts de ativação de papéis |
 | `changelog/` | Histórico por data |
-| `archive/` | Specs e plans concluídos |
+| `archive/` | Specs concluídas |
 
 ---
 
