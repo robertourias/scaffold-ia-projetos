@@ -64,6 +64,7 @@ packages/
 /retomar                    ← reconstrói contexto da sessão anterior
 /checkpoint                 ← atualiza docs e salva estado atual
 /spec   [TASKXX | requisito]← gera spec + plano técnico (Status: review)
+/hands-on [caminho-da-spec] ← executa o Plano de Implementação em ondas (agentes em paralelo)
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios

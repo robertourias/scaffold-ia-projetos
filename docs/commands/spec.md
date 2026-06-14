@@ -37,3 +37,5 @@ Prossiga normalmente com a geração da Spec + Plano Técnico.
 ## Execução
 
 Siga o **Modo de Planejamento Unificado** definido em `docs/skills/planner.md`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
+
+O "Plano de Implementação (Tarefas)" **deve sempre** incluir a subseção "Ordem de Execução & Dependências" (tabela de ondas/waves) e os campos `Depende de:` / `Paralelizável com:` em cada tarefa, conforme o template. Esse plano é o contrato consumido pelo comando `/hands-on`, que executa as tarefas respeitando a ordem e disparando agentes em paralelo dentro de cada onda.

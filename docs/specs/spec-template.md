@@ -51,9 +51,27 @@
 
 <Liste as tarefas lógicas e atômicas de implementação>
 
+### Ordem de Execução & Dependências
+
+Grafo de execução em ondas (waves). Tarefas na mesma onda **não** dependem
+entre si e podem rodar **em paralelo** (um agente por tarefa). Cada onda só
+inicia após a anterior concluir.
+
+| Onda | Tarefas (paralelas) | Pré-requisito |
+|------|---------------------|---------------|
+| 1    | T1                  | —             |
+| 2    | T2, T3              | T1            |
+| 3    | T4                  | T2, T3        |
+
+> Regra: o agente de implementação (`/hands-on`) percorre as ondas em ordem.
+> Dentro de uma onda, dispara as tarefas em paralelo. Não inicie uma tarefa
+> antes de **todas** as suas dependências estarem com os critérios `[x]`.
+
 ### Tarefa 1: [Identificador]
 - **Tipo:** feature | fix | refactor | chore
 - **Agente:** frontend | backend | ambos
+- **Depende de:** — (nenhuma) | T2, T3
+- **Paralelizável com:** T4 | nenhuma
 - **Descrição:** [O quê fazer e contratos relacionados]
 - **Critérios de Aceite:**
   - [ ] Critério 1

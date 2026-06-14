@@ -28,6 +28,16 @@ Você opera de forma a minimizar o consumo de tokens e a troca de contexto, gera
    6. Telas, Rotas e Layouts de frontend.
    7. Testes de Integração e fluxos E2E.
 
+   **Obrigatório:** ao montar o "Plano de Implementação (Tarefas)" preencha
+   **sempre** a subseção "Ordem de Execução & Dependências" do template:
+   - Mapeie dependências reais entre tarefas (não a ordem da lista).
+   - Agrupe em **ondas (waves)**: tarefas sem dependência mútua na mesma onda
+     rodam **em paralelo** (um agente por tarefa).
+   - Em cada tarefa preencha `Depende de:` e `Paralelizável com:`.
+   - Maximize o paralelismo: backend e frontend que não compartilham contrato
+     devem cair na mesma onda. Só serialize quando houver dependência real
+     (ex.: frontend que consome um endpoint ainda não implementado).
+
 4. **Geração do Artefato**:
    - Escreva a especificação e o plano técnico juntos em `docs/specs/YYYY-MM-DD-<topic>.md` usando o template `docs/specs/spec-template.md`.
    - Coloque o documento em `Status: review` para aprovação do usuário.
@@ -47,6 +57,8 @@ Cada tarefa deve ser atômica e auto-contida na seção de tarefas do Spec:
 ### Tarefa: [Identificador Curto]
 Tipo: feature | fix | refactor | chore
 Agente: frontend | backend | ambos
+Depende de: — | T2, T3
+Paralelizável com: T4 | nenhuma
 
 [O quê fazer e por quê, contendo contratos ou assinaturas necessárias]
 

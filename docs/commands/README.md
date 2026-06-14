@@ -14,6 +14,7 @@ docs/commands/
   back.md          ← agente backend (suporta escopo e agrupamento/batching de tarefas)
   front.md         ← agente frontend (suporta escopo e agrupamento/batching de tarefas)
   spec.md          ← planner em Modo de Planejamento Unificado (gera regras + tarefas técnicas)
+  hands-on.md      ← orquestrador: executa o Plano de Implementação da Spec em ondas (paralelo)
   review.md        ← reviewer em dois estágios (suporta escopo)
 ```
 
@@ -70,7 +71,10 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
   → atualiza backlog: Status → spec-review, link da spec
   → você edita: Status: review → Status: approved no documento
 
-# 4. Implementar (Use Batching para economizar tokens se as tarefas forem pequenas)
+# 4. Implementar
+#    Opção A (orquestrado) — executa o plano de tarefas em ondas, paralelizando:
+/hands-on docs/specs/YYYY-MM-DD-<topic>.md
+#    Opção B (manual) — use batching p/ economizar tokens em tarefas pequenas:
 /back implementar use case X, tarefa 1 e 2 da Spec
 /front criar página Y, tarefa 3 e 4 da Spec
 
