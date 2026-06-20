@@ -63,13 +63,23 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido. *
 
 Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual) e adicione ou complemente a entrada com o que foi feito nesta sessão.
 
-## Passo 4 — Confirmar
+## Passo 4 — Arquivar specs concluídas
+
+Liste os arquivos em `docs/specs/` (exceto `spec-template.md`). Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
+
+- Se sim: mova o arquivo de `docs/specs/` para `docs/archive/` (crie a pasta se não existir).
+- Se houver tarefa incompleta: mantenha em `docs/specs/` — ainda em andamento.
+
+Isso replica o passo de arquivamento da Fase 6 do `docs/workflows/feature-delivery.md`, garantido mesmo se o merge não passou por lá.
+
+## Passo 5 — Confirmar
 
 Exiba:
 
 ```
 ✅ Checkpoint salvo em docs/context/current-state.md
 📌 Última ação: [resumo]
+📦 Specs arquivadas: [lista ou "(nenhuma)"]
 ⏭ Próxima sessão: /retomar
 ```
 
