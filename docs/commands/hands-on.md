@@ -42,6 +42,27 @@ Onda 3: T4 (frontend)
 
 Se `--dry-run`, pare aqui.
 
+## Passo 2.5 — Delegar execução ao subagente
+
+Para não sobrecarregar o contexto atual, não execute as ondas inline. Dispare um subagente do tipo `claude` com o seguinte prompt (preencha os placeholders):
+
+```
+Você é o ORQUESTRADOR de implementação deste projeto.
+
+**Spec:** <caminho-da-spec>
+**Plano de ondas resolvido:**
+<cole aqui o plano exibido no Passo 2>
+
+Execute o plano onda a onda conforme as instruções abaixo.
+
+---
+[Inclua aqui o conteúdo dos Passos 3 e 4 do arquivo docs/commands/hands-on.md]
+```
+
+O subagente executa todas as ondas, dispara os sub-agentes de `/back` e `/front`, marca os critérios `[x]` na Spec e retorna um relatório final.
+
+Ao receber o retorno, exiba o relatório ao usuário e encerre.
+
 ## Passo 3 — Executar onda a onda
 
 Para cada onda, **em ordem**:

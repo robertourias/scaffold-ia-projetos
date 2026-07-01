@@ -34,6 +34,12 @@ Argumento recebido: $ARGUMENTS
 
 Prossiga normalmente com a geração da Spec + Plano Técnico.
 
+## Gerenciamento de Contexto
+
+Se o contexto da conversa estiver pesado antes de iniciar, avise o usuário:
+
+> Contexto carregado. Se quiser economizar tokens, rode `/compact` agora — o estado será preservado.
+
 ## Execução
 
 Siga o **Modo de Planejamento Unificado** definido em `docs/skills/planner.md`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.

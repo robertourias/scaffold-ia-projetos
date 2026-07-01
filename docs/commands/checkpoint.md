@@ -83,6 +83,14 @@ Exiba:
 ⏭ Próxima sessão: /retomar
 ```
 
+## Passo 6 — Limpar contexto
+
+Estado salvo. Exiba ao usuário:
+
+> Estado salvo. Para iniciar a próxima sessão com contexto limpo:
+> - `/clear` → contexto zerado (**recomendado** — use `/retomar` para recarregar o estado)
+> - `/compact` → comprime o histórico sem perder o contexto atual (útil se quiser continuar na mesma sessão)
+
 ## Regras
 
 - Nunca invente informações — use apenas o que está nos commits, specs e na conversa.
