@@ -41,6 +41,8 @@ docs/context/decisions.md
 docs/context/current-state.md    ← estado atual do projeto (use /retomar)
 docs/context/product.md          ← regras de negócio (se não for PLANNER)
 docs/workflows/release-process.md
+docs/workflows/playbook-tokens-qualidade.md  ← modos econômico / rigor / emergência
+docs/comparativo-scaffold-vs-superpowers.md  ← scaffold vs Superpowers (tokens × qualidade)
 ```
 
 ---
@@ -69,7 +71,8 @@ packages/
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios
 ```
-Referência completa: `docs/commands/README.md`
+Referência completa: `docs/commands/README.md`  
+Playbook tokens × qualidade: `docs/workflows/playbook-tokens-qualidade.md`
 
 ---
 

@@ -45,6 +45,13 @@ Os comandos `back`, `front`, `spec`, `review` e `retomar` suportam um **escopo o
 /retomar
 ```
 
+## Playbook e comparativo
+
+Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
+
+- [Playbook — tokens × qualidade](../workflows/playbook-tokens-qualidade.md) (modos econômico / rigor / emergência)
+- [Comparativo Scaffold vs Superpowers](../comparativo-scaffold-vs-superpowers.md)
+
 ## Como usar
 
 ### Claude Code (slash commands)

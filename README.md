@@ -79,10 +79,13 @@ docs/
 │
 ├── workflows/             ← Processos (carregados sob demanda)
 │   ├── feature-delivery.md← Fases 0-7 da entrega
-│   └── release-process.md
+│   ├── release-process.md
+│   └── playbook-tokens-qualidade.md ← Modos econômico / rigor / emergência
 │
 ├── commands/              ← Prompts de ativação de papéis
 │   └── README.md          ← Referência completa
+│
+├── comparativo-scaffold-vs-superpowers.md ← Scaffold vs Superpowers (tokens × qualidade)
 │
 └── changelog/             ← Histórico por data
 
@@ -118,6 +121,15 @@ Ideia/requisito
 
 **Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código.
 
+### Playbook e comparativo (tokens × qualidade)
+
+| Documento | Uso |
+|-----------|-----|
+| [Playbook — modos econômico / rigor / emergência](docs/workflows/playbook-tokens-qualidade.md) | Decidir **como** trabalhar em cada tarefa (default do dia a dia) |
+| [Comparativo Scaffold vs Superpowers](docs/comparativo-scaffold-vs-superpowers.md) | Entender trade-offs de tokens, qualidade e modelo híbrido |
+
+**Regra prática:** scaffold como sistema operacional do projeto; Superpowers só sob demanda (ambiguidade, bug hard, feature de alto risco). Detalhes no playbook.
+
 ---
 
 ## Slash Commands (Claude Code)
@@ -128,6 +140,7 @@ Ideia/requisito
 | `/backlog` | `/backlog` | Gera TASK01..TASKNN do product.md |
 | `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review) |
 | `/groom` | `/groom nova funcionalidade` | Refina uma nova feature isolada adicionando-a ao backlog |
+| `/hands-on` | `/hands-on docs/specs/….md` | Executa o plano da Spec em ondas (paralelo) |
 | `/back` | `/back implementar auth com JWT` | Agent backend |
 | `/front` | `/front criar modal de login` | Agent frontend |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
@@ -135,6 +148,8 @@ Ideia/requisito
 | `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
 
 Referência completa e uso em Cursor/Copilot: [`docs/commands/README.md`](docs/commands/README.md)
+
+Playbook de modos (quando batch vs hands-on vs Superpowers): [`docs/workflows/playbook-tokens-qualidade.md`](docs/workflows/playbook-tokens-qualidade.md)
 
 ---
 
@@ -183,6 +198,13 @@ O contexto cresce apenas quando:
 - Você aprova nova feature → novo spec em `specs/`
 
 Tudo mais é descartado ao final de cada feature (specs vão para archive).
+
+### Quando escalar o processo (e quando não)
+
+Para não gastar tokens com processo pesado em tarefa simples — nem subinvestir em feature crítica — use o playbook:
+
+- **[Playbook tokens × qualidade](docs/workflows/playbook-tokens-qualidade.md)** — modos Econômico (default), Rigor e Emergência
+- **[Comparativo Scaffold vs Superpowers](docs/comparativo-scaffold-vs-superpowers.md)** — o que cada sistema otimiza e o modelo híbrido recomendado
 
 ---
 
@@ -288,8 +310,9 @@ Após isso, seu projeto usa 30-40% menos tokens sem perder contexto.
 | `specs/` | Specs de features (Status: review → approved) |
 | `context/` | Informações únicas do seu produto — **você preenche** |
 | `architecture/` | Visão técnica: backend, frontend, infra |
-| `workflows/` | Processos (feature-delivery, release) |
+| `workflows/` | Processos (feature-delivery, release, playbook tokens×qualidade) |
 | `commands/` | Prompts de ativação de papéis |
+| `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 | `changelog/` | Histórico por data |
 | `archive/` | Specs concluídas |
 
