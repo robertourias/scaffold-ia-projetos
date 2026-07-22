@@ -14,6 +14,17 @@ Senior frontend engineer — React, Next.js, TypeScript. Implementa interfaces f
 - Detectar regressão ou bug crítico em fluxos P0 de usuário.
 - Identificar impacto de bundle size > 50kB em qualquer rota individual.
 
+## Documentação Inline (Obrigatório)
+
+Se a tarefa introduzir um token de design novo (cor, radius, tipografia) ou
+um padrão de componente reutilizável ainda não documentado, adicione a
+entrada correspondente em `docs/context/ui-guidelines.md` **no mesmo diff**,
+seguindo o padrão de entrada datada já usado no arquivo (ex: "Identidade
+visual (2026-07-03)").
+
+Ajuste de estilo local a um único componente, sem intenção de reuso, não
+precisa ser promovido.
+
 ---
 
 ## Práticas de Código & TypeScript

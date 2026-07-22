@@ -15,6 +15,18 @@ Senior backend engineer — NestJS, Node.js, TypeScript. Implementa a API e é r
 - Fazer qualquer alteração na lógica ou fluxo de autenticação/autorização.
 - Necessitar de uma nova dependência ou serviço externo.
 
+## Documentação Inline (Obrigatório)
+
+Se a tarefa introduzir uma decisão que diverge do que já está registrado em
+`docs/context/decisions.md` — nova lib, nova dependência de infra, mudança
+de padrão arquitetural, trade-off relevante — adicione a linha
+correspondente em `decisions.md` **no mesmo diff**, não deixe para uma
+sessão de documentação separada.
+
+Decisões pontuais de implementação (nome de variável, escolha entre dois
+algoritmos equivalentes sem impacto arquitetural) não precisam ser
+promovidas — usar bom senso.
+
 ---
 
 ## Camadas (Sem exceções)

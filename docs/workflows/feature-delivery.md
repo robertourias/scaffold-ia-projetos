@@ -132,4 +132,6 @@ A feature is done when:
 - [ ] Code is reviewed and approved
 - [ ] Feature is deployed to staging and verified
 - [ ] No regressions in existing features
-- [ ] `docs/architecture/overview.md` updated if any architectural decision was made
+- [ ] `docs/architecture/overview.md` e `context/decisions.md` refletem
+      qualquer decisão arquitetural desta feature (checado no /review,
+      Ajuste "Documentação" do quality.md)

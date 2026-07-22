@@ -35,6 +35,16 @@ Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
 ### Estágio 2 — Qualidade & Padrões
 
+#### Documentação
+- [ ] Se o diff introduziu decisão técnica nova (lib, padrão, trade-off),
+      ela está em `docs/context/decisions.md` — não só implementada no
+      código sem registro.
+- [ ] Se o diff introduziu token/padrão de design novo, ele está em
+      `docs/context/ui-guidelines.md`.
+
+Trate itens não marcados aqui como 🟡 WARNING, não 🔴 BLOCKER — não deve
+travar o merge, mas deve aparecer na revisão.
+
 #### Geral & Tipagem
 - [ ] Sem uso desnecessário de `any`, type assertions cegas (`as`) ou exclusões de lint (`eslint-disable`) sem comentários robustos explicando a causa.
 - [ ] Tratamento explícito de estados vazios (empty states), nulos e erros de conexão.

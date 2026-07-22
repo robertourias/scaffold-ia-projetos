@@ -20,7 +20,7 @@ O `docs/` é a memória persistente que preenche essa lacuna **sem reensinar tec
 
 ### Para um projeto novo
 
-```bash
+```
 # 1. Copiar scaffold
 cp -r scaffold-ia-projetos/docs   seu-projeto/
 cp -r scaffold-ia-projetos/.claude seu-projeto/
@@ -32,9 +32,9 @@ cp    scaffold-ia-projetos/AGENTS.md seu-projeto/
 
 O comando conduz entrevista em 5 blocos (nome, arquitetura, decisões backend, frontend, convenções) e preenche automaticamente `docs/context/`.
 
-### Para um projeto existente
+### Para um projeto existente (só reorganizar / economizar tokens)
 
-```bash
+```
 # 1. Copiar arquivos atualizados
 cp -r scaffold-ia-projetos/docs/commands/ seu-projeto/docs/
 cp -r scaffold-ia-projetos/docs/workflows/ seu-projeto/docs/
@@ -45,6 +45,25 @@ mkdir -p seu-projeto/docs/archive seu-projeto/docs/context/domains
 
 # 3. Reorganizar (veja "Migração" abaixo)
 ```
+
+### Para um projeto existente sem documentação (bootstrap retroativo)
+
+Se o projeto já tem código rodando mas nunca teve `docs/context/` ou
+`docs/architecture/` preenchidos — não é um problema de organização, é um
+problema de conteúdo inexistente — use o prompt de bootstrap retroativo:
+
+```
+cat docs/prompts/retroactive-documentation.md
+# cole o conteúdo no Claude Code, na raiz do projeto existente
+```
+
+Diferente da migração acima (que só reorganiza arquivos genéricos), este
+prompt **analisa o código real** — `package.json`, configs, estrutura de
+pastas, git log — e gera o conteúdo de `product.md`, `decisions.md`,
+`architecture/overview.md` etc. a partir do que já foi implementado, em vez
+de deixar placeholders para você preencher manualmente. Qualquer informação
+que não possa ser inferida com confiança é marcada como
+`[INFERIDO — confirmar]` em vez de inventada.
 
 ---
 
@@ -69,7 +88,8 @@ docs/
 │   ├── conventions.md    ← Nomenclatura, Git, imports
 │   ├── decisions.md      ← Escolhas de frontend e backend
 │   ├── ui-guidelines.md  ← Design system, tokens, componentes
-│   └── current-state.md  ← Estado atual (atualizado por /checkpoint)
+│   ├── current-state.md  ← Estado atual (atualizado por /checkpoint)
+│   └── domains/           ← Regras de negócio fragmentadas por domínio
 │
 ├── architecture/          ← Visão arquitetural detalhada
 │   ├── overview.md
@@ -84,6 +104,10 @@ docs/
 │
 ├── commands/              ← Prompts de ativação de papéis
 │   └── README.md          ← Referência completa
+│
+├── prompts/                ← Prompts avulsos de bootstrap e auditoria
+│   └── retroactive-documentation.md ← Gera docs/context/ e docs/architecture/
+│                                       a partir da análise de um projeto existente
 │
 ├── comparativo-scaffold-vs-superpowers.md ← Scaffold vs Superpowers (tokens × qualidade)
 │
@@ -124,9 +148,9 @@ Ideia/requisito
 ### Playbook e comparativo (tokens × qualidade)
 
 | Documento | Uso |
-|-----------|-----|
-| [Playbook — modos econômico / rigor / emergência](docs/workflows/playbook-tokens-qualidade.md) | Decidir **como** trabalhar em cada tarefa (default do dia a dia) |
-| [Comparativo Scaffold vs Superpowers](docs/comparativo-scaffold-vs-superpowers.md) | Entender trade-offs de tokens, qualidade e modelo híbrido |
+| --- | --- |
+| [Playbook — modos econômico / rigor / emergência](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/workflows/playbook-tokens-qualidade.md) | Decidir **como** trabalhar em cada tarefa (default do dia a dia) |
+| [Comparativo Scaffold vs Superpowers](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/comparativo-scaffold-vs-superpowers.md) | Entender trade-offs de tokens, qualidade e modelo híbrido |
 
 **Regra prática:** scaffold como sistema operacional do projeto; Superpowers só sob demanda (ambiguidade, bug hard, feature de alto risco). Detalhes no playbook.
 
@@ -135,7 +159,7 @@ Ideia/requisito
 ## Slash Commands (Claude Code)
 
 | Comando | Exemplo | O quê |
-|---------|---------|-------|
+| --- | --- | --- |
 | `/init-project` | `/init-project sistema de pedidos` | Entrevista, preenche contexto |
 | `/backlog` | `/backlog` | Gera TASK01..TASKNN do product.md |
 | `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review) |
@@ -147,9 +171,11 @@ Ideia/requisito
 | `/checkpoint` | `/checkpoint` | Salva estado, gera changelog |
 | `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
 
-Referência completa e uso em Cursor/Copilot: [`docs/commands/README.md`](docs/commands/README.md)
+Referência completa e uso em Cursor/Copilot: [`docs/commands/README.md`](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/commands/README.md)
 
-Playbook de modos (quando batch vs hands-on vs Superpowers): [`docs/workflows/playbook-tokens-qualidade.md`](docs/workflows/playbook-tokens-qualidade.md)
+Playbook de modos (quando batch vs hands-on vs Superpowers): [`docs/workflows/playbook-tokens-qualidade.md`](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/workflows/playbook-tokens-qualidade.md)
+
+Bootstrap retroativo para projeto existente sem contexto: [`docs/prompts/retroactive-documentation.md`](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/prompts/retroactive-documentation.md)
 
 ---
 
@@ -160,7 +186,7 @@ O design de **carregamento sob demanda** é proposital: cada arquivo existe para
 ### Quanto contexto cada papel usa
 
 | Papel | Arquivos | Tokens |
-|-------|----------|--------|
+| --- | --- | --- |
 | Backend | `skills/backend.md` + `conventions.md` + `decisions.md` | ~0.8k |
 | Frontend | `skills/frontend.md` + `conventions.md` + `ui-guidelines.md` + `decisions.md` | ~1.1k |
 | Planner (Spec + Plan) | `skills/planner.md` + `product.md` + `architecture/overview.md` | ~1.4k |
@@ -202,9 +228,8 @@ Tudo mais é descartado ao final de cada feature (specs vão para archive).
 ### Quando escalar o processo (e quando não)
 
 Para não gastar tokens com processo pesado em tarefa simples — nem subinvestir em feature crítica — use o playbook:
-
-- **[Playbook tokens × qualidade](docs/workflows/playbook-tokens-qualidade.md)** — modos Econômico (default), Rigor e Emergência
-- **[Comparativo Scaffold vs Superpowers](docs/comparativo-scaffold-vs-superpowers.md)** — o que cada sistema otimiza e o modelo híbrido recomendado
+- **[Playbook tokens × qualidade](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/workflows/playbook-tokens-qualidade.md)** — modos Econômico (default), Rigor e Emergência
+- **[Comparativo Scaffold vs Superpowers](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/comparativo-scaffold-vs-superpowers.md)** — o que cada sistema otimiza e o modelo híbrido recomendado
 
 ---
 
@@ -233,7 +258,7 @@ O `/retomar` funciona mesmo sem checkpoint anterior — ele infere estado do git
 
 ## Fluxo completo (exemplo)
 
-```bash
+```
 # Iniciar uma vez
 /init-project plataforma de gestão de despesas
 
@@ -268,10 +293,13 @@ mv docs/specs/YYYY-MM-DD-*.md docs/archive/
 
 ## Migração — Otimizar projeto existente
 
-Se você já tem um projeto rodando e quer economizar tokens:
+Se você já tem um projeto rodando e quer economizar tokens (a documentação
+já existe, só está desorganizada/verbosa demais — se ela **não existe**,
+use o [bootstrap retroativo](#para-um-projeto-existente-sem-documentação-bootstrap-retroativo) acima):
 
 ### Passo 1: Atualizar arquivos base
-```bash
+
+```
 cp -r scaffold-ia-projetos/docs/commands/ seu-projeto/docs/
 cp -r scaffold-ia-projetos/docs/workflows/ seu-projeto/docs/
 cp -r scaffold-ia-projetos/docs/skills/ seu-projeto/docs/
@@ -305,13 +333,14 @@ Após isso, seu projeto usa 30-40% menos tokens sem perder contexto.
 ## O que cada diretório faz
 
 | Diretório | Responsabilidade |
-|-----------|------------------|
+| --- | --- |
 | `skills/` | Papéis, checklist, boas práticas, qualidade |
 | `specs/` | Specs de features (Status: review → approved) |
-| `context/` | Informações únicas do seu produto — **você preenche** |
+| `context/` | Informações únicas do seu produto — **você preenche** (ou o bootstrap retroativo preenche por você) |
 | `architecture/` | Visão técnica: backend, frontend, infra |
 | `workflows/` | Processos (feature-delivery, release, playbook tokens×qualidade) |
 | `commands/` | Prompts de ativação de papéis |
+| `prompts/` | Prompts avulsos de bootstrap e auditoria, fora do fluxo do dia a dia |
 | `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 | `changelog/` | Histórico por data |
 | `archive/` | Specs concluídas |
@@ -321,7 +350,7 @@ Após isso, seu projeto usa 30-40% menos tokens sem perder contexto.
 ## Adaptadores incluídos
 
 | Ferramenta | Arquivo | Carregamento |
-|-----------|---------|-------------|
+| --- | --- | --- |
 | Claude Code | `.claude/CLAUDE.md` | Automático |
 | Cursor | `AGENTS.md` | Automático |
 | Copilot Workspace | `AGENTS.md` | Automático |
@@ -339,12 +368,17 @@ Atualize quando:
 - Nova tech/lib → `decisions.md`
 - Feature aprovada → novo spec em `specs/`
 
+Se a documentação de um projeto existente ficou pra trás em relação ao
+código (status desatualizado, decisões implementadas mas nunca registradas),
+rode o [bootstrap retroativo](docs/prompts/retroactive-documentation.md) para
+reconciliar antes de continuar usando o fluxo normal de specs.
+
 ---
 
 ## Stack padrão
 
 | Camada | Tech |
-|--------|------|
+| --- | --- |
 | Monorepo | Turborepo |
 | Frontend | Next.js 14+ (App Router) |
 | Backend | NestJS |

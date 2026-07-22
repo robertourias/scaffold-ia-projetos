@@ -59,6 +59,21 @@ Reescreva `docs/context/current-state.md` com o seguinte conteúdo preenchido. *
 - [item que precisa de resolução antes de continuar, ou "(nenhum)"]
 ```
 
+## Passo 2.5 — Sincronização leve de arquitetura
+
+Antes de salvar o estado, verifique rapidamente:
+
+1. A seção "Decisões desta sessão" que você acabou de escrever em
+   `current-state.md` tem algum item que deveria estar em
+   `docs/context/decisions.md` mas não foi promovido durante a
+   implementação (rede de segurança para o que passou despercebido no
+   Ajuste 1/2 dos papéis de backend/frontend)?
+2. Se sim, promova agora seguindo o mesmo critério: decisão estrutural →
+   `decisions.md` no domínio certo; detalhe de design → `ui-guidelines.md`.
+3. Se o volume de decisões pendentes for grande (ex: primeira vez rodando
+   isso num projeto com histórico acumulado), pare e sugira rodar o comando
+   `/architecture` completo em vez de tentar promover tudo inline aqui.
+
 ## Passo 3 — Atualizar CHANGELOG
 
 Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual) e adicione ou complemente a entrada com o que foi feito nesta sessão.
