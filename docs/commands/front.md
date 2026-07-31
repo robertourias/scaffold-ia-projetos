@@ -30,6 +30,18 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 - Escopo específico → salve artefatos em `$SCOPE/docs/`
 - Escopo global → salve em `docs/`
 
+## Tratamento de Ambiguidade
+
+Antes de implementar, detecte falta de contexto:
+
+- **Requisito de UI ambíguo?** "A tela deve ter X e Y juntos, ou em abas separadas?"
+- **Comportamento interativo indefinido?** "Qual é o estado esperado quando o usuário clica em Z?"
+- **Design ou validação desconhecida?** "Há padrão definido em `docs/context/ui-guidelines.md`? Se não, qual é o esperado?"
+- **Escopo técnico incerto?** "Isso é só frontend ou envolve backend também?"
+- **Acessibilidade ou responsividade?** "Há requisitos especiais de acessibilidade ou breakpoints?"
+
+Faça **1 pergunta** se houver dúvida. Não hesite em perguntar — evita retrabalho.
+
 ## Tarefa (Batching Suportado)
 
 $ARGUMENTS

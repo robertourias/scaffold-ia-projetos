@@ -10,6 +10,17 @@ O **primeiro token** é o caminho da Spec (ex: `docs/specs/2026-06-13-onboarding
 
 Se nenhum caminho for informado, peça o caminho da Spec e pare.
 
+## Tratamento de Ambiguidade
+
+Durante a execução, se:
+
+- **Critério de aceite ambíguo?** Pergunte: "O critério 'X' significa Y ou Z?"
+- **Spec incompleta ou sem Plano?** Avise: "A Spec não tem 'Plano de Implementação' ou 'Ordem de Execução'. Posso montar o grafo manualmente, mas confirme as dependências."
+- **Escopo de tarefa desconhecido?** "A tarefa T1 envolve X e Y? Só X? Preciso clareza antes de delegar."
+- **Dependência não atendida?** Bloqueie: "T3 depende de T1. T1 ainda não foi executada. Deseja pular ou executar fora de ordem?"
+
+**Regra:** nunca execute tarefa com dependência não atendida. Sempre questione e wait confirmação do usuário.
+
 ## Passo 1 — Ler e validar a Spec
 
 1. Leia o arquivo da Spec informado.

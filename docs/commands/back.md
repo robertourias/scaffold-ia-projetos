@@ -30,6 +30,18 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 - Escopo específico → salve artefatos em `$SCOPE/docs/`
 - Escopo global → salve em `docs/`
 
+## Tratamento de Ambiguidade
+
+Antes de implementar, detecte falta de contexto:
+
+- **Requisito ambíguo?** "Entendi assim... está certo?"
+- **Contrato de API indefinido?** "Qual é a assinatura esperada da função/endpoint?"
+- **Regra de negócio desconhecida?** "Qual é o critério de validação para X?"
+- **Escopo técnico incerto?** "Isso é só backend ou também frontend?"
+- **Dependência externa indefinida?** "Qual é a versão mínima desta lib? Há restrições de compatibilidade?"
+
+Faça **1 pergunta** se houver dúvida genuína. Não hesite em perguntar — evita implementação errada.
+
 ## Tarefa (Batching Suportado)
 
 $ARGUMENTS

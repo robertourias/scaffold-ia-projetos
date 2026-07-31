@@ -15,6 +15,19 @@ Carregue sob demanda apenas se necessário:
 
 O escopo de salvamento e contexto depende de onde o arquivo será criado ou de argumentos extras fornecidos (ex: se o projeto for dividido em sub-apps, salve na pasta correta). Se não especificado, use o escopo global (salve em `docs/specs/`).
 
+## Tratamento de Ambiguidade
+
+Antes de gerar a Spec, detecte falta de contexto:
+
+- **Requisito vago ou ambíguo?** "Entendi que a tarefa é fazer X. Está certo, ou há nuances?"
+- **Regra de negócio desconhecida?** "Qual é o critério exato para este comportamento?"
+- **Contrato de dados indefinido?** "Qual é o schema esperado para X (entrada/saída)?"
+- **Dependências da tarefa?** "Esta tarefa depende de outra? Qual?"
+- **Impacto em outras partes do sistema?** "Isso afeta autenticação? Banco? Integração com X?"
+- **Prioridade ou fase de entrega?** "Qual é a fase esperada (MVP, V1, complementar)?"
+
+Faça **2-3 perguntas** se houver dúvida genuína. O resultado deve ser uma Spec que o desenvolvedor execute **sem voltar a perguntar**.
+
 ## Resolução de Argumento
 
 Argumento recebido: $ARGUMENTS
@@ -25,14 +38,16 @@ Argumento recebido: $ARGUMENTS
 2. Localize a linha correspondente ao ID informado (ex: TASK01).
 3. Use o **título** e a **descrição** da tarefa como base.
 4. Se a tarefa tiver dependências, verifique se os specs das dependências já existem. Se não existirem, alerte o usuário.
-5. Siga para a geração unificada da Spec + Plano Técnico.
-6. Após gerar o arquivo, **atualize** `docs/context/product-backlog.md`:
+5. **Antes de gerar**, aplique o tratamento de ambiguidade acima se houver dúvidas genuínas sobre o requisito.
+6. Siga para a geração unificada da Spec + Plano Técnico.
+7. Após gerar o arquivo, **atualize** `docs/context/product-backlog.md`:
    - Altere o Status da tarefa de `backlog` para `spec-review`
    - Preencha a coluna "Spec" com o caminho do arquivo gerado (ex: `docs/specs/YYYY-MM-DD-<topic>.md`)
 
 ### Se o argumento for texto livre (descrição de feature/requisito)
 
-Prossiga normalmente com a geração da Spec + Plano Técnico.
+1. **Antes de gerar**, aplique o tratamento de ambiguidade acima se houver dúvidas.
+2. Prossiga normalmente com a geração da Spec + Plano Técnico.
 
 ## Gerenciamento de Contexto
 

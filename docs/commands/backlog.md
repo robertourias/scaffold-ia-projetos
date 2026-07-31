@@ -16,6 +16,17 @@ Carregue sob demanda apenas se necessário:
 O projeto deve ter sido inicializado com `/init-project`. Verifique se `docs/context/product.md` contém dados reais (sem `<!-- TODO -->`). Se não estiver preenchido, informe:
 > "O projeto ainda não foi inicializado. Execute `/init-project [descrição]` primeiro."
 
+## Tratamento de Ambiguidade
+
+Antes de gerar o backlog, se detectar **falta de contexto** nos dados de `docs/context/product.md`, faça perguntas curtas:
+
+- Features não claras? "Qual é a prioridade das features X, Y, Z? Devem ser no backlog inicial?"
+- Fases ou roadmap indefinidas? "Qual é a fase de entrega esperada (MVP, V1, fase de crescimento)?"
+- Restrições técnicas desconhecidas? "Há restrições de stack, banco de dados ou infraestrutura que devem guiar as tarefas?"
+- Regras de negócio ambíguas? "Qual é a regra exata para X?"
+
+Espere respostas antes de continuar. Use sua melhor interpretação se o usuário preferir que você prossiga mesmo com ambiguidade.
+
 ## Execução
 
 Contexto adicional do usuário (opcional): $ARGUMENTS
