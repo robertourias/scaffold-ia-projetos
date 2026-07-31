@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(pnpm *)",
+      "Bash(yarn *)",
+      "Bash(node *)",
+      "Bash(docker *)",
+      "Read(*)",
+      "Edit(*)"
+    ],
+    "ask": [
+      "Bash(rm *)",
+      "Bash(sudo *)"
+    ],
+    "defaultMode": "auto"
+  }
+}
