@@ -1,7 +1,7 @@
 # Archive
 
 Specs **concluídas**. Movidas para cá por `/checkpoint` (Passo 4) ou pela Fase 6 do
-`docs/workflows/feature-delivery.md`.
+`.claude/workflows/feature-delivery.md`.
 
 ## Por que esta pasta existe
 

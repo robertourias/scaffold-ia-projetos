@@ -3,8 +3,8 @@
 Documentação de features **entregues** (pós-merge). Um arquivo por feature:
 `docs/features/<feature>.md`.
 
-Criado/atualizado na Fase 6 de `docs/workflows/feature-delivery.md` e no
-checklist de `docs/workflows/release-process.md`.
+Criado/atualizado na Fase 6 de `.claude/workflows/feature-delivery.md` e no
+checklist de `.claude/workflows/release-process.md`.
 
 ## Features vs Specs vs Archive
 

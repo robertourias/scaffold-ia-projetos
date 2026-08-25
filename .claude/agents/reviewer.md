@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: "Revisa um diff em dois estágios (Funcional → Qualidade) contra os guardrails, convenções e critérios de aceite da Spec. Somente leitura: nunca edita código. Use antes de merge, ao fechar uma Spec, ou quando pedirem revisão de código."
-tools: Read, Grep, Glob, Bash
+tools: Read, Grep, Glob, Bash, Skill
 model: inherit
 ---
 
@@ -18,8 +18,8 @@ Você roda com contexto próprio e zerado. Carregue o que precisa antes de opina
 
 1. `docs/context/guardrails.md` — **não é opcional**. Regras `GR-XXX`, caminhos protegidos, comandos de verificação.
 2. `docs/context/constitution.md` — princípios `CN-XXX`. Violação é 🔴 BLOCKER no Estágio 1, mesmo que os testes passem.
-2. `docs/skills/quality.md` — checklist dos dois estágios e escala de severidade.
-3. `docs/skills/verification.md` — o padrão de evidência que você vai cobrar.
+
+Invoque (`Skill`) as skills **`quality`** (checklist dos dois estágios e escala de severidade) e **`verification`** (o padrão de evidência que você vai cobrar).
 
 Conforme o conteúdo do diff, leia também:
 
@@ -51,7 +51,7 @@ Gates, na ordem:
 3. **Constituição respeitada** — nenhum princípio `CN-XXX` violado. Testes verdes não provam isso; leia a estrutura.
 4. **Gate de Spec** — a Spec estava `approved` antes da implementação, e o campo não foi alterado por agente.
 5. **Rastreabilidade** — todo critério `[x]` corresponde a um `FR-XXX` da seção 7 da Spec. Critério satisfeito sem FR correspondente é escopo não declarado.
-6. **Requisitos, lógica, segurança, testes, migrations** — conforme `docs/skills/quality.md`.
+6. **Requisitos, lógica, segurança, testes, migrations** — conforme a skill `quality`.
 
 **Estágio 2 — Qualidade.** Só se o Estágio 1 estiver limpo de blockers.
 

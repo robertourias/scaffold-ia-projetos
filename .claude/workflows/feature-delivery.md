@@ -17,7 +17,7 @@ Requirement → [Fase 0: Spec & Plan] → ⛔ GATE: aprovação humana → Backe
 
 1. Ler `docs/architecture/overview.md` e `docs/context/product.md`
 2. Conduzir levantamento com o solicitante (uma pergunta por vez), se necessário
-3. Definir regras de negócio, contratos de API e quebra de tarefas técnicas seguindo `docs/specs/spec-template.md`
+3. Definir regras de negócio, contratos de API e quebra de tarefas técnicas seguindo `.claude/templates/spec-template.md`
 4. Salvar o documento consolidado em `docs/specs/YYYY-MM-DD-<nome-do-topico>.md` com status `review`
 5. **Parar e aguardar** — informar o caminho do arquivo ao solicitante
 
@@ -70,13 +70,13 @@ O solicitante deve:
 - [ ] Set up MSW handler for local development mocking
 
 ### Step 2b: Components
-- [ ] Build new components following `docs/skills/frontend.md`
+- [ ] Build new components following `.claude/skills/frontend/SKILL.md`
 - [ ] Apply design tokens from `docs/context/ui-guidelines.md`
 - [ ] Handle all states: loading, empty, error, data
 - [ ] Write component tests
 
 ### Step 2c: Page / Route
-- [ ] Create or update Next.js page following `docs/skills/frontend.md` and `docs/context/decisions.md`
+- [ ] Create or update Next.js page following `.claude/skills/frontend/SKILL.md` and `docs/context/decisions.md`
 - [ ] Set up proper metadata
 - [ ] Add `loading.tsx` and `error.tsx` if data-fetching route
 
@@ -97,7 +97,7 @@ O solicitante deve:
 
 ## Phase 4: Review (Reviewer Agent)
 
-- [ ] Self-review using `docs/skills/quality.md` checklist
+- [ ] Self-review using `.claude/skills/quality/SKILL.md` checklist
 - [ ] Open PR with description: what changed, why, how to test
 - [ ] Address all BLOCKER and WARNING items
 - [ ] Get approval from at least one other agent or team member
@@ -108,7 +108,7 @@ O solicitante deve:
 
 ## Phase 5: Deploy
 
-Follow `docs/workflows/release-process.md`.
+Follow `.claude/workflows/release-process.md`.
 
 ---
 

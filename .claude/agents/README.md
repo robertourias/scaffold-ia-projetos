@@ -5,10 +5,13 @@ zerado** e devolve só um relatório à thread principal.
 
 | Agente | Ferramentas | Papel |
 |--------|-------------|-------|
-| `backend` | Read, Write, Edit, Grep, Glob, Bash | implementa tarefas de backend |
-| `frontend` | Read, Write, Edit, Grep, Glob, Bash | implementa tarefas de frontend |
-| `reviewer` | Read, Grep, Glob, Bash | revisa em dois estágios — **sem Edit/Write** |
-| `planner` | Read, Write, Edit, Grep, Glob, Bash | gera Spec + plano em ondas |
+| `backend` | Read, Write, Edit, Grep, Glob, Bash, Skill | implementa tarefas de backend |
+| `frontend` | Read, Write, Edit, Grep, Glob, Bash, Skill | implementa tarefas de frontend |
+| `reviewer` | Read, Grep, Glob, Bash, Skill | revisa em dois estágios — **sem Edit/Write** |
+| `planner` | Read, Write, Edit, Grep, Glob, Bash, Skill | gera Spec + plano em ondas |
+
+Todos têm `Skill` para invocar o papel compartilhado com o comando equivalente
+(ver "Relação com `.claude/commands/`" abaixo).
 
 ## Por que subagente e não prompt inline
 
@@ -25,22 +28,26 @@ campo `Agente` da Spec. `/spec` e `/review` podem rodar inline ou delegar a
 Para tarefa pequena e avulsa, `/back` e `/front` inline continuam mais baratos —
 não há ganho em pagar o overhead de um subagente para uma edição de 2 arquivos.
 
-## Relação com `docs/commands/`
+## Relação com `.claude/commands/`
 
-`docs/commands/*.md` é a fonte **agnóstica de ferramenta** (serve Cursor,
-Copilot, Codex). `.claude/agents/*.md` é a materialização em subagente do Claude
-Code. Os dois descrevem o mesmo papel.
+`.claude/commands/back.md` e `.claude/agents/backend.md` descrevem o mesmo
+papel em dois modos de execução: comando roda **inline** na thread atual
+(barato, para tarefa pequena e avulsa); agente roda em **subagente**
+(contexto isolado, para tarefas paralelas em `/hands-on`). O mesmo par existe
+para `front` / `frontend`.
 
-Para evitar drift, o conteúdo que precisa ser idêntico foi extraído para arquivos
-únicos que ambos leem:
+Para evitar drift entre os dois modos, o conteúdo que precisa ser idêntico foi
+extraído para skills próprias, que ambos invocam:
 
-- `docs/skills/<papel>.md` — papel e padrões
-- `docs/skills/verification.md` — o que significa "pronto"
-- `docs/context/guardrails.md` — limites invioláveis
+- skill `backend` / `frontend` / `planner` / `quality` — papel e padrões (`.claude/skills/<papel>/SKILL.md`)
+- skill `verification` — o que significa "pronto" (`.claude/skills/verification/SKILL.md`)
+- `docs/context/guardrails.md` — limites invioláveis (dado do projeto, não skill — cada projeto preenche o seu)
 
-Ao editar um papel, mude o arquivo em `docs/skills/`. Só mexa aqui e em
-`docs/commands/` se a mudança for de **fluxo**, não de conteúdo — e então mude
-nos dois.
+Ao mudar o **papel** (o que um backend deve fazer, como revisar), edite a
+skill correspondente — comando e agente puxam dela e ficam sincronizados sem
+duplicação. Só edite o comando e o agente separadamente quando a mudança for
+de **fluxo de execução** (como o comando resolve escopo, como o agente reporta
+de volta ao orquestrador) — aí sim são coisas diferentes por natureza.
 
 ## Convenções ao escrever um agente novo
 

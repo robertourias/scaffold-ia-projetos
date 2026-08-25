@@ -1,8 +1,13 @@
+---
+name: verification
+description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação. Invocada por /back, /front, /hands-on, a skill quality e todos os subagentes de implementação."
+---
+
 # Skill: Verificação
 
 Fonte canônica do que significa "pronto" neste projeto. Referenciada por
-`docs/commands/back.md`, `docs/commands/front.md`, `docs/commands/hands-on.md`,
-`docs/skills/quality.md` e pelos subagentes em `.claude/agents/`.
+`.claude/commands/back.md`, `.claude/commands/front.md`, `.claude/commands/hands-on.md`,
+`.claude/skills/quality/SKILL.md` e pelos subagentes em `.claude/agents/`.
 
 > Os comandos concretos vivem em `docs/context/guardrails.md`, seção 1. Este
 > arquivo define **como usá-los**; aquele define **quais são**.
