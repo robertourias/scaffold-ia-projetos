@@ -32,7 +32,7 @@ com confiança no código, no `package.json`, nos configs, ou no `git log`.
    - `.claude/CLAUDE.md`, `.claude/README.md`, `.claude/settings.example.json`
    - `.claude/commands/*.md` (os slash commands: `/init-project`, `/backlog`,
      `/spec`, `/back`, `/front`, `/review`, `/hands-on`, `/retomar`,
-     `/checkpoint`, `/commit`, `/groom`) — **sem isso nenhum slash command
+     `/checkpoint`, `/groom`) — **sem isso nenhum slash command
      funciona**, é o erro mais comum de um bootstrap incompleto
    - `.claude/agents/*.md` (os subagentes de papel)
    - `.claude/skills/*/SKILL.md` (planner, backend, frontend, quality,
