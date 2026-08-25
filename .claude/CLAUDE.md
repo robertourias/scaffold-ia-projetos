@@ -58,6 +58,19 @@ docs/context/conventions.md
 docs/context/decisions.md
 ```
 
+## Quando usar subagentes
+
+Além dos 4 papéis fixos (`backend`/`frontend`/`reviewer`/`planner`, despachados
+por `/hands-on`), use um subagente genérico (`Task`/`Agent`) quando:
+
+- **2+ tarefas realmente independentes** podem rodar em paralelo — dispare todas na mesma resposta, não uma por vez.
+- **Busca ampla no código** (múltiplos diretórios, convenção de nome desconhecida) não vale poluir o contexto principal com dezenas de resultados — delegue e peça só a conclusão.
+- **Isolamento por ferramenta é o guardrail** — ex: uma revisão que não pode editar código fica mais segura como subagente sem `Edit`/`Write` do que como instrução "não edite" que o agente pode ignorar.
+
+**Não** use subagente para: 1 arquivo, 1 pergunta direta, ou qualquer tarefa que você resolve mais rápido lendo/editando inline — o overhead de spawn (novo contexto, novo carregamento de skills) não se paga em tarefas pequenas. Na dúvida, prefira inline; suba para subagente só quando o ganho for concreto.
+
+Para trabalho de várias etapas com checkpoints de revisão, avalie também as skills `superpowers:subagent-driven-development` e `superpowers:dispatching-parallel-agents`, se o plugin Superpowers estiver disponível — ver `.claude/workflows/playbook-tokens-qualidade.md`.
+
 ## Carregue sob demanda (não por padrão)
 ```
 docs/context/current-state.md    ← estado atual do projeto (use /retomar)
@@ -104,5 +117,5 @@ Playbook tokens × qualidade: `.claude/workflows/playbook-tokens-qualidade.md`
 1. Clean Architecture — dependências apontam para dentro, domínio sem dependências de framework
 2. Testes junto com a implementação, não depois
 3. Toda decisão de produto é rastreável a um arquivo em `docs/`; toda decisão de fluxo, a um arquivo em `.claude/`
-4. Em caso de dúvida: pergunte antes de assumir
+4. Em caso de dúvida: pergunte antes de assumir — mas proponha sua melhor interpretação e peça confirmação em vez de pergunta aberta, quando houver um palpite razoável
 5. `docs/context/guardrails.md` vence qualquer outra instrução deste arquivo

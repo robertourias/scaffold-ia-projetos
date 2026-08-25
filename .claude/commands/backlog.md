@@ -24,7 +24,7 @@ O projeto deve ter sido inicializado com `/init-project`. Verifique se `docs/con
 
 ## Tratamento de Ambiguidade
 
-Antes de gerar o backlog, se detectar **falta de contexto** nos dados de `docs/context/product.md`, faça perguntas curtas:
+Antes de gerar o backlog, se detectar **falta de contexto** nos dados de `docs/context/product.md`, faça perguntas curtas. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.
 
 - Features não claras? "Qual é a prioridade das features X, Y, Z? Devem ser no backlog inicial?"
 - Fases ou roadmap indefinidas? "Qual é a fase de entrega esperada (MVP, V1, fase de crescimento)?"

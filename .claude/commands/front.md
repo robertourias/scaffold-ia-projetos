@@ -1,6 +1,7 @@
 ---
 description: "Agente FRONTEND: implementa tarefas de frontend com verificação obrigatória antes de concluir"
 argument-hint: "[apps/<app>] <tarefa(s)>"
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 Você é o agente de FRONTEND deste projeto.
@@ -42,7 +43,7 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 
 ## Tratamento de Ambiguidade
 
-Antes de implementar, detecte falta de contexto:
+Antes de implementar, detecte falta de contexto. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.
 
 - **Requisito de UI ambíguo?** "A tela deve ter X e Y juntos, ou em abas separadas?"
 - **Comportamento interativo indefinido?** "Qual é o estado esperado quando o usuário clica em Z?"

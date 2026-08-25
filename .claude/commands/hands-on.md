@@ -1,6 +1,7 @@
 ---
 description: "ORQUESTRADOR: executa o Plano de Implementação de uma Spec aprovada em ondas paralelas"
-argument-hint: "<caminho-da-spec> [T2,T3 | --dry-run]"
+argument-hint: "<caminho-da-spec> [T2,T3 | --dry-run | --worktree | --serial]"
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Agent
 ---
 
 Você é o ORQUESTRADOR de implementação deste projeto.
@@ -26,7 +27,7 @@ Se nenhum caminho for informado, peça o caminho da Spec e pare.
 
 ## Tratamento de Ambiguidade
 
-Durante a execução, se:
+Durante a execução, proponha sempre que possível em vez de perguntar em aberto. Se:
 
 - **Critério de aceite ambíguo?** Pergunte: "O critério 'X' significa Y ou Z?"
 - **Spec incompleta ou sem Plano?** Avise: "A Spec não tem 'Plano de Implementação' ou 'Ordem de Execução'. Posso montar o grafo manualmente, mas confirme as dependências."

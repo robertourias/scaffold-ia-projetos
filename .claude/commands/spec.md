@@ -27,7 +27,7 @@ O escopo de salvamento e contexto depende de onde o arquivo será criado ou de a
 
 ## Tratamento de Ambiguidade
 
-Antes de gerar a Spec, detecte falta de contexto:
+Antes de gerar a Spec, detecte falta de contexto. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.
 
 - **Requisito vago ou ambíguo?** "Entendi que a tarefa é fazer X. Está certo, ou há nuances?"
 - **Regra de negócio desconhecida?** "Qual é o critério exato para este comportamento?"
