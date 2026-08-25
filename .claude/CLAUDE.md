@@ -106,7 +106,6 @@ packages/
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios
 /groom  [funcionalidade]    ← adiciona feature nova ao backlog (append, sem reprocessar)
-/commit                     ← agrupa o working tree em commits Conventional (nunca faz push)
 ```
 Referência completa: `.claude/README.md`
 Playbook tokens × qualidade: `.claude/workflows/playbook-tokens-qualidade.md`

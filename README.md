@@ -31,13 +31,29 @@ cp -r scaffold-ia-projetos/.claude seu-projeto/
 
 O comando conduz entrevista em **8 blocos** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche automaticamente `docs/context/`, gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez.
 
-### Para um projeto existente (só reorganizar / economizar tokens)
+### Para um projeto existente com harness desatualizado
+
+Se o projeto já usa uma versão anterior do scaffold — estrutura antiga
+(`docs/commands/`, `docs/skills/`, `AGENTS.md`), sem guardrails, sem
+subagentes, sem hooks, ou com comando que não existe mais — use o prompt de
+atualização de harness:
 
 ```
-# 1. Copiar o harness atualizado
-cp -r scaffold-ia-projetos/.claude/. seu-projeto/.claude/
+cat .claude/prompts/upgrade-harness.md
+# cole o conteúdo no Claude Code, na raiz do projeto existente
+```
 
-# 2. Criar pastas de produto
+Ele diagnostica a distância da versão atual, atualiza `.claude/` inteiro,
+remove estrutura obsoleta (com confirmação — nunca some com customização sem
+avisar), preenche guardrails/constituição se estiverem faltando, e faz
+**merge** do `.claude/settings.json` do usuário em vez de sobrescrever.
+Nenhum arquivo de produto em `docs/context/` é tocado sem necessidade.
+
+Para uma cópia manual e rápida (sem diagnóstico, sem merge de settings — só
+para quem sabe exatamente o que está fazendo):
+
+```
+cp -r scaffold-ia-projetos/.claude/. seu-projeto/.claude/
 mkdir -p seu-projeto/docs/archive seu-projeto/docs/context/domains
 ```
 
@@ -102,7 +118,7 @@ docs/
 ├── hooks/                       ← verificação automática (Pre/PostToolUse, Stop)
 ├── workflows/                   ← processos de várias fases (sob demanda)
 ├── templates/                    ← spec-template.md
-├── prompts/                       ← bootstrap retroativo, ativação de doc orgânica
+├── prompts/                       ← bootstrap retroativo, atualização de harness desatualizado
 └── comparativo-scaffold-vs-superpowers.md
 ```
 
@@ -194,7 +210,7 @@ Ideia/requisito
       ↓
 [6] /review [diff]
       ↓
-[7] /checkpoint (salva estado) → /commit
+[7] /checkpoint (salva estado) → git commit
       ↓
 [8] Specs concluídas migram para docs/archive/ (feito por /checkpoint)
 ```
@@ -226,13 +242,14 @@ Ideia/requisito
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
 | `/checkpoint` | `/checkpoint` | Salva estado, gera changelog, arquiva specs concluídas |
 | `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
-| `/commit` | `/commit` | Agrupa o working tree em commits Conventional (nunca faz push) |
 
 Referência completa: [`.claude/README.md`](.claude/README.md)
 
 Playbook de modos (quando batch vs hands-on vs Superpowers): [`.claude/workflows/playbook-tokens-qualidade.md`](.claude/workflows/playbook-tokens-qualidade.md)
 
 Bootstrap retroativo para projeto existente sem contexto: [`.claude/prompts/retroactive-documentation.md`](.claude/prompts/retroactive-documentation.md)
+
+Atualizar harness de um projeto que já usa o scaffold mas ficou desatualizado: [`.claude/prompts/upgrade-harness.md`](.claude/prompts/upgrade-harness.md)
 
 ---
 
@@ -382,7 +399,7 @@ O `/retomar` funciona mesmo sem checkpoint anterior — ele infere estado do git
 
 # Encerrar
 /checkpoint
-/commit
+git commit -m "feat: descrição"
 
 # Próxima tarefa
 /spec TASK02
@@ -449,7 +466,7 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
 | `hooks/` | Verificação automática (gate de Spec, lint, type-check) |
 | `workflows/` | Processos de várias fases (feature-delivery, release, playbook tokens×qualidade) |
 | `templates/` | `spec-template.md` |
-| `prompts/` | Bootstrap retroativo e ativação de documentação orgânica |
+| `prompts/` | Bootstrap retroativo e atualização de harness desatualizado |
 | `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 
 ---
@@ -469,10 +486,15 @@ Atualize `.claude/` quando:
 - Adicionar/mudar um slash command → `commands/`
 - Adicionar/mudar verificação automática → `hooks/`
 
-Se a documentação de um projeto existente ficou pra trás em relação ao
-código (status desatualizado, decisões implementadas mas nunca registradas),
-rode o [bootstrap retroativo](.claude/prompts/retroactive-documentation.md) para
-reconciliar antes de continuar usando o fluxo normal de specs.
+Se a **documentação de produto** de um projeto existente ficou pra trás em
+relação ao código (status desatualizado, decisões implementadas mas nunca
+registradas), rode o [bootstrap retroativo](.claude/prompts/retroactive-documentation.md)
+para reconciliar antes de continuar usando o fluxo normal de specs.
+
+Se o **harness em si** (`.claude/`) ficou pra trás em relação à versão atual
+do scaffold — estrutura antiga, sem guardrails, sem subagentes, comando
+descontinuado ainda referenciado — rode o [prompt de atualização de harness](.claude/prompts/upgrade-harness.md),
+que migra a estrutura preservando tudo que é conteúdo de produto.
 
 ---
 

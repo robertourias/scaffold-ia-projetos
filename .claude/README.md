@@ -21,7 +21,7 @@ ferramenta nem cópia paralela para outros assistentes.
   hooks/                  ← verificação automática (PreToolUse, PostToolUse, Stop)
   workflows/              ← processos de várias fases (carregados sob demanda)
   templates/              ← spec-template.md
-  prompts/                ← bootstrap retroativo e ativação de documentação orgânica
+  prompts/                ← bootstrap retroativo e atualização de harness desatualizado
   comparativo-scaffold-vs-superpowers.md
 ```
 
@@ -38,7 +38,6 @@ front.md         ← agente frontend (suporta escopo e agrupamento/batching de t
 spec.md          ← planner em Modo de Planejamento Unificado (gera regras + tarefas técnicas)
 hands-on.md      ← orquestrador: executa o Plano de Implementação da Spec em ondas (paralelo)
 review.md        ← reviewer em dois estágios (suporta escopo)
-commit.md        ← agrupa o working tree em commits Conventional (nunca faz push)
 ```
 
 Cada arquivo **é** o slash command — sem wrapper, sem `@` apontando para outro
@@ -126,10 +125,10 @@ Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
 /back implementar use case X, tarefa 1 e 2 da Spec
 /front criar página Y, tarefa 3 e 4 da Spec
 
-# 5. Revisar e commitar
+# 5. Revisar e commitar (git commit é manual — nenhum comando faz isso por você)
 /review [diff]
 /checkpoint
-/commit
+git commit -m "feat: ..."
 
 # 6. Próxima tarefa do backlog
 /spec TASK02
@@ -149,7 +148,7 @@ Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
 
 # Ao final, salve o checkpoint e comite
 /checkpoint
-/commit
+git commit -m "feat(metronome): ..."
 ```
 
 ## Fluxo típico de uma feature global (monorepo)
@@ -167,7 +166,7 @@ Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
 
 # Ao final, salve o checkpoint e comite
 /checkpoint
-/commit
+git commit -m "feat: ..."
 ```
 
 ## Adicionar um comando novo
