@@ -70,13 +70,13 @@ O solicitante deve:
 - [ ] Set up MSW handler for local development mocking
 
 ### Step 2b: Components
-- [ ] Build new components following `docs/agents/frontend.agent.md`
+- [ ] Build new components following `docs/skills/frontend.md`
 - [ ] Apply design tokens from `docs/context/ui-guidelines.md`
 - [ ] Handle all states: loading, empty, error, data
 - [ ] Write component tests
 
 ### Step 2c: Page / Route
-- [ ] Create or update Next.js page following `docs/agents/frontend.agent.md` and `docs/context/decisions.md`
+- [ ] Create or update Next.js page following `docs/skills/frontend.md` and `docs/context/decisions.md`
 - [ ] Set up proper metadata
 - [ ] Add `loading.tsx` and `error.tsx` if data-fetching route
 
@@ -97,7 +97,7 @@ O solicitante deve:
 
 ## Phase 4: Review (Reviewer Agent)
 
-- [ ] Self-review using `docs/agents/reviewer.agent.md` checklist
+- [ ] Self-review using `docs/skills/quality.md` checklist
 - [ ] Open PR with description: what changed, why, how to test
 - [ ] Address all BLOCKER and WARNING items
 - [ ] Get approval from at least one other agent or team member

@@ -25,6 +25,9 @@ Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
 ### Estágio 1 — Funcional (GATES)
 
+- [ ] **Verificação executada**: type-check, lint e testes de `docs/context/guardrails.md` rodaram e a **saída real** está na conversa, conforme `docs/skills/verification.md`. Critério de aceite marcado `[x]` sem evidência é 🔴 BLOCKER — o checkbox é autodeclaração até prova em contrário.
+- [ ] **Guardrails respeitados**: nenhuma regra `GR-XXX` de `docs/context/guardrails.md` foi violada; nenhum caminho protegido foi editado sem pedido explícito.
+- [ ] **Gate de Spec**: a Spec estava `Status: approved` **antes** da implementação, e o campo não foi alterado por agente.
 - [ ] **Requisitos**: Atende a todos os critérios de aceite descritos no spec aprovado ou na tarefa delegada.
 - [ ] **Lógica**: Corretude de algoritmos, condicionais e ausência de efeitos colaterais indesejados.
 - [ ] **Segurança**: Sem segredos/chaves no código, queries parametrizadas obrigatórias, validação de posse (ownership) feita na camada de service.
@@ -66,6 +69,7 @@ travar o merge, mas deve aparecer na revisão.
 ## O Que NÃO Bloquear
 
 * Formatação cosmética tratada automaticamente pelo Prettier/Linter.
+* Falha de verificação **pré-existente**, sem relação com o diff — reporte como 💡 NOTE e registre como dívida, não bloqueie o merge desta mudança.
 * Preferências puramente pessoais de estilo que não causem impacto técnico real.
 * Requisitos futuros especulativos que não estejam na definição de escopo atual.
 

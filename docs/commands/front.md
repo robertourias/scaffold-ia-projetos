@@ -11,6 +11,10 @@ Analise `$ARGUMENTS`:
 
 Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conversa ativa desta sessão do chat, use sua memória de trabalho e **NÃO** faça o carregamento/releitura dos mesmos do disco.
 
+**Sempre carregado** (não é opcional):
+- `docs/context/guardrails.md` (limites invioláveis + comandos de verificação)
+- `docs/skills/verification.md` (o que significa "pronto")
+
 Carregue sob demanda apenas se for a primeira chamada ou se os arquivos mudaram:
 - `docs/skills/frontend.md` (definição de papel e padrões de frontend)
 - `docs/context/conventions.md` (padrões de projeto)
@@ -42,6 +46,16 @@ Antes de implementar, detecte falta de contexto:
 
 Faça **1 pergunta** se houver dúvida. Não hesite em perguntar — evita retrabalho.
 
+## Gate de Spec
+
+Se a tarefa vier de uma Spec, verifique o cabeçalho `**Status:**` antes de escrever código:
+
+- `approved` → prossiga.
+- `review` → **pare**. A Spec não passou pelo gate humano. Avise e não implemente.
+- Sem Spec associada (tarefa avulsa) → prossiga, mas registre isso na resposta.
+
+**Nunca** altere você mesmo `review` → `approved`. Esse campo é do humano.
+
 ## Tarefa (Batching Suportado)
 
 $ARGUMENTS
@@ -52,20 +66,38 @@ $ARGUMENTS
 
 Ao terminar a implementação, execute **sempre** estas etapas na ordem:
 
-### 1. Atualizar a Spec
+### 1. Verificação obrigatória (gate)
+
+Rode os comandos da seção 1 de `docs/context/guardrails.md` que se aplicam ao
+que você alterou e **cole a saída real** na resposta.
+
+| Alterou | Rode |
+|---------|------|
+| qualquer `.ts` / `.tsx` | type-check |
+| qualquer código | lint |
+| lógica de negócio | testes |
+
+Regra completa, incluindo os quatro casos (passou / reprovou / não configurado /
+falha pré-existente) e o que é proibido: **`docs/skills/verification.md`**.
+
+Resumo do que não pode: nunca `--no-verify`, `--passWithNoTests` ou
+`eslint-disable` para forçar verde; nunca marcar `[x]` sem evidência. Se não
+rodou, a resposta é "implementado, **não verificado**", não `[x]`.
+
+### 2. Atualizar a Spec
 
 Identifique o arquivo de Spec associado à tarefa (em `docs/specs/` ou `$SCOPE/docs/specs/`).
 
 Para cada critério de aceite implementado, marque o checkbox como concluído:
 - `- [ ]` → `- [x]`
 
-### 2. Verificar se é a última tarefa da Spec
+### 3. Verificar se é a última tarefa da Spec
 
 Verifique se **todos** os checkboxes da Spec estão marcados como `[x]`.
 
-Se sim → prossiga para o passo 3. Caso contrário → encerre aqui.
+Se sim → prossiga para o passo 4. Caso contrário → encerre aqui.
 
-### 3. Atualizar o status no product-backlog
+### 4. Atualizar o status no product-backlog
 
 Abra `docs/context/product-backlog.md` e localize a linha da TASK correspondente à Spec concluída.
 

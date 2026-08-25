@@ -5,11 +5,20 @@ Leia apenas os arquivos do seu papel antes de qualquer tarefa.
 
 ---
 
+## SEMPRE (todos os papéis)
+
+```
+docs/context/guardrails.md
+docs/skills/verification.md
+```
+
+> No Claude Code, estes papéis existem como subagentes em `.claude/agents/`.
+> Em outras ferramentas, cole o conteúdo de `docs/commands/` correspondente.
+
 ## BACKEND
 
 ```
 docs/skills/backend.md
-docs/skills/supabase.md
 docs/context/conventions.md
 docs/context/decisions.md
 ```
@@ -66,6 +75,8 @@ docs/comparativo-scaffold-vs-superpowers.md  ← scaffold vs Superpowers (tokens
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios
+/groom  [funcionalidade]    ← adiciona feature nova ao backlog (append)
+/commit                     ← agrupa o working tree em commits Conventional (nunca faz push)
 ```
 
 Referência completa: `docs/commands/README.md`  
@@ -79,3 +90,4 @@ Playbook tokens × qualidade: `docs/workflows/playbook-tokens-qualidade.md`
 2. Testes junto com a implementação, não depois
 3. Toda decisão rastreável a um arquivo em `docs/`
 4. Em caso de dúvida: pergunte antes de assumir
+5. `docs/context/guardrails.md` vence qualquer outra instrução deste arquivo

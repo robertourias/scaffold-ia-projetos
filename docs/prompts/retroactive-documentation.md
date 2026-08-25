@@ -26,7 +26,7 @@ com confiança no código, no `package.json`, nos configs, ou no `git log`.
 2. Se você tiver acesso local ao repositório `scaffold-ia-projetos` (pergunte
    o caminho ao usuário se não foi informado), copie os arquivos **genéricos**
    de lá sem alteração:
-   - `docs/skills/*.md` (planner, backend, frontend, quality, supabase — são
+   - `docs/skills/*.md` (planner, backend, frontend, quality — são
      papéis de agente, não específicos deste produto)
    - `docs/specs/spec-template.md`
    - `docs/workflows/feature-delivery.md`, `release-process.md`,
@@ -125,6 +125,42 @@ apenas referencie o arquivo/link — não tente reconstruir os tokens de lá.
   de deploy, variáveis de ambiente esperadas (`.env.example`), runbook básico
   se houver processo de deploy documentado em algum lugar do código/scripts.
 
+## Passo 5.5 — `docs/context/guardrails.md` e `.claude/settings.json` (obrigatório)
+
+Projeto existente sem guardrails é o cenário de maior risco: o código já está
+em produção e o agente entra com permissão de escrita e nenhum limite.
+
+Infira do repositório real — **nunca invente um comando que não roda**:
+
+1. **Comandos de verificação:** leia os `scripts` do `package.json` (ou
+   `Makefile`, `turbo.json`, `justfile`). Rode cada um que encontrar para
+   confirmar que funciona. Comando que falha ou não existe entra como
+   `(não configurado)`, com o motivo.
+2. **Caminhos protegidos:** migrations já aplicadas (`prisma/migrations/`,
+   `src/migrations/`, `db/migrate/`), `.github/workflows/`, `infra/`,
+   `terraform/`, e qualquer pasta que o `git log` mostre ser tocada só por
+   commits de release.
+3. **Caminhos de segredo:** cruze `.gitignore` com a árvore de arquivos.
+   Sinalize se encontrar segredo **já versionado** — isso é achado de
+   segurança, reporte imediatamente e não copie o valor para lugar nenhum.
+4. **Regras invioláveis:** extraia de constraints do schema (`NOT NULL`,
+   `UNIQUE`, `CHECK`), validações repetidas em services, e comentários do tipo
+   "NUNCA", "IMPORTANTE", "não remover". Cada uma vira `GR-001`, `GR-002`, ...
+   marcada `[INFERIDO — confirmar]`.
+5. **Gatilhos de escalação:** identifique os módulos de auth, pagamento e dado
+   pessoal pela estrutura de pastas.
+
+Preencha `docs/context/guardrails.md` com o resultado e gere
+`.claude/settings.json` a partir de `.claude/settings.example.json`,
+acrescentando ao `deny` os caminhos de segredo do item 3 e ao `ask` as escritas
+nos caminhos protegidos do item 2. Valide o JSON antes de salvar.
+
+Se **nenhum** comando de verificação existir, abra o resumo final com:
+
+> ⚠️ Este projeto não tem comando de teste/lint/type-check executável.
+> Até configurar um, nenhum agente consegue provar que uma mudança funciona —
+> os Critérios de Aceite das Specs serão autodeclaração.
+
 ## Passo 6 — `docs/specs/`
 
 Não invente specs históricos. Em vez disso, gere **um único spec-baseline**:
@@ -157,6 +193,10 @@ Encerre com um resumo estruturado:
 ✅ Slash commands ativos (.claude/commands/*.md): [lista ou ⚠️ pendente]
 ✅ docs/context/ preenchido: [arquivos]
 ✅ docs/architecture/ preenchido: [arquivos]
+🛡️ Guardrails: docs/context/guardrails.md + .claude/settings.json
+   - Verificação: [comandos que rodam, ou ⚠️ "(não configurado)"]
+   - Regras invioláveis inferidas: GR-001..GR-0NN (confirmar)
+   - ⚠️ Segredos versionados encontrados: [lista ou "(nenhum)"]
 📋 docs/specs/ — baseline retroativo criado e arquivado
 📌 Itens marcados [INFERIDO — confirmar]: [lista completa, por arquivo]
 ⏭ Próximo passo sugerido: revisar os itens marcados e rodar /init-project

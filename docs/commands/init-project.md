@@ -79,6 +79,66 @@ Use os termos de domínio coletados no Bloco 1 (pergunta 6). Se houver termos, p
 
 ---
 
+### Bloco 6 — Guardrails (preenche `docs/context/guardrails.md` e `.claude/settings.json`)
+
+**Obrigatório. Não pule este bloco.** Um scaffold sem guardrails entrega um agente
+com permissão de escrita e nenhum limite — o dano aparece depois, em produção.
+
+Antes de perguntar, **inspecione o repositório** para inferir respostas e reduzir
+perguntas ao usuário:
+
+- `package.json` → scripts `test`, `lint`, `type-check`, `build` reais (não invente)
+- `.gitignore` e a árvore de arquivos → onde vivem segredos e artefatos
+- `prisma/`, `migrations/`, `db/migrate/` → há migrations versionadas?
+- `.github/workflows/` → há CI?
+
+Faça as perguntas nesta ordem, **uma por vez**, já propondo o que você inferiu
+("Encontrei `npm run test` no package.json — é esse o comando de testes?"):
+
+1. Qual o comando de **testes**? (se não houver, responda "não configurado")
+2. Qual o comando de **type-check**? (ex: `npx tsc --noEmit`)
+3. Qual o comando de **lint**?
+4. Há **caminhos protegidos** que agentes nunca devem editar sem pedido explícito? (ex: migrations já aplicadas em produção, `infra/`, workflows de CI)
+5. Além de `.env` e chaves privadas, há **caminhos de segredo** específicos deste projeto?
+6. Quais são as **regras de negócio invioláveis** — aquelas cuja violação corrompe dados ou quebra contrato com o usuário? (reaproveite as regras críticas do Bloco 1, pergunta 5; peça apenas as que faltarem)
+7. Que operações exigem **parar e perguntar ao humano** neste produto? (além do padrão: auth, migration destrutiva, breaking change, nova dependência, dinheiro, dado pessoal)
+
+Após coletar todas as respostas:
+
+**6a. Preencha `docs/context/guardrails.md`**
+
+- Seção 1: comandos reais. Se um comando não existir, escreva `(não configurado)` — **nunca** invente um comando que não roda.
+- Seções 2 e 3: caminhos e operações coletados, somados aos padrões já listados no template.
+- Seção 4: regras invioláveis com IDs sequenciais `GR-001`, `GR-002`, ...
+- Seção 5: gatilhos de escalação.
+- Seção 6: mantenha o gate de Spec como está — é invariante do scaffold.
+- Remova todos os `<!-- TODO -->` e o aviso `**Status do arquivo:** vazio`.
+
+**6b. Gere `.claude/settings.json`**
+
+- Copie `.claude/settings.example.json` como base.
+- Acrescente ao array `permissions.deny` os caminhos de segredo do item 5 e as operações destrutivas do item 7.
+- Acrescente a `permissions.ask` as escritas em caminhos protegidos do item 4 (ex: `"Write(./infra/**)"`, `"Edit(./infra/**)"`).
+- Ajuste `permissions.allow`: mantenha apenas os comandos de verificação que **existem** de fato neste projeto (respostas 1–3) e o gerenciador de pacotes realmente usado (npm/pnpm/yarn — descubra pelo lockfile).
+- Mantenha o bloco `hooks` como está — é o que torna a verificação automática. Confirme que `.claude/hooks/verify-file.mjs` e `.claude/hooks/verify-project.mjs` foram copiados junto com o scaffold; se não, avise o usuário.
+- Valide o JSON antes de salvar.
+- Avise o usuário: `.claude/settings.json` é versionado e vale para o time; preferências pessoais vão em `.claude/settings.local.json` (já ignorado pelo git).
+- Os hooks falham em aberto (projeto sem ESLint/TypeScript → não bloqueiam nada). Se o projeto não tiver essas ferramentas, diga que os hooks estão inertes até serem instalados — não deixe o usuário achar que está protegido.
+
+**6c. Reporte as lacunas honestamente**
+
+Se algum comando de verificação ficou como `(não configurado)`, diga explicitamente:
+
+> ⚠️ Sem comando de `<verificação>`, nenhum agente consegue provar que o
+> código funciona — os Critérios de Aceite viram autodeclaração. Configure
+> antes de rodar `/spec`.
+
+**Limitação a comunicar ao usuário:** `permissions.deny` reduz acidente, não é
+sandbox. Um comando shell criativo o suficiente contorna a lista. Guardrail forte
+depende dos hooks de verificação e do gate humano de Spec — não da lista de permissões.
+
+---
+
 ## Finalização
 
 Após preencher todos os arquivos, exiba um resumo:
@@ -90,9 +150,18 @@ Após preencher todos os arquivos, exiba um resumo:
   - docs/context/decisions.md
   - docs/context/ui-guidelines.md
   - docs/context/conventions.md  (ou: ⚠️ aguardando termos de domínio)
+  - docs/context/guardrails.md
+  - .claude/settings.json        (guardrails de permissão)
+
+🛡️ Guardrails ativos:
+  - Verificação: [comandos configurados, ou ⚠️ "(não configurado)"]
+  - Caminhos protegidos: [n]
+  - Regras invioláveis: GR-001..GR-0NN
+  - Gate de Spec: apenas humano aprova (review → approved)
 
 ⚠️ Ainda requer revisão manual:
   - [liste seções que ficaram como "a definir"]
+  - [liste verificações "(não configurado)"]
 
 Próximos passos:
   /backlog → gerar o product backlog com tarefas numeradas (TASK01, TASK02...)
@@ -101,6 +170,7 @@ Próximos passos:
 ## Regras
 
 - Uma pergunta por mensagem — sem exceção.
+- O Bloco 6 (Guardrails) é obrigatório. Se o usuário quiser pular, avise que o scaffold ficará sem limites de permissão e sem definição de "pronto", e peça confirmação explícita antes de pular.
 - Não preencha arquivos parcialmente. Preencha apenas quando tiver todas as respostas do bloco.
 - Quando preencher um arquivo: remova todos os `<!-- TODO -->`, remova o bloco `**Status do arquivo:** vazio` e sua nota associada, substitua pelo conteúdo real.
 - Se o usuário responder "a definir" ou "não sei ainda", use um comentário `<!-- a definir -->` no campo correspondente — não deixe o placeholder original.

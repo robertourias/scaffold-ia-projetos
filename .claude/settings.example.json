@@ -1,19 +1,131 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
-    "allow": [
-      "Bash(git *)",
-      "Bash(npm *)",
-      "Bash(pnpm *)",
-      "Bash(yarn *)",
-      "Bash(node *)",
-      "Bash(docker *)",
-      "Read(*)",
-      "Edit(*)"
+    "defaultMode": "acceptEdits",
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.development)",
+      "Read(./.env.production)",
+      "Read(./.env.test)",
+      "Read(./.env.*.local)",
+      "Read(./**/.env)",
+      "Read(./**/.env.local)",
+      "Read(./**/.env.development)",
+      "Read(./**/.env.production)",
+      "Read(./**/.env.test)",
+      "Read(./**/.env.*.local)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/*.p12)",
+      "Read(./**/id_rsa*)",
+      "Read(./**/.aws/**)",
+      "Read(./**/secrets/**)",
+      "Read(./**/credentials*.json)",
+      "Bash(cat .env:*)",
+      "Bash(cat ./.env:*)",
+      "Bash(cat ../.env:*)",
+      "Bash(head .env:*)",
+      "Bash(tail .env:*)",
+      "Bash(grep .env:*)",
+      "Bash(printenv:*)",
+      "Bash(env:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git clean -fdx:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git checkout --:*)",
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Bash(chmod 777:*)",
+      "Bash(npm publish:*)",
+      "Bash(pnpm publish:*)",
+      "Bash(yarn publish:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker volume rm:*)",
+      "Bash(prisma migrate reset:*)",
+      "Bash(npx prisma migrate reset:*)"
     ],
     "ask": [
-      "Bash(rm *)",
-      "Bash(sudo *)"
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(git rebase:*)",
+      "Bash(git merge:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh release:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(yarn add:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(npm run migration:run:*)",
+      "Bash(docker compose down:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "WebFetch",
+      "Write(./.github/workflows/**)",
+      "Write(./.claude/settings.json)"
     ],
-    "defaultMode": "auto"
+    "allow": [
+      "Read(./**)",
+      "Edit(./apps/**)",
+      "Edit(./packages/**)",
+      "Edit(./docs/**)",
+      "Write(./docs/**)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)",
+      "Bash(git stash:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm build:*)",
+      "Bash(npx tsc --noEmit:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx jest:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify-file.mjs\"",
+            "timeout": 45
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify-project.mjs\"",
+            "timeout": 200
+          }
+        ]
+      }
+    ]
   }
 }
