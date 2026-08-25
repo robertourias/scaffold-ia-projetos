@@ -33,17 +33,44 @@ Você opera de forma a minimizar o consumo de tokens e a troca de contexto, gera
    - Mapeie dependências reais entre tarefas (não a ordem da lista).
    - Agrupe em **ondas (waves)**: tarefas sem dependência mútua na mesma onda
      rodam **em paralelo** (um agente por tarefa).
-   - Em cada tarefa preencha `Depende de:` e `Paralelizável com:`.
+   - Em cada tarefa preencha `Depende de:`, `Paralelizável com:`, `Arquivos:` e `Cobre:` (os FR/GR/CN que a tarefa satisfaz).
+   - **Nenhuma onda pode ter duas tarefas declarando o mesmo arquivo.** Ondas
+     paralelas compartilham a working tree — arquivo disputado vira sobrescrita
+     silenciosa. Em caso de colisão: serialize, ou extraia a edição comum para
+     uma tarefa própria numa onda anterior.
    - Maximize o paralelismo: backend e frontend que não compartilham contrato
      devem cair na mesma onda. Só serialize quando houver dependência real
      (ex.: frontend que consome um endpoint ainda não implementado).
 
-4. **Geração do Artefato**:
+4. **Rastreabilidade (seção 7 do template)**:
+   - Depois de escrever as tarefas, preencha a tabela FR → Tarefa → Teste.
+   - Todo FR da seção 3 aparece em pelo menos uma linha. FR sem tarefa é
+     requisito esquecido — volte e adicione a tarefa. Tarefa sem FR
+     correspondente é escopo não declarado — volte à seção 3 ou remova.
+   - Se a feature violar algum `GR-XXX` de `docs/context/guardrails.md` ou
+     `CN-XXX` de `docs/context/constitution.md`, **não gere a Spec**. Pare e
+     escale ao humano — isso não se resolve com uma exceção pontual na tarefa.
+
+5. **Definição de Verificação**:
+   - Preencha a seção "Verificação" do template com os comandos **reais** de
+     `docs/context/guardrails.md` (seção 1). Nunca invente comando.
+   - Se uma verificação estiver `(não configurado)` no guardrails, escreva isso
+     na Spec e sinalize ao usuário: os Critérios de Aceite daquela dimensão
+     serão autodeclarados pelo agente, não verificados.
+
+6. **Geração do Artefato**:
    - Escreva a especificação e o plano técnico juntos em `docs/specs/YYYY-MM-DD-<topic>.md` usando o template `docs/specs/spec-template.md`.
    - Coloque o documento em `Status: review` para aprovação do usuário.
+   - Atualize `**Spec ativo:**` em `docs/context/current-state.md` (ou no escopo) para o caminho gerado — o hook `spec-gate.mjs` depende deste campo para bloquear implementação antes da aprovação. Não deixe para o `/checkpoint`.
    - Instrua o usuário a revisar a Spec e as Tarefas e, se tudo estiver correto, mudar para `Status: approved` e iniciar a execução com os agentes `/back` e `/front`.
 
 ---
+
+## Critérios de Aceite — regra de forma
+
+Todo critério é escrito em **Dado / Quando / Então** e nomeia **como será
+verificado** (comando ou arquivo de teste). Critério que não pode ser checado
+por alguém que não participou da conversa está mal escrito — reescreva.
 
 ## Economia de Tokens e Respostas
 - Seja extremamente conciso. Evite explicações teóricas, jargões desnecessários ou preâmbulos.
@@ -59,12 +86,14 @@ Tipo: feature | fix | refactor | chore
 Agente: frontend | backend | ambos
 Depende de: — | T2, T3
 Paralelizável com: T4 | nenhuma
+Arquivos: caminho/a.ts, caminho/b.tsx
+Cobre: FR-001 | GR-002, CN-001
 
 [O quê fazer e por quê, contendo contratos ou assinaturas necessárias]
 
 Critérios de Aceite:
-- [ ] Cenário de sucesso X funciona e é testável.
-- [ ] Cenário de falha Y é tratado de forma elegante.
+- [ ] Dado <estado>, quando <ação>, então <resultado observável>. — cobre FR-001, verificado por `<comando ou arquivo de teste>`
+- [ ] Dado <estado de falha>, quando <ação>, então <erro tratado de forma X>. — cobre FR-001, verificado por `<comando ou arquivo de teste>`
 
 Notas: [Requisitos de infra, segurança ou links para outras tarefas]
 ```

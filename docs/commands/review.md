@@ -11,6 +11,11 @@ Analise `$ARGUMENTS`:
 
 Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conversa ativa desta sessão do chat, use sua memória de trabalho e **NÃO** faça o carregamento/releitura dos mesmos do disco.
 
+**Sempre carregado** (não é opcional):
+- `docs/context/guardrails.md` (limites invioláveis + comandos de verificação)
+- `docs/context/constitution.md` (princípios arquiteturais — `CN-XXX`)
+- `docs/skills/verification.md` (padrão de evidência a cobrar)
+
 Carregue sob demanda apenas se necessário:
 - `docs/skills/quality.md` (definição do papel e regras de qualidade/revisão)
 
@@ -30,6 +35,19 @@ Leia também, se existirem:
 - `$SCOPE/docs/architecture/` (arquivos relevantes)
 
 As decisões do escopo específico **sobrepõem** os padrões globais onde houver conflito.
+
+## Obtenção do diff
+
+Se `$ARGUMENTS` **não** contiver um diff colado, obtenha-o você mesmo — não peça
+ao usuário para colar (diff colado no chat é pago duas vezes: no prompt e na
+leitura dos arquivos):
+
+```
+git diff HEAD
+git status --short
+```
+
+Se `$SCOPE` foi informado, restrinja: `git diff HEAD -- $SCOPE`.
 
 ## Execução
 

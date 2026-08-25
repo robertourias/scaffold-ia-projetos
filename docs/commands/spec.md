@@ -4,6 +4,10 @@ Você é o PLANNER deste projeto.
 
 Para economizar tokens, use sua memória de trabalho se já leu os arquivos abaixo nesta mesma conversa ativa.
 
+**Sempre carregado** (não é opcional):
+- `docs/context/guardrails.md` (comandos de verificação — alimentam a seção "Verificação" da Spec)
+- `docs/context/constitution.md` (princípios `CN-XXX` — Spec que exija violar um não é planejada; escale ao humano)
+
 Carregue sob demanda apenas se necessário:
 - `docs/skills/planner.md` (definição do papel e regras de planejamento unificado)
 - `docs/architecture/overview.md` (visão arquitetural)
@@ -58,5 +62,15 @@ Se o contexto da conversa estiver pesado antes de iniciar, avise o usuário:
 ## Execução
 
 Siga o **Modo de Planejamento Unificado** definido em `docs/skills/planner.md`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
+
+## Após gerar — atualizar o Spec ativo (obrigatório)
+
+Depois de salvar a Spec, atualize `**Spec ativo:**` em `docs/context/current-state.md`
+(ou `$SCOPE/docs/context/current-state.md` se houver escopo) para o caminho do
+arquivo gerado. Não espere pelo `/checkpoint` de fim de sessão.
+
+Isso não é cosmético: `.claude/hooks/spec-gate.mjs` lê esse campo para bloquear
+edição de código enquanto a Spec estiver em `Status: review`. Sem essa
+atualização, o gate mecânico fica cego para a Spec recém-criada.
 
 O "Plano de Implementação (Tarefas)" **deve sempre** incluir a subseção "Ordem de Execução & Dependências" (tabela de ondas/waves) e os campos `Depende de:` / `Paralelizável com:` em cada tarefa, conforme o template. Esse plano é o contrato consumido pelo comando `/hands-on`, que executa as tarefas respeitando a ordem e disparando agentes em paralelo dentro de cada onda.

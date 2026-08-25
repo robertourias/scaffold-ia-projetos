@@ -87,8 +87,11 @@ Antes de salvar o estado, verifique rapidamente:
 2. Se sim, promova agora seguindo o mesmo critério: decisão estrutural →
    `decisions.md` no domínio certo; detalhe de design → `ui-guidelines.md`.
 3. Se o volume de decisões pendentes for grande (ex: primeira vez rodando
-   isso num projeto com histórico acumulado), pare e sugira rodar o comando
-   `/architecture` completo em vez de tentar promover tudo inline aqui.
+   isso num projeto com histórico acumulado), **não** tente promover tudo
+   inline aqui. Pare, registre a pendência em "Bloqueadores / Perguntas
+   abertas" e sugira ao usuário rodar o bootstrap retroativo
+   (`docs/prompts/retroactive-documentation.md`), que reconcilia
+   `decisions.md` e `architecture/` com o código real.
 ```
 
 Renumere os passos seguintes do arquivo (antigo Passo 3 em diante) de

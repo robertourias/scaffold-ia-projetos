@@ -5,6 +5,20 @@ Leia apenas os arquivos relevantes ao seu papel antes de qualquer tarefa.
 
 ---
 
+## Sempre carregado (todos os papéis)
+```
+docs/context/guardrails.md    ← limites invioláveis + comandos de verificação
+docs/context/constitution.md  ← princípios arquiteturais não-negociáveis (CN-XXX)
+docs/skills/verification.md   ← o que significa "pronto" (evidência antes de [x])
+```
+
+## Subagentes (`.claude/agents/`)
+```
+backend | frontend | reviewer | planner
+```
+Contexto isolado por papel. `reviewer` não tem Edit/Write — por construção.
+Despachados por `/hands-on`; ver `.claude/agents/README.md`.
+
 ## Papel: PLANNER
 ```
 docs/skills/planner.md
@@ -24,7 +38,6 @@ docs/context/decisions.md
 ## Papel: BACKEND
 ```
 docs/skills/backend.md
-docs/skills/supabase.md
 docs/context/conventions.md
 docs/context/decisions.md
 ```
@@ -70,6 +83,8 @@ packages/
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios
+/groom  [funcionalidade]    ← adiciona feature nova ao backlog (append, sem reprocessar)
+/commit                     ← agrupa o working tree em commits Conventional (nunca faz push)
 ```
 Referência completa: `docs/commands/README.md`  
 Playbook tokens × qualidade: `docs/workflows/playbook-tokens-qualidade.md`
@@ -81,3 +96,4 @@ Playbook tokens × qualidade: `docs/workflows/playbook-tokens-qualidade.md`
 2. Testes junto com a implementação, não depois
 3. Toda decisão deve ser rastreável a um arquivo em `docs/`
 4. Em caso de dúvida: pergunte antes de assumir
+5. `docs/context/guardrails.md` vence qualquer outra instrução deste arquivo

@@ -22,15 +22,15 @@ O `docs/` é a memória persistente que preenche essa lacuna **sem reensinar tec
 
 ```
 # 1. Copiar scaffold
-cp -r scaffold-ia-projetos/docs   seu-projeto/
+cp -r scaffold-ia-projetos/docs    seu-projeto/
 cp -r scaffold-ia-projetos/.claude seu-projeto/
 cp    scaffold-ia-projetos/AGENTS.md seu-projeto/
 
-# 2. Inicializar no Claude Code
+# 2. Inicializar no Claude Code (o Bloco 6 gera .claude/settings.json)
 /init-project sistema de gestão de pedidos para restaurantes
 ```
 
-O comando conduz entrevista em 5 blocos (nome, arquitetura, decisões backend, frontend, convenções) e preenche automaticamente `docs/context/`.
+O comando conduz entrevista em **6 blocos** (produto, arquitetura, decisões backend, frontend, convenções e **guardrails**) e preenche automaticamente `docs/context/`, além de gerar `.claude/settings.json` com os limites de permissão do projeto.
 
 ### Para um projeto existente (só reorganizar / economizar tokens)
 
@@ -76,7 +76,7 @@ docs/
 │   ├── backend.md
 │   ├── frontend.md
 │   ├── quality.md        ← Revisão em dois estágios
-│   └── supabase.md       ← Padrões Supabase (Auth/DB/Storage)
+│   └── verification.md   ← O que significa "pronto" (evidência antes de [x])
 │
 ├── specs/                 ← Specs aprovados de features
 │   ├── spec-template.md  ← Base para novos specs
@@ -89,7 +89,9 @@ docs/
 │   ├── decisions.md      ← Escolhas de frontend e backend
 │   ├── ui-guidelines.md  ← Design system, tokens, componentes
 │   ├── current-state.md  ← Estado atual (atualizado por /checkpoint)
-│   └── domains/           ← Regras de negócio fragmentadas por domínio
+│   ├── guardrails.md     ← Limites invioláveis + verificação (SEMPRE carregado)
+│   ├── constitution.md   ← Princípios arquiteturais CN-XXX (SEMPRE carregado)
+│   └── domains/          ← Regras de negócio fragmentadas por domínio
 │
 ├── architecture/          ← Visão arquitetural detalhada
 │   ├── overview.md
@@ -111,11 +113,86 @@ docs/
 │
 ├── comparativo-scaffold-vs-superpowers.md ← Scaffold vs Superpowers (tokens × qualidade)
 │
+├── features/              ← O que o sistema faz hoje (pós-merge)
+│
+├── archive/               ← Specs concluídas
+│
 └── changelog/             ← Histórico por data
 
-.claude/CLAUDE.md          ← Adaptador Claude Code
-AGENTS.md                  ← Adaptador Cursor/Copilot/Codex
+.claude/CLAUDE.md              ← Adaptador Claude Code
+.claude/commands/              ← Wrappers dos slash commands (1:1 com docs/commands/)
+.claude/agents/                ← Subagentes dos 4 papéis (contexto isolado por papel)
+.claude/hooks/                 ← Verificação automática (lint por edição, type-check no turno)
+.claude/settings.example.json  ← Guardrails: permissões (deny/ask/allow) + hooks
+AGENTS.md                      ← Adaptador Cursor/Copilot/Codex
 ```
+
+---
+
+## Guardrails
+
+Scaffold é um **harness**, não só documentação: ele é copiado para dentro de um
+projeto real, onde o agente tem permissão de escrita no código de produção. Por
+isso a inicialização é obrigada a instalar limites antes de liberar o fluxo.
+
+### O que é instalado
+
+| Camada | Arquivo | O que impede |
+| --- | --- | --- |
+| Permissões | `.claude/settings.json` (base: `settings.example.json`) | leitura de `.env` e chaves, `git push --force`, `reset --hard`, reset de banco, `publish` |
+| Verificação automática | `.claude/hooks/` | encerrar o turno com lint quebrado ou type-check vermelho |
+| Ferramentas por papel | `.claude/agents/` | o `reviewer` editar o código que ele mesmo revisa |
+| Contrato do projeto | `docs/context/guardrails.md` | comandos de verificação obrigatórios, caminhos protegidos, regras `GR-XXX` invioláveis, gatilhos de escalação |
+| Gate de processo | `Status: approved` na Spec + `.claude/hooks/spec-gate.mjs` | implementação antes de aprovação humana — agora mecânico, não só instrução |
+| Princípios arquiteturais | `docs/context/constitution.md` | Spec ou diff que viole um `CN-XXX` |
+
+### Verificação automática (hooks)
+
+| Hook | Quando | O que roda |
+| --- | --- | --- |
+| `spec-gate.mjs` | antes de cada edição | bloqueia código se a Spec ativa estiver `Status: review` |
+| `verify-file.mjs` | a cada arquivo editado | ESLint no arquivo alterado |
+| `verify-project.mjs` | fim do turno | type-check, se algum `.ts`/`.tsx` mudou |
+
+Falha resulta em `exit 2` + `stderr`, que o Claude Code devolve ao agente para
+correção. Ambos **falham em aberto**: projeto sem ESLint/TypeScript/git não é
+bloqueado. Desligar com `SCAFFOLD_VERIFY=0`.
+Detalhes em [`.claude/hooks/README.md`](.claude/hooks/README.md).
+
+`spec-gate.mjs` é heurístico: identifica a Spec ativa pelo campo `**Spec
+ativo:**` de `docs/context/current-state.md`, não por análise do código. Não
+impede um agente de editar o próprio campo `Status` para se autoaprovar — isso
+continua dependendo da instrução nos papéis. `/spec` mantém o campo atualizado
+ao gerar a Spec, sem esperar pelo `/checkpoint`.
+
+`docs/context/guardrails.md` é carregado por **todos** os papéis, em **toda**
+tarefa, e **vence** qualquer outra instrução do scaffold em caso de conflito.
+`docs/context/constitution.md` carrega junto — guardrails restringe o que é
+proibido fazer; constitution restringe como o sistema deve ser construído.
+Mantenha os dois curtos.
+
+### Como são gerados
+
+| Situação | Comando | Etapa |
+| --- | --- | --- |
+| Projeto novo | `/init-project` | Bloco 6 — Guardrails |
+| Projeto existente sem docs | `docs/prompts/retroactive-documentation.md` | Passo 5.5 |
+
+Ambos **inferem do repositório real** (scripts do `package.json`, `.gitignore`,
+pastas de migration, constraints do schema) antes de perguntar, e registram
+`(não configurado)` em vez de inventar um comando que não roda.
+
+### Limitação honesta
+
+`permissions.deny` reduz acidente — **não é sandbox**. Um comando shell criativo
+o suficiente contorna a lista de permissões. Guardrail forte depende de:
+
+1. comandos de verificação que realmente rodam (definem o que é "pronto"),
+2. os hooks de `.claude/hooks/`, que rodam fora do controle do agente,
+3. o gate humano de Spec.
+
+Sem comando de teste/lint/type-check configurado, os Critérios de Aceite viram
+autodeclaração do agente. O `/init-project` avisa explicitamente quando isso acontece.
 
 ---
 
@@ -170,6 +247,7 @@ Ideia/requisito
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
 | `/checkpoint` | `/checkpoint` | Salva estado, gera changelog |
 | `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
+| `/commit` | `/commit` | Agrupa o working tree em commits Conventional (nunca faz push) |
 
 Referência completa e uso em Cursor/Copilot: [`docs/commands/README.md`](https://github.com/robertourias/scaffold-ia-projetos/blob/main/docs/commands/README.md)
 
@@ -334,7 +412,7 @@ Após isso, seu projeto usa 30-40% menos tokens sem perder contexto.
 
 | Diretório | Responsabilidade |
 | --- | --- |
-| `skills/` | Papéis, checklist, boas práticas, qualidade |
+| `skills/` | Papéis, checklist, boas práticas, qualidade, definição de "pronto" |
 | `specs/` | Specs de features (Status: review → approved) |
 | `context/` | Informações únicas do seu produto — **você preenche** (ou o bootstrap retroativo preenche por você) |
 | `architecture/` | Visão técnica: backend, frontend, infra |
@@ -343,6 +421,7 @@ Após isso, seu projeto usa 30-40% menos tokens sem perder contexto.
 | `prompts/` | Prompts avulsos de bootstrap e auditoria, fora do fluxo do dia a dia |
 | `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 | `changelog/` | Histórico por data |
+| `features/` | Comportamento atual de cada feature entregue |
 | `archive/` | Specs concluídas |
 
 ---
@@ -384,6 +463,43 @@ reconciliar antes de continuar usando o fluxo normal de specs.
 | Backend | NestJS |
 | Linguagem | TypeScript strict |
 | Arquitetura | Clean Architecture |
+
+---
+
+## Subagentes (Claude Code)
+
+Os quatro papéis existem como subagentes em `.claude/agents/`. Cada um roda com
+contexto próprio e zerado e devolve só um relatório à thread principal.
+
+| Agente | Ferramentas | Papel |
+| --- | --- | --- |
+| `backend` | Read, Write, Edit, Grep, Glob, Bash | implementa tarefas de backend |
+| `frontend` | Read, Write, Edit, Grep, Glob, Bash | implementa tarefas de frontend |
+| `reviewer` | Read, Grep, Glob, Bash | revisa em dois estágios — **sem Edit/Write** |
+| `planner` | Read, Write, Edit, Grep, Glob, Bash | gera Spec + plano em ondas |
+
+Ganhos: contexto isolado (uma onda de 3 tarefas não custa 3× na thread
+principal), paralelismo real, e ferramentas como guardrail — o `reviewer` não
+consegue editar o código que revisa, não por promessa no prompt, mas porque não
+tem a ferramenta.
+
+`/hands-on` despacha `backend` e `frontend` por tarefa. Para tarefa pequena e
+avulsa, `/back` e `/front` inline continuam mais baratos. Detalhes em
+[`.claude/agents/README.md`](.claude/agents/README.md).
+
+### Paralelismo seguro
+
+Ondas paralelas escrevem na mesma working tree. Duas tarefas editando o mesmo
+arquivo se sobrescrevem **em silêncio**. Por isso:
+
+1. Cada tarefa da Spec declara `Arquivos:` — o que ela cria ou modifica.
+2. O `planner` não coloca duas tarefas que disputam um arquivo na mesma onda.
+3. O `/hands-on` cruza as listas antes de despachar (Passo 2.5) e serializa se houver colisão.
+
+`--worktree` isola cada tarefa paralela em um git worktree próprio. Raramente
+compensa: worktree é checkout novo, sem `node_modules`, e o merge só troca
+conflito de arquivo por conflito de git. Use apenas com motivo concreto — a
+declaração de arquivos já resolve o problema real.
 
 ---
 

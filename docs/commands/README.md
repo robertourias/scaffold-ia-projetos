@@ -16,7 +16,37 @@ docs/commands/
   spec.md          ← planner em Modo de Planejamento Unificado (gera regras + tarefas técnicas)
   hands-on.md      ← orquestrador: executa o Plano de Implementação da Spec em ondas (paralelo)
   review.md        ← reviewer em dois estágios (suporta escopo)
+  commit.md        ← agrupa o working tree em commits Conventional (nunca faz push)
 ```
+
+> **Paridade obrigatória:** todo arquivo aqui (exceto `README.md`) precisa de um
+> wrapper correspondente em `.claude/commands/<nome>.md`, senão o slash command
+> não existe no Claude Code. Verifique com:
+> ```
+> ls docs/commands/*.md .claude/commands/*.md
+> ```
+
+### Anatomia de um wrapper
+
+```markdown
+---
+description: "Uma linha. Aspas obrigatórias se contiver `:`, senão o YAML quebra
+              e a descrição vira o corpo do arquivo."
+argument-hint: "[apps/<app>] <tarefa>"
+allowed-tools: Read, Grep, Glob, Bash(git diff:*)
+model: claude-haiku-4-5-20251001
+---
+
+@docs/commands/<nome>.md
+```
+
+| Campo | Por quê |
+|-------|---------|
+| `description` | aparece na lista de comandos e orienta a invocação |
+| `argument-hint` | autocomplete do argumento |
+| `allowed-tools` | **guardrail executável** — `/review` e `/retomar` são somente leitura por construção, não por promessa no prompt |
+| `model` | comandos de leitura/resumo rodam em modelo barato |
+| `@caminho` | inlina o prompt na expansão: sem tool call extra, aproveita o prompt cache |
 
 ## Sintaxe de escopo
 
@@ -88,7 +118,7 @@ Abra o arquivo do comando desejado, copie o conteúdo e cole no chat da ferramen
 # 5. Revisar e commitar
 /review [diff]
 /checkpoint
-git commit -m "feat: ..."
+/commit
 
 # 6. Próxima tarefa do backlog
 /spec TASK02
@@ -137,3 +167,41 @@ git commit -m "feat: ..."
    Leia docs/commands/<nome>.md e execute as instruções, substituindo $ARGUMENTS por: $ARGUMENTS
    ```
 3. Para outros tools, documente o novo comando neste README
+4. Adicione o comando às listas de `.claude/CLAUDE.md` e `AGENTS.md`
+
+## Subagentes (Claude Code)
+
+Os papéis existem também como subagentes em `.claude/agents/`: `backend`,
+`frontend`, `reviewer`, `planner`. Contexto isolado por papel, e ferramentas
+como guardrail — o `reviewer` não tem `Edit`/`Write`.
+
+`/hands-on` despacha `backend` e `frontend` por tarefa (Passo 3). Para tarefa
+pequena e avulsa, `/back` e `/front` inline continuam mais baratos.
+
+Este diretório continua sendo a fonte **agnóstica de ferramenta** (Cursor,
+Copilot, Codex). O conteúdo que os dois compartilham vive em `docs/skills/` e
+`docs/context/guardrails.md` — edite lá para não criar drift.
+Ver [`.claude/agents/README.md`](../../.claude/agents/README.md).
+
+## Verificação automática
+
+`.claude/hooks/` roda **fora do controle do agente**:
+
+| Hook | Quando | O que roda |
+|------|--------|------------|
+| `verify-file.mjs` | a cada `Edit`/`Write` | ESLint no arquivo alterado |
+| `verify-project.mjs` | fim do turno | type-check, se algum `.ts`/`.tsx` mudou |
+
+Falha devolve `exit 2` + `stderr` ao agente, que corrige antes de seguir.
+Testes **não** rodam em hook — são o Passo 1 da Finalização de `/back` e `/front`.
+Detalhes e invariante de fail-open: [`.claude/hooks/README.md`](../../.claude/hooks/README.md).
+
+## Guardrails
+
+`docs/context/guardrails.md` é carregado por **todos** os papéis em **toda**
+tarefa. Ele define os comandos de verificação obrigatórios, caminhos protegidos,
+operações proibidas e o gate de Spec. É gerado pelo Bloco 6 do `/init-project`
+(projeto novo) ou pelo Passo 5.5 do bootstrap retroativo (projeto existente).
+
+Em caso de conflito, guardrails vencem qualquer outra instrução — inclusive as
+deste diretório.

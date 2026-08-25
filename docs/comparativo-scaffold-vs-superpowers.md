@@ -35,7 +35,7 @@ brainstorm (gate) → design doc → writing-plans (plano com código) → SDD o
 | Implementação | `/back` `/front` (batch) ou `/hands-on` (ondas paralelas) | Subagent **fresco** por tarefa + **review** após cada uma |
 | Memória entre sessões | `/checkpoint` + `/retomar` (estado comprimido) | Ledger SDD + git; menos “produto”, mais “branch em andamento” |
 | Qualidade | Review em 2 estágios + skills de papel | TDD iron law + verification-before-completion + review per task |
-| Escopo | Stack do monorepo (Next / Nest / Supabase, Clean Architecture) | Agnóstico de stack |
+| Escopo | Stack do monorepo (Next / Nest, Clean Architecture) | Agnóstico de stack |
 
 ---
 
