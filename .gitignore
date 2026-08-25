@@ -60,3 +60,6 @@ next-env.d.ts
 # Config local
 # ===========================
 *.local.json
+
+# Claude Code session lock (runtime state, never commit)
+.claude/scheduled_tasks.lock

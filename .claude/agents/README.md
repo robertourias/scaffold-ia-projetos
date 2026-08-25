@@ -19,6 +19,30 @@ Todos têm `Skill` para invocar o papel compartilhado com o comando equivalente
 2. **Ferramentas como guardrail.** `reviewer` não tem `Edit` nem `Write` — não é uma promessa no prompt, é impossível. Revisor que conserta o próprio achado perde a independência do parecer.
 3. **Paralelismo real.** Despachados numa só rodada, rodam ao mesmo tempo.
 
+## Além dos 4 papéis — quando spawnar um subagente genérico
+
+Os 4 agentes acima são fixos (papel definido, sempre os mesmos). Fora deles,
+a thread principal também pode despachar um subagente genérico (`general-purpose`
+ou equivalente) — não só para `/back`/`/front`/`/review`/`/spec`. Vale a pena
+quando:
+
+| Situação | Por quê vale o overhead |
+|----------|--------------------------|
+| 2+ tarefas independentes, sem dependência entre si | Rodam em paralelo numa só rodada — tempo de parede menor, e nenhuma pisa no contexto da outra |
+| Investigação ampla (múltiplos diretórios, convenção desconhecida) | Contexto de exploração fica isolado; a thread principal recebe só a conclusão, não os resultados brutos da busca |
+| Necessidade de restringir ferramentas por segurança | Subagente sem `Edit`/`Write` é garantia estrutural, não instrução seguida por confiança |
+
+**Não vale a pena** para: 1 arquivo, 1 pergunta, qualquer coisa que a thread
+principal resolve no mesmo tempo que levaria para escrever o prompt de
+delegação. Overhead de spawn (novo contexto, recarregar skills) é real —
+subagente errado desperdiça tokens em vez de economizar.
+
+Para orquestração de múltiplas etapas com checkpoints de revisão humana, ou
+quando o Superpowers estiver disponível no projeto, considere também
+`superpowers:subagent-driven-development` e
+`superpowers:dispatching-parallel-agents` em vez de reinventar o
+despacho manualmente — ver `.claude/workflows/playbook-tokens-qualidade.md`.
+
 ## Quem despacha
 
 `/hands-on` (Passo 3) despacha `backend` e `frontend` por tarefa, conforme o

@@ -41,6 +41,14 @@
 - [Rule 2]: e.g., "Invoices cannot be deleted, only voided"
 - [Rule 3]: e.g., "Free tier is limited to 5 projects"
 
+## Restrições Não-Funcionais
+
+> Escala, compliance e disponibilidade que a arquitetura precisa respeitar desde o início — não decisões de tecnologia (essas vão em `architecture/overview.md`), e sim os requisitos que forçam essas decisões.
+
+- **Escala esperada**: [ex: "100 usuários simultâneos no MVP, projeção de 10k em 12 meses" ou "nenhuma projeção ainda"]
+- **Compliance / regulação**: [ex: "LGPD — dado pessoal de usuário brasileiro", "nenhuma aplicável"]
+- **Disponibilidade**: [ex: "best-effort, sem SLA formal" ou "99.9%, downtime programado só em janela X"]
+
 ## Domain Glossary
 
 > Use these terms consistently in code, documentation, and conversations.

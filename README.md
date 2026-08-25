@@ -29,7 +29,7 @@ cp -r scaffold-ia-projetos/.claude seu-projeto/
 /init-project sistema de gestão de pedidos para restaurantes
 ```
 
-O comando conduz entrevista em **7 blocos** (produto, arquitetura, decisões backend, frontend, convenções, **guardrails** e **constituição**) e preenche automaticamente `docs/context/`, além de gerar `.claude/settings.json` com os limites de permissão do projeto.
+O comando conduz entrevista em **8 blocos** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche automaticamente `docs/context/`, gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez.
 
 ### Para um projeto existente (só reorganizar / economizar tokens)
 

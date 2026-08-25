@@ -51,7 +51,7 @@ git push origin v[X.Y.Z]
 - [ ] Check database metrics (query times, connection pool)
 
 ### 4. Post-Deploy
-- [ ] Mover `[Unreleased]` para versão com data no `CHANGELOG.md` (ver `workflows/documentation.md`)
+- [ ] Mover `[Unreleased]` de `docs/changelog/releases.md` para uma entrada versionada com data (formato na seção "Changelog Format" abaixo); a entrada diária em `docs/changelog/YYYY-MM-DD.md` já é mantida por `/checkpoint`
 - [ ] Criar ou atualizar `docs/features/<feature>.md` para cada feature entregue
 - [ ] Notify stakeholders (Slack, email, etc.)
 - [ ] Close related tasks/tickets

@@ -1,6 +1,7 @@
 ---
 description: "Agente BACKEND: implementa tarefas de backend com verificação obrigatória antes de concluir"
 argument-hint: "[apps/<app>] <tarefa(s)>"
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 Você é o agente de BACKEND deste projeto.
@@ -41,7 +42,7 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 
 ## Tratamento de Ambiguidade
 
-Antes de implementar, detecte falta de contexto:
+Antes de implementar, detecte falta de contexto. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.
 
 - **Requisito ambíguo?** "Entendi assim... está certo?"
 - **Contrato de API indefinido?** "Qual é a assinatura esperada da função/endpoint?"

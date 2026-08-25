@@ -60,6 +60,16 @@ o usuário fornecer). Preencha:
   perfis de usuário)
 - Regras de negócio de alto nível **apenas as que você conseguir confirmar**
   no código (validações, condicionais de domínio, constraints de banco)
+- **Restrições Não-Funcionais** (seção própria no template): escala real
+  observável (rate limiting configurado? connection pool sizing? sugere ordem
+  de grandeza), compliance inferível do domínio (dado de saúde → sugere HIPAA;
+  dado de pagamento → sugere PCI — marque como `[INFERIDO — confirmar]`, nunca
+  afirme compliance sem confirmação humana), disponibilidade (há
+  health-check, retry, circuit breaker configurado?)
+- **Out of Scope**: normalmente não é inferível do código — deixe
+  `<!-- a definir -->` e não invente
+- **Metrics & Success Criteria**: idem, deixe `<!-- a definir -->` salvo se
+  houver analytics/telemetria já instrumentada no código que revele a métrica
 
 Se o produto tiver múltiplos domínios de negócio grandes, fragmente em
 `docs/context/domains/<dominio>.md` (ex: `auth.md`, `payments.md`) e deixe
@@ -202,6 +212,20 @@ Crie `docs/changelog/YYYY-MM-DD-bootstrap-documentacao.md` registrando que a
 documentação retroativa foi gerada nesta data, a partir de qual commit
 (`git rev-parse HEAD`), e um resumo do que foi criado.
 
+## Passo 8.5 — `README.md` (seção "Desenvolvimento com IA")
+
+Leia o `README.md` atual na raiz. Projeto existente quase sempre já tem README
+com conteúdo real — **não substitua**. Apenas acrescente (ou atualize se já
+existir e estiver desatualizada) uma seção "Desenvolvimento com IA" ao final,
+apontando para `.claude/README.md` e listando os slash commands mais usados no
+dia a dia (`/spec`, `/back`, `/front`, `/review`, `/checkpoint`, `/retomar`),
+mais uma frase sobre o gate de Spec (`Status: approved` antes de implementar).
+
+Se excepcionalmente o README também for boilerplate não tocado (raro em
+projeto com código real rodando), siga o mesmo critério do Bloco 8 de
+`/init-project`: reescreva com nome/descrição do produto + stack + quick start
+lido do `package.json` real, além da seção acima.
+
 ## Passo 9 — Confirmar
 
 Encerre com um resumo estruturado:
@@ -217,6 +241,7 @@ Encerre com um resumo estruturado:
    - Regras invioláveis inferidas: GR-001..GR-0NN (confirmar)
    - ⚠️ Segredos versionados encontrados: [lista ou "(nenhum)"]
 📋 docs/specs/ — baseline retroativo criado e arquivado
+📄 README.md: [seção "Desenvolvimento com IA" adicionada | reescrito | já cobria]
 📌 Itens marcados [INFERIDO — confirmar]: [lista completa, por arquivo]
 ⏭ Próximo passo sugerido: revisar os itens marcados e rodar /init-project
   apenas se quiser reconduzir a entrevista de contexto do zero

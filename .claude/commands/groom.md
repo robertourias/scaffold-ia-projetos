@@ -18,7 +18,7 @@ $ARGUMENTS
 
 ## Tratamento de Ambiguidade
 
-Detecte automaticamente falta de contexto:
+Detecte automaticamente falta de contexto. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.
 
 - **Escopo ambíguo?** "A funcionalidade engloba X e Y, ou só X?"
 - **Regra de negócio desconhecida?** "Qual é o comportamento esperado quando Z acontece?"
