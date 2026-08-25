@@ -1,3 +1,8 @@
+---
+name: frontend
+description: "Papel e padrões do agente de frontend deste projeto: React, Next.js App Router, TypeScript, acessibilidade e performance. Invocada por /front e pelo subagente frontend antes de implementar qualquer tarefa de frontend."
+---
+
 # Skill & Papel: Frontend
 
 Senior frontend engineer — React, Next.js, TypeScript. Implementa interfaces fluidas, responsivas, acessíveis e de alta performance.

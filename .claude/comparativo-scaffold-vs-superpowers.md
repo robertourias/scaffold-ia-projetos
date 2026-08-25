@@ -1,7 +1,7 @@
 # Comparativo: Scaffold (`docs/` + comandos) vs Superpowers
 
 > Objetivo: avaliar **economia de tokens** e **qualidade do processo** ao codar com este scaffold versus a lib Superpowers.  
-> Playbook operacional (modos econômico / rigor / emergência): [`docs/workflows/playbook-tokens-qualidade.md`](workflows/playbook-tokens-qualidade.md)
+> Playbook operacional (modos econômico / rigor / emergência): [`.claude/workflows/playbook-tokens-qualidade.md`](workflows/playbook-tokens-qualidade.md)
 
 ---
 
@@ -116,7 +116,7 @@ Medições aproximadas no ambiente do scaffold (markdown ~4 chars/token):
 |--------|---------|
 | Superpowers full stack em todo commit | Estoura tokens sem ganho proporcional |
 | Scaffold sem `/spec` / sem approval | Volta a “vibe code” com papéis de fantasia |
-| Carregar todos os `docs/skills` + todos os Superpowers no mesmo turn | Pior dos dois mundos |
+| Carregar todas as `.claude/skills` + todos os Superpowers no mesmo turn | Pior dos dois mundos |
 | SDD + `/hands-on` ao mesmo tempo sem regra | Dois orquestradores, contexto e git confusos |
 
 ---
@@ -142,7 +142,7 @@ Processo genérico pesado    =  Superpowers (só quando o risco justificar)
 **Regra de ouro:** a memória barata é **arquivo em disco** (`docs/`), não histórico de chat.
 
 Detalhamento dos modos **Econômico / Rigor / Emergência**:  
-[`docs/workflows/playbook-tokens-qualidade.md`](workflows/playbook-tokens-qualidade.md)
+[`.claude/workflows/playbook-tokens-qualidade.md`](workflows/playbook-tokens-qualidade.md)
 
 ---
 
@@ -182,8 +182,8 @@ Detalhamento dos modos **Econômico / Rigor / Emergência**:
 
 | Recurso | Caminho |
 |---------|---------|
-| Playbook operacional | [`docs/workflows/playbook-tokens-qualidade.md`](workflows/playbook-tokens-qualidade.md) |
-| Comandos | [`docs/commands/README.md`](commands/README.md) |
-| Entrega de feature | [`docs/workflows/feature-delivery.md`](workflows/feature-delivery.md) |
-| Papéis (skills) | [`docs/skills/`](skills/) |
+| Playbook operacional | [`.claude/workflows/playbook-tokens-qualidade.md`](workflows/playbook-tokens-qualidade.md) |
+| Comandos | [`.claude/README.md`](README.md) |
+| Entrega de feature | [`.claude/workflows/feature-delivery.md`](workflows/feature-delivery.md) |
+| Papéis (skills) | [`.claude/skills/`](skills/) |
 | README do scaffold | [`README.md`](../README.md) |

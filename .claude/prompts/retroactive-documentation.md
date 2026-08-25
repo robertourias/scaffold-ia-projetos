@@ -23,35 +23,30 @@ com confiança no código, no `package.json`, nos configs, ou no `git log`.
 
 1. Verifique se `docs/` já existe parcialmente. Se sim, **nunca sobrescreva**
    um arquivo já preenchido — pule e liste no resumo final.
-2. Se você tiver acesso local ao repositório `scaffold-ia-projetos` (pergunte
-   o caminho ao usuário se não foi informado), copie os arquivos **genéricos**
-   de lá sem alteração:
-   - `docs/skills/*.md` (planner, backend, frontend, quality — são
-     papéis de agente, não específicos deste produto)
-   - `docs/specs/spec-template.md`
-   - `docs/workflows/feature-delivery.md`, `release-process.md`,
+2. Este scaffold é **Claude Code apenas**. `docs/` guarda só conteúdo do
+   produto (o que você vai gerar nos passos seguintes); todo o harness —
+   comandos, subagentes, skills, hooks, workflows, templates — vive em
+   `.claude/`. Se você tiver acesso local ao repositório `scaffold-ia-projetos`
+   (pergunte o caminho ao usuário se não foi informado), copie a pasta
+   `.claude/` inteira de lá sem alteração:
+   - `.claude/CLAUDE.md`, `.claude/README.md`, `.claude/settings.example.json`
+   - `.claude/commands/*.md` (os slash commands: `/init-project`, `/backlog`,
+     `/spec`, `/back`, `/front`, `/review`, `/hands-on`, `/retomar`,
+     `/checkpoint`, `/commit`, `/groom`) — **sem isso nenhum slash command
+     funciona**, é o erro mais comum de um bootstrap incompleto
+   - `.claude/agents/*.md` (os subagentes de papel)
+   - `.claude/skills/*/SKILL.md` (planner, backend, frontend, quality,
+     verification — são papéis de agente, não específicos deste produto)
+   - `.claude/hooks/*.mjs` e `.claude/hooks/README.md`
+   - `.claude/templates/spec-template.md`
+   - `.claude/workflows/feature-delivery.md`, `release-process.md`,
      `playbook-tokens-qualidade.md`
-   - `docs/commands/*.md` e `docs/commands/README.md`
-   - `docs/comparativo-scaffold-vs-superpowers.md`
-   - `.claude/CLAUDE.md` (Claude Code) e/ou `AGENTS.md` (Cursor/Copilot/Codex)
-   - **`.claude/commands/*.md`** — os shims que ativam os slash commands no
-     Claude Code (`/init-project`, `/backlog`, `/spec`, `/back`, `/front`,
-     `/review`, `/hands-on`, `/retomar`, `/checkpoint`, `/commit`). **Sem
-     isso o projeto fica com a documentação em `docs/commands/` mas nenhum
-     slash command funciona** — é o erro mais comum de um bootstrap
-     incompleto. Cada shim é uma linha só, no formato:
-     ```
-     Leia docs/commands/<nome>.md e execute as instruções, substituindo $ARGUMENTS por: $ARGUMENTS
-     ```
-     (`checkpoint.md`, `retomar.md` e `commit.md` não recebem `$ARGUMENTS` —
-     confira o texto exato de cada shim no repositório do scaffold antes de
-     copiar).
-3. Se não tiver acesso ao repositório do scaffold, gere esses arquivos
-   seguindo fielmente a estrutura documentada no README do
-   `scaffold-ia-projetos` (papéis, templates de spec, fases 0-7 de entrega) —
-   eles são reutilizáveis entre projetos e não dependem deste código específico.
-   Isso inclui gerar os shims de `.claude/commands/*.md` também — um por
-   comando listado em `docs/commands/README.md`, seguindo o formato acima.
+   - `.claude/comparativo-scaffold-vs-superpowers.md`
+3. Se não tiver acesso ao repositório do scaffold, gere `.claude/` seguindo
+   fielmente a estrutura documentada no README do `scaffold-ia-projetos`
+   (comandos, subagentes, skills de papel, hooks de verificação, templates de
+   spec, fases 0-7 de entrega) — são reutilizáveis entre projetos e não
+   dependem deste código específico.
 4. Crie as pastas: `docs/archive/`, `docs/context/domains/`, `docs/changelog/`.
 
 ## Passo 1 — `docs/context/product.md`

@@ -1,7 +1,7 @@
 # Playbook — Tokens × Qualidade
 
 > Guia operacional de 1 página. Escolha o **modo** pela complexidade e risco da tarefa.  
-> Comparativo completo scaffold vs Superpowers: [`docs/comparativo-scaffold-vs-superpowers.md`](../comparativo-scaffold-vs-superpowers.md)
+> Comparativo completo scaffold vs Superpowers: [`.claude/comparativo-scaffold-vs-superpowers.md`](../comparativo-scaffold-vs-superpowers.md)
 
 **Sistema padrão deste repo:** scaffold (`docs/` + comandos).  
 **Superpowers:** ferramentas sob demanda — nunca default em todo turno.

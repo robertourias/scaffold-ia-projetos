@@ -17,7 +17,7 @@ insira o conteúdo novo no ponto indicado. Se algum arquivo já tiver uma
 seção equivalente, não duplique — apenas confirme que o conteúdo já cobre
 o mesmo objetivo.
 
-## Ajuste 1 — `docs/skills/backend.md`
+## Ajuste 1 — `.claude/skills/backend/SKILL.md`
 
 Insira logo após a seção `## Escalar Imediatamente Se`:
 
@@ -35,7 +35,7 @@ algoritmos equivalentes sem impacto arquitetural) não precisam ser
 promovidas — usar bom senso.
 ```
 
-## Ajuste 2 — `docs/skills/frontend.md`
+## Ajuste 2 — `.claude/skills/frontend/SKILL.md`
 
 Insira logo após a seção `## Escalar Imediatamente Se`:
 
@@ -52,7 +52,7 @@ Ajuste de estilo local a um único componente, sem intenção de reuso, não
 precisa ser promovido.
 ```
 
-## Ajuste 3 — `docs/skills/quality.md`
+## Ajuste 3 — `.claude/skills/quality/SKILL.md`
 
 Na seção `### Estágio 2 — Qualidade & Padrões`, adicione uma nova subseção
 antes de `#### Geral & Tipagem`:
@@ -69,7 +69,7 @@ antes de `#### Geral & Tipagem`:
 Trate itens não marcados aqui como 🟡 WARNING, não 🔴 BLOCKER — não deve
 travar o merge, mas deve aparecer na revisão.
 
-## Ajuste 4 — `docs/commands/checkpoint.md`
+## Ajuste 4 — `.claude/commands/checkpoint.md`
 
 Insira um novo passo entre o atual "Passo 2 — Atualizar current-state.md" e
 "Passo 3 — Atualizar CHANGELOG":
@@ -90,14 +90,14 @@ Antes de salvar o estado, verifique rapidamente:
    isso num projeto com histórico acumulado), **não** tente promover tudo
    inline aqui. Pare, registre a pendência em "Bloqueadores / Perguntas
    abertas" e sugira ao usuário rodar o bootstrap retroativo
-   (`docs/prompts/retroactive-documentation.md`), que reconcilia
+   (`.claude/prompts/retroactive-documentation.md`), que reconcilia
    `decisions.md` e `architecture/` com o código real.
 ```
 
 Renumere os passos seguintes do arquivo (antigo Passo 3 em diante) de
 acordo.
 
-## Ajuste 5 — `docs/workflows/feature-delivery.md`
+## Ajuste 5 — `.claude/workflows/feature-delivery.md`
 
 Na "Definition of Done", troque a linha atual:
 

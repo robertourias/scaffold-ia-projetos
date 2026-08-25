@@ -1,16 +1,18 @@
 # Claude Project Context
 
-Este projeto usa `docs/` como memória persistente de contexto para agentes de IA.
-Leia apenas os arquivos relevantes ao seu papel antes de qualquer tarefa.
+`docs/` é a memória do **produto**: o que ele é, suas regras de negócio, decisões
+e arquitetura. `.claude/` é o **harness**: como os papéis operam, os comandos,
+os subagentes, os hooks de verificação e o gate de Spec. Leia apenas o que é
+relevante ao seu papel antes de qualquer tarefa.
 
 ---
 
 ## Sempre carregado (todos os papéis)
 ```
-docs/context/guardrails.md    ← limites invioláveis + comandos de verificação
-docs/context/constitution.md  ← princípios arquiteturais não-negociáveis (CN-XXX)
-docs/skills/verification.md   ← o que significa "pronto" (evidência antes de [x])
+docs/context/guardrails.md    ← limites invioláveis + comandos de verificação (dado do projeto)
+docs/context/constitution.md  ← princípios arquiteturais não-negociáveis, CN-XXX (dado do projeto)
 ```
+Invoque também a skill **`verification`** — o que significa "pronto" (evidência antes de `[x]`).
 
 ## Subagentes (`.claude/agents/`)
 ```
@@ -19,32 +21,39 @@ backend | frontend | reviewer | planner
 Contexto isolado por papel. `reviewer` não tem Edit/Write — por construção.
 Despachados por `/hands-on`; ver `.claude/agents/README.md`.
 
-## Papel: PLANNER
+## Skills (`.claude/skills/`)
 ```
-docs/skills/planner.md
+backend | frontend | planner | quality | verification
+```
+Papel e padrões de cada função. Comandos e subagentes convergem na mesma skill
+para não divergir — edite a skill, não o comando ou o agente, ao mudar um papel.
+
+## Papel: PLANNER
+Invoque a skill `planner`. Leia também:
+```
 docs/context/product.md
 docs/architecture/overview.md
-docs/workflows/feature-delivery.md
+.claude/workflows/feature-delivery.md
 ```
 
 ## Papel: FRONTEND
+Invoque a skill `frontend`. Leia também:
 ```
-docs/skills/frontend.md
 docs/context/conventions.md
 docs/context/ui-guidelines.md
 docs/context/decisions.md
 ```
 
 ## Papel: BACKEND
+Invoque a skill `backend`. Leia também:
 ```
-docs/skills/backend.md
 docs/context/conventions.md
 docs/context/decisions.md
 ```
 
 ## Papel: REVIEWER
+Invoque a skill `quality`. Leia também:
 ```
-docs/skills/quality.md
 docs/context/conventions.md
 docs/context/decisions.md
 ```
@@ -53,9 +62,9 @@ docs/context/decisions.md
 ```
 docs/context/current-state.md    ← estado atual do projeto (use /retomar)
 docs/context/product.md          ← regras de negócio (se não for PLANNER)
-docs/workflows/release-process.md
-docs/workflows/playbook-tokens-qualidade.md  ← modos econômico / rigor / emergência
-docs/comparativo-scaffold-vs-superpowers.md  ← scaffold vs Superpowers (tokens × qualidade)
+.claude/workflows/release-process.md
+.claude/workflows/playbook-tokens-qualidade.md  ← modos econômico / rigor / emergência
+.claude/comparativo-scaffold-vs-superpowers.md  ← scaffold vs Superpowers (tokens × qualidade)
 ```
 
 ---
@@ -86,14 +95,14 @@ packages/
 /groom  [funcionalidade]    ← adiciona feature nova ao backlog (append, sem reprocessar)
 /commit                     ← agrupa o working tree em commits Conventional (nunca faz push)
 ```
-Referência completa: `docs/commands/README.md`  
-Playbook tokens × qualidade: `docs/workflows/playbook-tokens-qualidade.md`
+Referência completa: `.claude/README.md`
+Playbook tokens × qualidade: `.claude/workflows/playbook-tokens-qualidade.md`
 
 ---
 
 ## Princípios-chave
 1. Clean Architecture — dependências apontam para dentro, domínio sem dependências de framework
 2. Testes junto com a implementação, não depois
-3. Toda decisão deve ser rastreável a um arquivo em `docs/`
+3. Toda decisão de produto é rastreável a um arquivo em `docs/`; toda decisão de fluxo, a um arquivo em `.claude/`
 4. Em caso de dúvida: pergunte antes de assumir
 5. `docs/context/guardrails.md` vence qualquer outra instrução deste arquivo

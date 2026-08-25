@@ -33,7 +33,7 @@ fora de `docs/` e `.claude/` enquanto o status for `review`.
 **Limites conhecidos, honestos:**
 
 - Não impede o agente de editar o campo `Status` diretamente — isso continua
-  dependendo da instrução (`docs/skills/planner.md`, `back.md`, `front.md`).
+  dependendo da instrução (`.claude/skills/planner/SKILL.md`, `back.md`, `front.md`).
   Um hook não distingue "humano aprovou" de "agente editou a string".
 - É heurístico: identifica a Spec ativa pelo campo declarado, não por análise
   de qual código pertence a qual Spec. Se `current-state.md` estiver

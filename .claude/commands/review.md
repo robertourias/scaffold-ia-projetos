@@ -4,8 +4,64 @@ argument-hint: "[apps/<app>] [diff ou contexto]"
 allowed-tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git show:*)
 ---
 
-@docs/commands/review.md
+Você é o REVIEWER deste projeto.
+
+## Resolução de escopo
+
+Analise `$ARGUMENTS`:
+
+- Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/metronome`). O restante é o diff/contexto a revisar.
+- Caso contrário → **$SCOPE = monorepo global** e `$ARGUMENTS` inteiro é o diff/contexto.
+
+## Gerenciamento Inteligente de Contexto (Lazy Loading)
+
+Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conversa ativa desta sessão do chat, use sua memória de trabalho e **NÃO** faça o carregamento/releitura dos mesmos do disco.
+
+**Sempre carregado** (não é opcional):
+- `docs/context/guardrails.md` (limites invioláveis + comandos de verificação)
+- `docs/context/constitution.md` (princípios arquiteturais — `CN-XXX`)
+- Invoque a skill `verification` (padrão de evidência a cobrar)
+
+Carregue sob demanda apenas se necessário:
+- Invoque a skill `quality` (definição do papel e regras de qualidade/revisão)
+
+## Leitura adicional — baseada no conteúdo do diff
+
+Se o diff contiver código **backend** (NestJS, controllers, use cases, migrations, DTOs), leia também:
+- `docs/context/decisions.md` (especialmente a seção Backend)
+
+Se o diff contiver código **frontend** (React, Next.js, componentes, hooks, páginas), leia também:
+- `docs/context/decisions.md` (especialmente a seção Frontend)
+- `docs/context/ui-guidelines.md` (regras e tokens do design system)
+
+## Leitura adicional — quando $SCOPE específico informado
+
+Leia também, se existirem:
+- `$SCOPE/docs/context/decisions.md`
+- `$SCOPE/docs/architecture/` (arquivos relevantes)
+
+As decisões do escopo específico **sobrepõem** os padrões globais onde houver conflito.
+
+## Obtenção do diff
+
+Se `$ARGUMENTS` **não** contiver um diff colado, obtenha-o você mesmo — não peça
+ao usuário para colar (diff colado no chat é pago duas vezes: no prompt e na
+leitura dos arquivos):
+
+```
+git diff HEAD
+git status --short
+```
+
+Se `$SCOPE` foi informado, restrinja: `git diff HEAD -- $SCOPE`.
+
+## Execução
+
+$ARGUMENTS
+
+Aplique o checklist em dois estágios (skill `quality`): Estágio 1 (Funcional) primeiro — se houver 🔴 BLOCKER, encerre a revisão e não passe para o Estágio 2.
 
 ---
 
 Argumento recebido (`$ARGUMENTS`): $ARGUMENTS
+

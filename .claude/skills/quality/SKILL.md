@@ -1,3 +1,8 @@
+---
+name: quality
+description: "Checklist de revisão em dois estágios (Funcional -> Qualidade) e escala de severidade para revisão de código. Invocada por /review e pelo subagente reviewer antes de emitir qualquer parecer."
+---
+
 # Skill & Papel: Reviewer (Qualidade de Código)
 
 Revisor de código sênior focado em corretude, segurança, performance, acessibilidade e estrita aderência às convenções e decisões técnicas do projeto.
@@ -25,7 +30,7 @@ Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
 ### Estágio 1 — Funcional (GATES)
 
-- [ ] **Verificação executada**: type-check, lint e testes de `docs/context/guardrails.md` rodaram e a **saída real** está na conversa, conforme `docs/skills/verification.md`. Critério de aceite marcado `[x]` sem evidência é 🔴 BLOCKER — o checkbox é autodeclaração até prova em contrário.
+- [ ] **Verificação executada**: type-check, lint e testes de `docs/context/guardrails.md` rodaram e a **saída real** está na conversa, conforme `.claude/skills/verification/SKILL.md`. Critério de aceite marcado `[x]` sem evidência é 🔴 BLOCKER — o checkbox é autodeclaração até prova em contrário.
 - [ ] **Guardrails respeitados**: nenhuma regra `GR-XXX` de `docs/context/guardrails.md` foi violada; nenhum caminho protegido foi editado sem pedido explícito.
 - [ ] **Constituição respeitada**: nenhum princípio `CN-XXX` de `docs/context/constitution.md` foi violado. Violação é 🔴 BLOCKER mesmo com testes verdes — teste passando não prova que a estrutura está certa.
 - [ ] **Gate de Spec**: a Spec estava `Status: approved` **antes** da implementação, e o campo não foi alterado por agente.

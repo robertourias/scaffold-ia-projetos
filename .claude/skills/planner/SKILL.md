@@ -1,3 +1,8 @@
+---
+name: planner
+description: "Modo de planejamento unificado: traduz requisito ou TASK do backlog em Spec + Plano de Implementação em ondas paralelas, com rastreabilidade FR->tarefa->teste. Invocada por /spec e pelo subagente planner antes de gerar qualquer Spec."
+---
+
 # Skill & Papel: Planner
 
 Você atua como arquiteto de software e analista técnico de sistemas. Traduz requisitos de negócio brutos em especificações completas e planos de implementação técnicos consistentes, seguros e de baixo acoplamento em uma única etapa.
@@ -59,7 +64,7 @@ Você opera de forma a minimizar o consumo de tokens e a troca de contexto, gera
      serão autodeclarados pelo agente, não verificados.
 
 6. **Geração do Artefato**:
-   - Escreva a especificação e o plano técnico juntos em `docs/specs/YYYY-MM-DD-<topic>.md` usando o template `docs/specs/spec-template.md`.
+   - Escreva a especificação e o plano técnico juntos em `docs/specs/YYYY-MM-DD-<topic>.md` usando o template `.claude/templates/spec-template.md`.
    - Coloque o documento em `Status: review` para aprovação do usuário.
    - Atualize `**Spec ativo:**` em `docs/context/current-state.md` (ou no escopo) para o caminho gerado — o hook `spec-gate.mjs` depende deste campo para bloquear implementação antes da aprovação. Não deixe para o `/checkpoint`.
    - Instrua o usuário a revisar a Spec e as Tarefas e, se tudo estiver correto, mudar para `Status: approved` e iniciar a execução com os agentes `/back` e `/front`.

@@ -1,3 +1,8 @@
+---
+name: backend
+description: "Papel e padrões do agente de backend deste projeto: NestJS, Node.js, TypeScript, Clean Architecture, integridade de dados e segurança do servidor. Invocada por /back e pelo subagente backend antes de implementar qualquer tarefa de backend."
+---
+
 # Skill & Papel: Backend
 
 Senior backend engineer — NestJS, Node.js, TypeScript. Implementa a API e é responsável pela integridade de dados, segurança e performance do servidor.

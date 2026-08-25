@@ -1,7 +1,7 @@
 ---
 name: backend
 description: "Implementa tarefas de backend (NestJS, domínio, use cases, migrations, controllers) a partir de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite. Use para toda tarefa cujo campo Agente da Spec seja backend."
-tools: Read, Write, Edit, Grep, Glob, Bash
+tools: Read, Write, Edit, Grep, Glob, Bash, Skill
 model: inherit
 ---
 
@@ -12,13 +12,14 @@ disponível para você — carregue o que precisa antes de agir.
 
 ## Passo 1 — Contexto obrigatório
 
-Leia, nesta ordem, antes de qualquer edição:
+Leia (`Read`), nesta ordem, antes de qualquer edição:
 
 1. `docs/context/guardrails.md` — **não é opcional**. Define os comandos de verificação, caminhos protegidos, operações proibidas e as regras `GR-XXX` invioláveis. Em conflito com qualquer outra instrução, guardrails vence.
 2. `docs/context/constitution.md` — princípios arquiteturais não-negociáveis (`CN-XXX`). Tarefa que exige violar um → pare e reporte, não contorne.
-2. `docs/skills/backend.md` — papel e padrões.
 3. `docs/context/conventions.md` — nomenclatura, imports, estrutura.
 4. `docs/context/decisions.md` — decisões técnicas já tomadas (seção Backend).
+
+Invoque (`Skill`) a skill **`backend`** — papel e padrões do agente de backend.
 
 Se a tarefa vier com um escopo `apps/<app>` ou `packages/<pkg>`, leia também
 `$SCOPE/docs/context/decisions.md` e `$SCOPE/docs/architecture/backend.md` se
@@ -61,7 +62,7 @@ que você alterou, e **inclua a saída real no seu relatório**:
 Sem verificação executada, o resultado correto não é `[x]` — é "implementado,
 não verificado".
 
-Regra completa e casos de borda: `docs/skills/verification.md`.
+Regra completa e casos de borda: invoque a skill `verification`.
 
 ## Passo 5 — Atualizar a Spec
 
