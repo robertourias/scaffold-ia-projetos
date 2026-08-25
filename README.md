@@ -90,6 +90,7 @@ docs/
 │   ├── ui-guidelines.md  ← Design system, tokens, componentes
 │   ├── current-state.md  ← Estado atual (atualizado por /checkpoint)
 │   ├── guardrails.md     ← Limites invioláveis + verificação (SEMPRE carregado)
+│   ├── constitution.md   ← Princípios arquiteturais CN-XXX (SEMPRE carregado)
 │   └── domains/          ← Regras de negócio fragmentadas por domínio
 │
 ├── architecture/          ← Visão arquitetural detalhada
@@ -142,12 +143,14 @@ isso a inicialização é obrigada a instalar limites antes de liberar o fluxo.
 | Verificação automática | `.claude/hooks/` | encerrar o turno com lint quebrado ou type-check vermelho |
 | Ferramentas por papel | `.claude/agents/` | o `reviewer` editar o código que ele mesmo revisa |
 | Contrato do projeto | `docs/context/guardrails.md` | comandos de verificação obrigatórios, caminhos protegidos, regras `GR-XXX` invioláveis, gatilhos de escalação |
-| Gate de processo | `Status: approved` na Spec | implementação antes de aprovação humana |
+| Gate de processo | `Status: approved` na Spec + `.claude/hooks/spec-gate.mjs` | implementação antes de aprovação humana — agora mecânico, não só instrução |
+| Princípios arquiteturais | `docs/context/constitution.md` | Spec ou diff que viole um `CN-XXX` |
 
 ### Verificação automática (hooks)
 
 | Hook | Quando | O que roda |
 | --- | --- | --- |
+| `spec-gate.mjs` | antes de cada edição | bloqueia código se a Spec ativa estiver `Status: review` |
 | `verify-file.mjs` | a cada arquivo editado | ESLint no arquivo alterado |
 | `verify-project.mjs` | fim do turno | type-check, se algum `.ts`/`.tsx` mudou |
 
@@ -156,9 +159,17 @@ correção. Ambos **falham em aberto**: projeto sem ESLint/TypeScript/git não �
 bloqueado. Desligar com `SCAFFOLD_VERIFY=0`.
 Detalhes em [`.claude/hooks/README.md`](.claude/hooks/README.md).
 
+`spec-gate.mjs` é heurístico: identifica a Spec ativa pelo campo `**Spec
+ativo:**` de `docs/context/current-state.md`, não por análise do código. Não
+impede um agente de editar o próprio campo `Status` para se autoaprovar — isso
+continua dependendo da instrução nos papéis. `/spec` mantém o campo atualizado
+ao gerar a Spec, sem esperar pelo `/checkpoint`.
+
 `docs/context/guardrails.md` é carregado por **todos** os papéis, em **toda**
 tarefa, e **vence** qualquer outra instrução do scaffold em caso de conflito.
-É o único arquivo com essa precedência — mantenha-o curto.
+`docs/context/constitution.md` carrega junto — guardrails restringe o que é
+proibido fazer; constitution restringe como o sistema deve ser construído.
+Mantenha os dois curtos.
 
 ### Como são gerados
 

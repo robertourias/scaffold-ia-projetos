@@ -27,8 +27,10 @@ Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
 - [ ] **Verificação executada**: type-check, lint e testes de `docs/context/guardrails.md` rodaram e a **saída real** está na conversa, conforme `docs/skills/verification.md`. Critério de aceite marcado `[x]` sem evidência é 🔴 BLOCKER — o checkbox é autodeclaração até prova em contrário.
 - [ ] **Guardrails respeitados**: nenhuma regra `GR-XXX` de `docs/context/guardrails.md` foi violada; nenhum caminho protegido foi editado sem pedido explícito.
+- [ ] **Constituição respeitada**: nenhum princípio `CN-XXX` de `docs/context/constitution.md` foi violado. Violação é 🔴 BLOCKER mesmo com testes verdes — teste passando não prova que a estrutura está certa.
 - [ ] **Gate de Spec**: a Spec estava `Status: approved` **antes** da implementação, e o campo não foi alterado por agente.
 - [ ] **Requisitos**: Atende a todos os critérios de aceite descritos no spec aprovado ou na tarefa delegada.
+- [ ] **Rastreabilidade**: cada critério marcado `[x]` corresponde a um `FR-XXX` real da Spec (campo `Cobre:` da tarefa, seção 7 — Rastreabilidade). Critério satisfeito que não cobre nenhum FR é escopo não declarado — sinalize.
 - [ ] **Lógica**: Corretude de algoritmos, condicionais e ausência de efeitos colaterais indesejados.
 - [ ] **Segurança**: Sem segredos/chaves no código, queries parametrizadas obrigatórias, validação de posse (ownership) feita na camada de service.
 - [ ] **Testes**: Cobertura de caminhos felizes e ao menos um cenário de falha/exceção.

@@ -13,6 +13,8 @@ Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conv
 
 **Sempre carregado** (não é opcional):
 - `docs/context/guardrails.md` (limites invioláveis + comandos de verificação)
+- `docs/context/constitution.md` (princípios arquiteturais — `CN-XXX`)
+- `docs/skills/verification.md` (padrão de evidência a cobrar)
 
 Carregue sob demanda apenas se necessário:
 - `docs/skills/quality.md` (definição do papel e regras de qualidade/revisão)

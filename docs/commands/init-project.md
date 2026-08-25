@@ -139,6 +139,29 @@ depende dos hooks de verificação e do gate humano de Spec — não da lista de
 
 ---
 
+### Bloco 7 — Constituição (preenche `docs/context/constitution.md`)
+
+**Obrigatório.** Diferente de `guardrails.md` (o que é proibido fazer), este
+bloco define **como o sistema deve ser construído** — princípios que uma Spec
+violando não deve ser aprovada.
+
+Antes de perguntar, infira da estrutura de pastas já existente (se houver
+código): há separação `domain/application/infrastructure/presentation`? Módulos
+importam uns aos outros diretamente ou por interface?
+
+Faça as perguntas nesta ordem, uma por vez:
+
+1. Qual a direção de dependência entre camadas? (ex: Clean Architecture — domínio não importa framework; ou outra arquitetura em uso)
+2. Testes são obrigatórios no mesmo diff da implementação, ou podem vir depois?
+3. Há limite de acoplamento entre módulos? (ex: só se comunicam por interface pública)
+4. Há algum princípio arquitetural específico deste produto que um agente jamais pode violar, mesmo sob pressão de prazo?
+
+Preencha `docs/context/constitution.md` com os princípios reais, cada um com ID
+sequencial `CN-001`, `CN-002`, ... Remova os `<!-- TODO -->` e o aviso de status.
+Mantenha o arquivo curto — constituição longa não é lida.
+
+---
+
 ## Finalização
 
 Após preencher todos os arquivos, exiba um resumo:
@@ -151,6 +174,7 @@ Após preencher todos os arquivos, exiba um resumo:
   - docs/context/ui-guidelines.md
   - docs/context/conventions.md  (ou: ⚠️ aguardando termos de domínio)
   - docs/context/guardrails.md
+  - docs/context/constitution.md
   - .claude/settings.json        (guardrails de permissão)
 
 🛡️ Guardrails ativos:
@@ -170,7 +194,7 @@ Próximos passos:
 ## Regras
 
 - Uma pergunta por mensagem — sem exceção.
-- O Bloco 6 (Guardrails) é obrigatório. Se o usuário quiser pular, avise que o scaffold ficará sem limites de permissão e sem definição de "pronto", e peça confirmação explícita antes de pular.
+- Os Blocos 6 (Guardrails) e 7 (Constituição) são obrigatórios. Se o usuário quiser pular algum, avise o que fica faltando (limites de permissão e definição de "pronto" no caso do 6; princípios arquiteturais não-negociáveis no caso do 7) e peça confirmação explícita antes de pular.
 - Não preencha arquivos parcialmente. Preencha apenas quando tiver todas as respostas do bloco.
 - Quando preencher um arquivo: remova todos os `<!-- TODO -->`, remova o bloco `**Status do arquivo:** vazio` e sua nota associada, substitua pelo conteúdo real.
 - Se o usuário responder "a definir" ou "não sei ainda", use um comentário `<!-- a definir -->` no campo correspondente — não deixe o placeholder original.

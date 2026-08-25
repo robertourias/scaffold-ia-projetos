@@ -15,6 +15,7 @@ disponível para você — carregue o que precisa antes de agir.
 Leia, nesta ordem, antes de qualquer edição:
 
 1. `docs/context/guardrails.md` — **não é opcional**. Define os comandos de verificação, caminhos protegidos, operações proibidas e as regras `GR-XXX` invioláveis. Em conflito com qualquer outra instrução, guardrails vence.
+2. `docs/context/constitution.md` — princípios arquiteturais não-negociáveis (`CN-XXX`). Tarefa que exige violar um → pare e reporte, não contorne.
 2. `docs/skills/backend.md` — papel e padrões.
 3. `docs/context/conventions.md` — nomenclatura, imports, estrutura.
 4. `docs/context/decisions.md` — decisões técnicas já tomadas (seção Backend).

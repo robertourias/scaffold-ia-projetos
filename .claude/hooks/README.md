@@ -10,6 +10,7 @@ Ligados em `.claude/settings.example.json` → copie para `.claude/settings.json
 
 | Hook | Evento | Quando | O que faz |
 |------|--------|--------|-----------|
+| `spec-gate.mjs` | `PreToolUse` (`Edit`\|`Write`\|`MultiEdit`) | antes de cada edição | bloqueia código enquanto a Spec ativa estiver `Status: review` |
 | `verify-file.mjs` | `PostToolUse` (`Edit`\|`Write`\|`MultiEdit`) | a cada arquivo editado | ESLint **no arquivo alterado** (rápido) |
 | `verify-project.mjs` | `Stop` | fim do turno | type-check do projeto, se algum `.ts`/`.tsx` mudou |
 
@@ -17,6 +18,28 @@ Divisão proposital: lint por arquivo é barato e roda sempre; type-check é car
 roda uma vez por turno. Testes **não** rodam em hook — são responsabilidade
 explícita do agente (`/back`, `/front`, Passo 1 da Finalização), porque a
 suíte pode levar minutos e nem toda tarefa a exige.
+
+## O gate de Spec — de honra para mecânico
+
+Antes deste hook, `Status: approved` era só uma instrução no prompt: nada
+impedia um agente de implementar contra uma Spec em `review`, ou de editar o
+próprio campo `Status` para se autoaprovar.
+
+`spec-gate.mjs` fecha a primeira metade: lê `**Spec ativo:**` em
+`docs/context/current-state.md` (escrito por `/spec` ao gerar a Spec, e por
+`/checkpoint`), resolve o `Status` dessa Spec, e bloqueia `Edit`/`Write`/`MultiEdit`
+fora de `docs/` e `.claude/` enquanto o status for `review`.
+
+**Limites conhecidos, honestos:**
+
+- Não impede o agente de editar o campo `Status` diretamente — isso continua
+  dependendo da instrução (`docs/skills/planner.md`, `back.md`, `front.md`).
+  Um hook não distingue "humano aprovou" de "agente editou a string".
+- É heurístico: identifica a Spec ativa pelo campo declarado, não por análise
+  de qual código pertence a qual Spec. Se `current-state.md` estiver
+  desatualizado, o gate fica cego.
+- Falha em aberto sem `current-state.md`, sem campo `Spec ativo:`, ou sem a
+  Spec referenciada existir no disco.
 
 ## Contrato
 

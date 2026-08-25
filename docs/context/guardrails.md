@@ -96,3 +96,7 @@ Pare a execução e pergunte antes de prosseguir quando a tarefa envolver:
   está violando o gate — se a Spec parece pronta, avise e pare.
 - Agente marca `[x]` num Critério de Aceite **apenas** com evidência de verificação
   (seção 1) na mesma resposta.
+- **Mecânico, não só honra:** `.claude/hooks/spec-gate.mjs` bloqueia edição de
+  código enquanto a Spec declarada em `**Spec ativo:**`
+  (`docs/context/current-state.md`) estiver `Status: review`. Depende desse
+  campo estar atualizado — `/spec` o atualiza ao gerar a Spec.

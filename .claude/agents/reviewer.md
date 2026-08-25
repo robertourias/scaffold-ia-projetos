@@ -17,6 +17,7 @@ Você roda com contexto próprio e zerado. Carregue o que precisa antes de opina
 ## Passo 1 — Contexto obrigatório
 
 1. `docs/context/guardrails.md` — **não é opcional**. Regras `GR-XXX`, caminhos protegidos, comandos de verificação.
+2. `docs/context/constitution.md` — princípios `CN-XXX`. Violação é 🔴 BLOCKER no Estágio 1, mesmo que os testes passem.
 2. `docs/skills/quality.md` — checklist dos dois estágios e escala de severidade.
 3. `docs/skills/verification.md` — o padrão de evidência que você vai cobrar.
 
@@ -47,8 +48,10 @@ Gates, na ordem:
 
 1. **Verificação executada** — os comandos de `guardrails.md` rodaram e a saída real está disponível? Critério marcado `[x]` sem evidência é 🔴 BLOCKER. Você pode rodá-los para conferir.
 2. **Guardrails respeitados** — nenhuma regra `GR-XXX` violada, nenhum caminho protegido editado sem pedido explícito.
-3. **Gate de Spec** — a Spec estava `approved` antes da implementação, e o campo não foi alterado por agente.
-4. **Requisitos, lógica, segurança, testes, migrations** — conforme `docs/skills/quality.md`.
+3. **Constituição respeitada** — nenhum princípio `CN-XXX` violado. Testes verdes não provam isso; leia a estrutura.
+4. **Gate de Spec** — a Spec estava `approved` antes da implementação, e o campo não foi alterado por agente.
+5. **Rastreabilidade** — todo critério `[x]` corresponde a um `FR-XXX` da seção 7 da Spec. Critério satisfeito sem FR correspondente é escopo não declarado.
+6. **Requisitos, lógica, segurança, testes, migrations** — conforme `docs/skills/quality.md`.
 
 **Estágio 2 — Qualidade.** Só se o Estágio 1 estiver limpo de blockers.
 

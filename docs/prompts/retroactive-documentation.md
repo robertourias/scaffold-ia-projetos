@@ -161,6 +161,29 @@ Se **nenhum** comando de verificação existir, abra o resumo final com:
 > Até configurar um, nenhum agente consegue provar que uma mudança funciona —
 > os Critérios de Aceite das Specs serão autodeclaração.
 
+## Passo 5.6 — `docs/context/constitution.md` (obrigatório)
+
+Diferente do guardrails (o que é proibido), aqui é **como o código já construído
+se organiza** — extraia os princípios que o código já segue, não os que
+deveriam existir.
+
+Infira da estrutura real:
+
+1. **Direção de dependência:** módulos de domínio importam framework? Camadas
+   internas importam infraestrutura, ou o contrário? Leia 3-4 arquivos de
+   `domain/` ou equivalente para confirmar o padrão real, não assuma.
+2. **Testes:** os testes existentes ficam ao lado do código (`*.spec.ts` junto
+   do arquivo) ou separados? Rode um teste para confirmar que a suíte funciona.
+3. **Acoplamento entre módulos:** módulos importam uns aos outros direto, ou
+   por interface/barrel export? Verifique 2-3 imports cross-module.
+
+Preencha `docs/context/constitution.md` com os princípios **observados**
+(marcados `[INFERIDO — confirmar]` quando a inferência não for óbvia), cada um
+com ID `CN-001`, `CN-002`, ... Se o código não seguir um padrão consistente em
+algum eixo, diga isso explicitamente em vez de inventar um princípio que o
+código não respeita — constituição que descreve um código que não existe é
+pior que nenhuma.
+
 ## Passo 6 — `docs/specs/`
 
 Não invente specs históricos. Em vez disso, gere **um único spec-baseline**:
@@ -193,6 +216,7 @@ Encerre com um resumo estruturado:
 ✅ Slash commands ativos (.claude/commands/*.md): [lista ou ⚠️ pendente]
 ✅ docs/context/ preenchido: [arquivos]
 ✅ docs/architecture/ preenchido: [arquivos]
+📜 Constituição: docs/context/constitution.md (princípios [INFERIDO — confirmar])
 🛡️ Guardrails: docs/context/guardrails.md + .claude/settings.json
    - Verificação: [comandos que rodam, ou ⚠️ "(não configurado)"]
    - Regras invioláveis inferidas: GR-001..GR-0NN (confirmar)

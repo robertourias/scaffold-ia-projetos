@@ -126,6 +126,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/spec-gate.mjs\"",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }

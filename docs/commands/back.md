@@ -13,6 +13,7 @@ Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conv
 
 **Sempre carregado** (não é opcional):
 - `docs/context/guardrails.md` (limites invioláveis + comandos de verificação)
+- `docs/context/constitution.md` (princípios arquiteturais — `CN-XXX`)
 - `docs/skills/verification.md` (o que significa "pronto")
 
 Carregue sob demanda apenas se for a primeira chamada ou se os arquivos mudaram:

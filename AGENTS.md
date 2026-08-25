@@ -9,6 +9,7 @@ Leia apenas os arquivos do seu papel antes de qualquer tarefa.
 
 ```
 docs/context/guardrails.md
+docs/context/constitution.md
 docs/skills/verification.md
 ```
 

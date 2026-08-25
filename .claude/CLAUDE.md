@@ -8,6 +8,7 @@ Leia apenas os arquivos relevantes ao seu papel antes de qualquer tarefa.
 ## Sempre carregado (todos os papéis)
 ```
 docs/context/guardrails.md    ← limites invioláveis + comandos de verificação
+docs/context/constitution.md  ← princípios arquiteturais não-negociáveis (CN-XXX)
 docs/skills/verification.md   ← o que significa "pronto" (evidência antes de [x])
 ```
 

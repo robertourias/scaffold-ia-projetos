@@ -27,7 +27,9 @@
 - **FR-001:** <requisito mensurável e verificável>
 - **FR-002:** <requisito mensurável e verificável>
 
-> Cada FR deve ser independente e testável.
+> Cada FR deve ser independente e testável. Toda tarefa na seção 6 declara quais
+> FR cobre (campo `Cobre:`); a tabela de rastreabilidade na seção 8 fecha o
+> ciclo FR → tarefa → teste.
 
 ---
 
@@ -80,17 +82,34 @@ inicia após a anterior concluir.
 - **Depende de:** — (nenhuma) | T2, T3
 - **Paralelizável com:** T4 | nenhuma
 - **Arquivos:** `caminho/a.ts`, `caminho/b.tsx`  ← todos os arquivos que esta tarefa cria ou modifica
+- **Cobre:** FR-001 | GR-002, CN-001  ← requisito(s) funcional(is) e/ou guardrail/princípio relevante
 - **Descrição:** [O quê fazer e contratos relacionados]
 - **Critérios de Aceite:**
-  - [ ] Critério 1
-  - [ ] Critério 2
+  - [ ] Dado <estado>, quando <ação>, então <resultado observável>. — cobre FR-001, verificado por `<comando ou arquivo de teste>`
+  - [ ] Dado <estado de falha>, quando <ação>, então <erro tratado de forma X>. — cobre FR-001, verificado por `<comando ou arquivo de teste>`
 
 ### Tarefa 2: [Identificador]
 ...
 
 ---
 
-## 7. Verificação
+## 7. Rastreabilidade
+
+Fecha o ciclo requisito → tarefa → teste. Preenchida **depois** da seção 6 —
+copie os IDs já usados nas tarefas, não invente novos aqui.
+
+| FR | Coberto por | Verificado por |
+|----|-------------|-----------------|
+| FR-001 | T1, T3 | `<arquivo de teste ou comando>` |
+| FR-002 | T2 | `<arquivo de teste ou comando>` |
+
+> Todo FR aparece em pelo menos uma linha. FR sem tarefa correspondente é
+> requisito esquecido — volte à seção 6. Tarefa sem FR correspondente é escopo
+> não declarado — volte à seção 3 ou remova a tarefa.
+
+---
+
+## 8. Verificação
 
 Como provar que esta Spec foi entregue. Comandos reais de
 `docs/context/guardrails.md` — não descrições.
