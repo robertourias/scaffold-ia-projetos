@@ -83,25 +83,42 @@ que você alterou e **cole a saída real** na resposta.
 | qualquer código | lint |
 | lógica de negócio | testes |
 
-Regra completa, incluindo os quatro casos (passou / reprovou / não configurado /
-falha pré-existente) e o que é proibido: invoque a skill **`verification`**.
+Regra completa, incluindo os cinco casos (passou / reprovou / não configurado /
+falha pré-existente / Pendência Manual) e o que é proibido: invoque a skill
+**`verification`**.
 
 Resumo do que não pode: nunca `--no-verify`, `--passWithNoTests` ou
 `eslint-disable` para forçar verde; nunca marcar `[x]` sem evidência. Se não
 rodou, a resposta é "implementado, **não verificado**", não `[x]`.
 
+**Critério exige ação que você não consegue executar** (teste manual,
+credencial/ambiente externo, decisão de negócio)? Não deixe em aberto
+silenciosamente. Anote como Pendência Manual na Spec — formato exato na skill
+`verification`, seção "Como anotar uma Pendência Manual" — e inclua no
+resumo final, com a instrução concreta do que o humano precisa fazer para
+fechar o critério (ex: qual comando rodar, o que colar como evidência, qual
+checkbox vira `[x]`). Não marque `[x]` por suposição. Depois de resolver
+manualmente, o humano roda `/recheck <spec>`.
+
 ### 2. Atualizar a Spec
 
 Identifique o arquivo de Spec associado à tarefa (em `docs/specs/` ou `$SCOPE/docs/specs/`).
 
-Para cada critério de aceite implementado, marque o checkbox como concluído:
+Para cada critério de aceite implementado e verificado, marque o checkbox como concluído:
 - `- [ ]` → `- [x]`
+
+Para cada critério com Pendência Manual, **não** marque `[x]` — insira o bloco
+de anotação abaixo do critério (ver skill `verification`).
 
 ### 3. Verificar se é a última tarefa da Spec
 
-Verifique se **todos** os checkboxes da Spec estão marcados como `[x]`.
+Verifique se **todos** os checkboxes da Spec estão marcados como `[x]` **e**
+se não resta nenhum bloco `> 🟡 Pendência Manual:` em aberto.
 
-Se sim → prossiga para o passo 4. Caso contrário → encerre aqui.
+Se sim → prossiga para o passo 4. Se restar Pendência Manual (mesmo com todo
+o resto pronto), **não** avance para o passo 4 — a Spec só fecha via
+`/recheck`, depois que o humano resolver as pendências. Encerre aqui e deixe
+claro no resumo que a Spec está implementada mas pendente de ação manual.
 
 ### 4. Atualizar o status no product-backlog
 

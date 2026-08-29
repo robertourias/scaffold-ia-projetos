@@ -1,13 +1,13 @@
 ---
 name: verification
-description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação. Invocada por /back, /front, /hands-on, a skill quality e todos os subagentes de implementação."
+description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação, e todo critério que exige ação humana vira Pendência Manual rastreável. Invocada por /back, /front, /hands-on, /recheck, a skill quality e todos os subagentes de implementação."
 ---
 
 # Skill: Verificação
 
 Fonte canônica do que significa "pronto" neste projeto. Referenciada por
 `.claude/commands/back.md`, `.claude/commands/front.md`, `.claude/commands/hands-on.md`,
-`.claude/skills/quality/SKILL.md` e pelos subagentes em `.claude/agents/`.
+`.claude/commands/recheck.md`, `.claude/skills/quality/SKILL.md` e pelos subagentes em `.claude/agents/`.
 
 > Os comandos concretos vivem em `docs/context/guardrails.md`, seção 1. Este
 > arquivo define **como usá-los**; aquele define **quais são**.
@@ -43,9 +43,11 @@ Verificação:
   lint:       passou | falhou | não configurado
   testes:     N passando | falhou | não configurado
   <saída relevante, recortada>
+
+Pendências Manuais: (nenhuma) | <critério> — <instrução resumida>
 ```
 
-## Os quatro casos
+## Os cinco casos
 
 **1. Passou.** Marque `[x]`. Inclua a saída.
 
@@ -61,6 +63,32 @@ lacuna.
 **4. Falha pré-existente**, sem relação com sua mudança. Reporte nominalmente
 (arquivo e erro), registre como dívida, e siga. Não silencie e não "conserte de
 passagem" — correção fora de escopo entra no diff sem revisão.
+
+**5. Pendência Manual.** O critério exige ação que você não consegue executar
+nem verificar sozinho — teste manual em navegador/dispositivo real, credencial
+ou ambiente externo que você não acessa, decisão de negócio, aprovação humana.
+Não deixe isso em aberto silenciosamente e não marque `[x]` por suposição.
+Anote na Spec (formato abaixo), reporte ao usuário com instrução concreta do
+que fazer, e siga sem bloquear o restante da tarefa. Quando o humano resolver,
+ele roda `/recheck` para fechar o critério — não é seu trabalho como agente de
+implementação ficar esperando.
+
+## Como anotar uma Pendência Manual na Spec
+
+Logo abaixo do critério de aceite afetado, insira (mantendo o checkbox
+`- [ ]`):
+
+```markdown
+- [ ] <critério de aceite original>
+  > 🟡 Pendência Manual: <o que falta e por que você não consegue verificar>
+  > Instrução: <ação concreta que o humano precisa tomar — ex: "testar em
+  > dispositivo iOS real e colar evidência", "confirmar com o time de negócio
+  > se X é aceitável", "gerar a credencial Y em produção e configurar .env">
+```
+
+`/recheck` procura por esse bloco (linha `> 🟡 Pendência Manual:`) para saber
+o que rechecar. Não use esse formato para falhas normais (caso 2) — só para o
+que está genuinamente fora do seu alcance como agente.
 
 ## Proibido
 

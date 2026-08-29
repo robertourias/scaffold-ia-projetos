@@ -215,6 +215,10 @@ Ideia/requisito
 [8] Specs concluídas migram para docs/archive/ (feito por /checkpoint)
 ```
 
+**Diagrama do fluxo** (sequência de comandos, gate humano, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
+
+![Fluxo de entrega do Scaffold IA](docs/assets/fluxo-workflow.png)
+
 **Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código — e agora um hook bloqueia mecanicamente a edição de código enquanto a Spec ativa não estiver aprovada.
 
 ### Playbook e comparativo (tokens × qualidade)
@@ -240,6 +244,7 @@ Ideia/requisito
 | `/back` | `/back implementar auth com JWT` | Agente backend, inline |
 | `/front` | `/front criar modal de login` | Agente frontend, inline |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
+| `/recheck` | `/recheck docs/specs/2026-06-13-onboarding.md testei no dispositivo iOS` | Fecha Pendências Manuais de uma Spec após ajuste feito por você |
 | `/checkpoint` | `/checkpoint` | Salva estado, gera changelog, arquiva specs concluídas |
 | `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
 

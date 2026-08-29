@@ -38,6 +38,7 @@ front.md         ← agente frontend (suporta escopo e agrupamento/batching de t
 spec.md          ← planner em Modo de Planejamento Unificado (gera regras + tarefas técnicas)
 hands-on.md      ← orquestrador: executa o Plano de Implementação da Spec em ondas (paralelo)
 review.md        ← reviewer em dois estágios (suporta escopo)
+recheck.md       ← rechecagem pós-ajuste manual: fecha Pendências Manuais de uma Spec ou lista o que falta
 ```
 
 Cada arquivo **é** o slash command — sem wrapper, sem `@` apontando para outro
