@@ -1,6 +1,6 @@
 ---
 description: "PLANNER: gera Spec + Plano Técnico em ondas (Status: review) para uma TASK ou requisito"
-argument-hint: "[TASKXX | apps/<app> | requisito]"
+argument-hint: "[apps/<app> | packages/<pkg>] [TASKXX | requisito]"
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -23,7 +23,20 @@ Carregue sob demanda apenas se necessário:
 
 ## Resolução de Escopo
 
-O escopo de salvamento e contexto depende de onde o arquivo será criado ou de argumentos extras fornecidos (ex: se o projeto for dividido em sub-apps, salve na pasta correta). Se não especificado, use o escopo global (salve em `docs/specs/`).
+Analise `$ARGUMENTS`:
+
+- Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/metronome`). O restante (TASKXX ou requisito) é processado normalmente.
+- Caso contrário → **$SCOPE = monorepo global**.
+
+**Leitura adicional — quando $SCOPE específico informado.** Leia também, se existirem:
+- `$SCOPE/docs/context/decisions.md`
+- `$SCOPE/docs/architecture/overview.md` (ou `backend.md`/`frontend.md`)
+
+Decisões de escopo específico sobrepõem os padrões globais onde houver conflito. `docs/context/product.md` e o backlog continuam sempre lidos da raiz — regra de negócio e priorização são do produto, não do app/package.
+
+**Saída de artefatos:**
+- Escopo específico → gere a Spec em `$SCOPE/docs/specs/YYYY-MM-DD-<topic>.md`
+- Escopo global → gere em `docs/specs/YYYY-MM-DD-<topic>.md`
 
 ## Tratamento de Ambiguidade
 
@@ -40,7 +53,7 @@ Faça **2-3 perguntas** se houver dúvida genuína. O resultado deve ser uma Spe
 
 ## Resolução de Argumento
 
-Argumento recebido: $ARGUMENTS
+Use o argumento **após remover o `$SCOPE`** resolvido acima (se houver).
 
 ### Se o argumento for um ID de tarefa (ex: TASK01, TASK03)
 
@@ -67,7 +80,7 @@ Se o contexto da conversa estiver pesado antes de iniciar, avise o usuário:
 
 ## Execução
 
-Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
+Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `$SCOPE/docs/specs/YYYY-MM-DD-<topic>.md`, se `$SCOPE` informado) com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
 
 ## Após gerar — atualizar o Spec ativo (obrigatório)
 

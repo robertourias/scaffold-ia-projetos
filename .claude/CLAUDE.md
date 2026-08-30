@@ -93,6 +93,10 @@ packages/
   types/      → Tipos TypeScript compartilhados
   utils/      → Funções utilitárias compartilhadas
 ```
+Cada app/package pode ter `docs/{context,architecture,specs}` próprio (`$SCOPE`
+nos comandos `back`/`front`/`spec`/`review`/`retomar`/`checkpoint`). Raiz =
+monorepo inteiro; `$SCOPE/docs/` = local a um app/package. Convenção:
+`docs/context/conventions.md#documentação-em-monorepo-appspackages`.
 
 ## Slash commands disponíveis
 ```

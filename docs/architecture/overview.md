@@ -20,6 +20,21 @@
 | Fila | <!-- a definir --> | |
 | Cache | <!-- a definir --> | |
 
+## Projetos do Monorepo
+
+<!-- Preencha apenas se este projeto for monorepo (apps/ e/ou packages/ na raiz). Se não for, remova esta seção. -->
+<!-- Atualizada por /init-project (Bloco 2) ao detectar monorepo, e manualmente quando um app/package novo é criado. -->
+
+| Path | Tipo | Propósito | Stack (se diferir da tabela acima) | Docs próprios |
+|------|------|-----------|--------------------------------------|---------------|
+| `apps/[nome]` | app | [uma frase] | [ex: usa Redis só aqui] | `apps/[nome]/docs/` |
+| `packages/[nome]` | package compartilhado | [uma frase] | | `packages/[nome]/docs/` |
+
+Cada app/package só ganha `docs/` próprio quando `/spec`, `/back`, `/front` ou
+`/checkpoint` rodam com esse escopo (ver
+`docs/context/conventions.md#documentação-em-monorepo-appspackages`) — não
+precisa ser criado antecipadamente.
+
 ## Fluxo de dados
 
 ```

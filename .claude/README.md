@@ -69,7 +69,9 @@ model: claude-haiku-4-5-20251001
 
 ## Sintaxe de escopo
 
-Os comandos `back`, `front`, `spec`, `review` e `retomar` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global.
+Os comandos `back`, `front`, `spec`, `review`, `retomar` e `checkpoint` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar dentro daquele app/package, não na raiz.
+
+Isso existe para separar dois níveis de documentação num monorepo: `docs/` na raiz guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `$SCOPE/docs/` guarda o que é local a **um** app/package (suas próprias decisões, specs, estado). Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
 
 ```
 /comando [apps/<app> | packages/<pkg>] tarefa
@@ -83,6 +85,7 @@ Os comandos `back`, `front`, `spec`, `review` e `retomar` suportam um **escopo o
 /spec apps/tools nova ferramenta: conversor de unidades
 /review apps/challenges [cole o diff aqui]
 /retomar apps/metronome
+/checkpoint apps/metronome
 ```
 
 **Sem escopo** — trabalha no contexto global do monorepo, salva em `docs/`:

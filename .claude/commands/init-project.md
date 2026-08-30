@@ -66,6 +66,14 @@ sempre. Liste `apps/` e `packages/` (se existirem) e substitua o bloco pela
 estrutura real. Se o projeto não for monorepo, substitua por uma árvore de
 `src/` de alto nível ou remova a seção — não deixe o exemplo genérico.
 
+**Se for monorepo**, preencha também a seção "Projetos do Monorepo" em
+`docs/architecture/overview.md`: uma linha por app/package (path, tipo,
+propósito em uma frase, stack se diferir da tabela geral). Não crie `docs/`
+dentro de cada app/package agora — isso só acontece quando `/spec`, `/back`,
+`/front` ou `/checkpoint` rodarem com aquele escopo pela primeira vez (ver
+`docs/context/conventions.md#documentação-em-monorepo-appspackages`). Se o
+projeto não for monorepo, remova a seção "Projetos do Monorepo" do overview.
+
 ---
 
 ### Bloco 3 — Decisões de Backend (preenche `docs/context/decisions.md` — seção Backend)

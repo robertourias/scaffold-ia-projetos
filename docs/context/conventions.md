@@ -52,6 +52,24 @@ Antes de encerrar a sessão de trabalho ou ao concluir marcos importantes:
 
 Não pule este protocolo para manter a IA sempre sintonizada com o estado real do projeto.
 
+## Documentação em Monorepo (apps/packages)
+
+Em projeto monorepo, `docs/` tem dois níveis. Não duplique conteúdo entre eles — cada fato mora em exatamente um lugar.
+
+**`docs/` na raiz — nível monorepo:**
+- Visão do produto como um todo, decisões que atravessam apps/packages, infraestrutura compartilhada, lista de projetos (`docs/architecture/overview.md`, seção "Projetos do Monorepo"), guardrails e constituição globais.
+- Specs de feature que tocam mais de um app/package, ou que não pertencem a nenhum específico.
+
+**`$SCOPE/docs/` (ex: `apps/api/docs/`, `packages/ui/docs/`) — nível do app/package:**
+- Mesma árvore da raiz, só que local: `context/decisions.md`, `context/current-state.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`.
+- Decisões e specs que só fazem sentido dentro daquele app/package (ex: uma decisão de cache que só existe na API).
+- **Não recrie** `guardrails.md`, `constitution.md` ou `product.md` no escopo local — esses são sempre globais.
+- Não precisa ser criado antecipadamente: `/spec`, `/back`, `/front` e `/checkpoint` criam os arquivos em `$SCOPE/docs/` na primeira vez que geram algo com escopo, exatamente como fariam na raiz.
+
+**Regra de conflito:** decisão em `$SCOPE/docs/context/decisions.md` sobrepõe a equivalente em `docs/context/decisions.md` só dentro daquele escopo — não é uma decisão nova para o monorepo inteiro.
+
+**Economia de contexto:** ao trabalhar com `$SCOPE` informado, leia o "sempre carregado" da raiz (guardrails, constitution) **mais** os arquivos equivalentes de `$SCOPE/docs/`, se existirem. Nunca leia `docs/` ou `$SCOPE/docs/` de um app/package diferente do que está em foco — isso é contexto que não serve à tarefa e só custa tokens.
+
 ## Comentários
 
 - Comente o **POR QUÊ**, não o QUÊ — o código mostra o quê; comentários explicam restrições ocultas e regras de negócio não-óbvias.

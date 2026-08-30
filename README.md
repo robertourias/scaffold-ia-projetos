@@ -122,6 +122,16 @@ docs/
 └── comparativo-scaffold-vs-superpowers.md
 ```
 
+**Monorepo (apps/packages):** cada `apps/<nome>/` e `packages/<nome>/` pode ter
+seu próprio `docs/{context,architecture,specs}` — mesma árvore acima, em
+miniatura, só com o que é local àquele app/package. A raiz fica com o que é do
+monorepo inteiro: produto, decisões cross-cutting, infra, e o inventário de
+projetos em `docs/architecture/overview.md`. Os comandos `/spec`, `/back`,
+`/front`, `/review`, `/retomar` e `/checkpoint` aceitam `apps/<app>` ou
+`packages/<pkg>` como primeiro argumento para operar nesse nível — ver
+[Sintaxe de escopo](.claude/README.md#sintaxe-de-escopo) e a
+[convenção de documentação em monorepo](docs/context/conventions.md#documentação-em-monorepo-appspackages).
+
 ---
 
 ## Guardrails
@@ -245,7 +255,7 @@ Ideia/requisito
 | `/front` | `/front criar modal de login` | Agente frontend, inline |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
 | `/recheck` | `/recheck docs/specs/2026-06-13-onboarding.md testei no dispositivo iOS` | Fecha Pendências Manuais de uma Spec após ajuste feito por você |
-| `/checkpoint` | `/checkpoint` | Salva estado, gera changelog, arquiva specs concluídas |
+| `/checkpoint` | `/checkpoint [apps/<app>]` | Salva estado, gera changelog, arquiva specs concluídas |
 | `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
 
 Referência completa: [`.claude/README.md`](.claude/README.md)
