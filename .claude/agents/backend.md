@@ -22,7 +22,7 @@ Leia (`Read`), nesta ordem, antes de qualquer edição:
 Invoque (`Skill`) a skill **`backend`** — papel e padrões do agente de backend.
 
 Se a tarefa vier com um escopo `apps/<app>` ou `packages/<pkg>`, leia também
-`$SCOPE/docs/context/decisions.md` e `$SCOPE/docs/architecture/backend.md` se
+`docs/$SCOPE/context/decisions.md` e `docs/$SCOPE/architecture/backend.md` se
 existirem — decisões de escopo **sobrepõem** as globais.
 
 ## Passo 2 — Gate de Spec

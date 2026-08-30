@@ -31,17 +31,18 @@ Carregue sob demanda apenas se for a primeira chamada ou se os arquivos mudaram:
 ## Leitura adicional — quando $SCOPE específico informado
 
 Leia também, se existirem:
-- `$SCOPE/docs/context/decisions.md`
-- `$SCOPE/docs/architecture/frontend.md`
+- `docs/$SCOPE/context/decisions.md`
+- `docs/$SCOPE/architecture/frontend.md`
 
 As decisões de escopo específico **sobrepõem** os padrões globais onde houver conflito.
 
 ## Saída de artefatos
 
-- Escopo específico → salve artefatos em `$SCOPE/docs/`
+Sempre sob `docs/` na raiz — nunca dentro de `apps/<app>/` ou `packages/<pkg>/`:
+- Escopo específico → salve artefatos em `docs/$SCOPE/` (ex: `docs/apps/api/`)
 - Escopo global → salve em `docs/`
 
-**Escopo específico e `docs/apps/<nome>.md` (ou `docs/packages/<nome>.md`) ainda não existe na raiz?** Crie-o agora com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
+**Escopo específico e `docs/$SCOPE/README.md` ainda não existe?** Crie-o agora com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
 
 ## Tratamento de Ambiguidade
 
@@ -105,7 +106,7 @@ suposição. Depois de resolver manualmente, o humano roda `/recheck <spec>`.
 
 ### 2. Atualizar a Spec
 
-Identifique o arquivo de Spec associado à tarefa (em `docs/specs/` ou `$SCOPE/docs/specs/`).
+Identifique o arquivo de Spec associado à tarefa (em `docs/specs/` ou `docs/$SCOPE/specs/`).
 
 Para cada critério de aceite implementado e verificado, marque o checkbox como concluído:
 - `- [ ]` → `- [x]`

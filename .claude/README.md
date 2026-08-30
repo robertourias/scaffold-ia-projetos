@@ -69,15 +69,15 @@ model: claude-haiku-4-5-20251001
 
 ## Sintaxe de escopo
 
-Os comandos `back`, `front`, `spec`, `review`, `retomar` e `checkpoint` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar dentro daquele app/package, não na raiz.
+Os comandos `back`, `front`, `spec`, `review`, `retomar` e `checkpoint` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar em `docs/$SCOPE/`, um subdiretório de `docs/` na raiz (nunca dentro de `apps/<app>/` ou `packages/<pkg>/`).
 
-Isso existe para separar dois níveis de documentação num monorepo: `docs/` na raiz guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `$SCOPE/docs/` guarda o que é local a **um** app/package (suas próprias decisões, specs, estado). Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
+Isso existe para separar dois níveis de documentação num monorepo, sem misturar documentação com código-fonte: `docs/` na raiz, sem subpasta de escopo, guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `docs/$SCOPE/` (ex: `docs/apps/api/`) guarda o que é local a **um** app/package (suas próprias decisões, specs, estado) — mas sempre dentro de `docs/` na raiz. Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
 
 ```
 /comando [apps/<app> | packages/<pkg>] tarefa
 ```
 
-**Com escopo** — lê `$SCOPE/docs/context/` além do global, salva artefatos em `$SCOPE/docs/`:
+**Com escopo** — lê `docs/$SCOPE/context/` além do global, salva artefatos em `docs/$SCOPE/`:
 ```
 /front apps/metronome implementar o metrônomo com Web Audio API
 /front apps/web-nico.dev.br criar página de projetos
@@ -142,7 +142,7 @@ git commit -m "feat: ..."
 
 ```
 /spec apps/metronome metrônomo com BPM, beats e timer
-  → planner gera apps/metronome/docs/specs/YYYY-MM-DD-metronome.md (Status: review)
+  → planner gera docs/apps/metronome/specs/YYYY-MM-DD-metronome.md (Status: review)
   → você revisa as tarefas e regras, e edita: Status: review → Status: approved
 
 /front apps/metronome implementar controle de BPM da Spec metronome

@@ -49,6 +49,40 @@ com confiança no código, no `package.json`, nos configs, ou no `git log`.
    dependem deste código específico.
 4. Crie as pastas: `docs/archive/`, `docs/context/domains/`, `docs/changelog/`.
 
+## Passo 0.5 — Detectar monorepo e planejar organização de `docs/`
+
+Verifique se existem `apps/` e/ou `packages/` na raiz do projeto.
+
+**Se não for monorepo** (um único `package.json` de aplicação na raiz, sem
+`apps/`/`packages/`): toda a documentação gerada pelos passos seguintes fica
+direto em `docs/` — siga os passos normalmente, sem subpastas de escopo.
+
+**Se for monorepo**: toda documentação continua vivendo em `docs/` na raiz —
+**nunca** dentro de `apps/<app>/` ou `packages/<pkg>/` (não crie
+`apps/api/docs/`). O que muda é a organização dentro de `docs/`:
+
+- `docs/context/product.md`, `docs/context/guardrails.md`,
+  `docs/context/constitution.md`, `docs/architecture/overview.md` e
+  `docs/changelog/` são **sempre globais** — visão de produto, guardrails e
+  constituição não se fragmentam por app/package.
+- Para cada app/package com stack, decisões ou arquitetura própria o
+  suficiente para não caber na documentação geral, crie
+  `docs/apps/<nome>/` ou `docs/packages/<nome>/` espelhando a árvore da raiz
+  (`context/decisions.md`, `architecture/backend.md` ou `frontend.md`,
+  `specs/`) e um `docs/apps/<nome>/README.md` (ou
+  `docs/packages/<nome>/README.md`) de índice — propósito em 1-2 frases,
+  stack se diferir da tabela geral, link para as subpastas locais.
+- Preencha a seção "Projetos do Monorepo" em `docs/architecture/overview.md`
+  com uma linha por app/package, linkando para o `README.md` de índice
+  correspondente.
+- Regra completa: `docs/context/conventions.md#documentação-em-monorepo-appspackages`
+  (preenchida no Passo 2 — se ainda estiver com o texto padrão do template
+  nesse ponto, use a versão já publicada no `scaffold-ia-projetos` como
+  referência do que gerar).
+
+Liste os apps/packages identificados antes de prosseguir — os passos
+seguintes referenciam essa lista.
+
 ## Passo 1 — `docs/context/product.md`
 
 Leia `README.md`, `package.json` (name/description), rotas/páginas principais
@@ -102,6 +136,12 @@ curto, sem prosa longa. Exemplo de formato:
 Não invente justificativa que não está documentada em lugar nenhum — se não
 houver como saber o "porquê" de uma escolha, registre só o "o quê".
 
+**Monorepo (Passo 0.5):** decisões cross-cutting (ex: ORM/banco compartilhado
+por todos os apps) ficam aqui. Decisão que só vale para um app/package
+específico (ex: uma fila que só existe na API) vai em
+`docs/apps/<nome>/context/decisions.md` ou `docs/packages/<nome>/context/decisions.md`
+— não duplique a mesma decisão nos dois lugares.
+
 ## Passo 4 — `docs/context/ui-guidelines.md` (se houver frontend)
 
 Leia o config do Tailwind (ou equivalente), variáveis CSS/design tokens, e a
@@ -129,6 +169,13 @@ apenas referencie o arquivo/link — não tente reconstruir os tokens de lá.
 - **infra.md**: pipeline de CI/CD real (leia `.github/workflows/`), estratégia
   de deploy, variáveis de ambiente esperadas (`.env.example`), runbook básico
   se houver processo de deploy documentado em algum lugar do código/scripts.
+
+**Monorepo (Passo 0.5):** `overview.md` cobre a visão cross-app (inclusive a
+tabela "Projetos do Monorepo"). Se um app/package tiver arquitetura própria
+que não caiba em `backend.md`/`frontend.md` genéricos (ex: a API usa Clean
+Architecture mas um app interno usa uma estrutura simples diferente),
+documente isso em `docs/apps/<nome>/architecture/backend.md` (ou
+`frontend.md`) em vez de forçar tudo no arquivo global.
 
 ## Passo 5.5 — `docs/context/guardrails.md` e `.claude/settings.json` (obrigatório)
 
@@ -199,6 +246,11 @@ e "Requisitos Funcionais" — isso dá um ponto de partida legível sem fingir
 que houve um processo de spec formal no passado. Mova este spec-baseline
 direto para `docs/archive/` (não é uma spec em andamento).
 
+**Monorepo (Passo 0.5):** um único spec-baseline global cobrindo todos os
+apps/packages é suficiente — não crie um por escopo. Organize por seção
+dentro do arquivo (uma seção "Cenários de Usuário" por app, se fizer
+diferença) em vez de fragmentar o baseline.
+
 ## Passo 7 — `docs/context/current-state.md`
 
 Preencha seguindo o formato do `/checkpoint`: resumo de progresso global,
@@ -235,6 +287,7 @@ Encerre com um resumo estruturado:
 ✅ Slash commands ativos (.claude/commands/*.md): [lista ou ⚠️ pendente]
 ✅ docs/context/ preenchido: [arquivos]
 ✅ docs/architecture/ preenchido: [arquivos]
+🏗️ Monorepo: [não | sim — apps/packages detectados: lista + docs/apps/ e docs/packages/ criados]
 📜 Constituição: docs/context/constitution.md (princípios [INFERIDO — confirmar])
 🛡️ Guardrails: docs/context/guardrails.md + .claude/settings.json
    - Verificação: [comandos que rodam, ou ⚠️ "(não configurado)"]

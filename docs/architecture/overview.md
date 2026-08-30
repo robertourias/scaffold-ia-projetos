@@ -27,16 +27,18 @@
 
 | Path | Tipo | Propósito | Stack (se diferir da tabela acima) | Docs próprios |
 |------|------|-----------|--------------------------------------|---------------|
-| `apps/[nome]` | app | [uma frase] | [ex: usa Redis só aqui] | `docs/apps/[nome].md` |
-| `packages/[nome]` | package compartilhado | [uma frase] | | `docs/packages/[nome].md` |
+| `apps/[nome]` | app | [uma frase] | [ex: usa Redis só aqui] | `docs/apps/[nome]/README.md` |
+| `packages/[nome]` | package compartilhado | [uma frase] | | `docs/packages/[nome]/README.md` |
 
-Cada app/package só ganha `$SCOPE/docs/` e seu índice raiz
-(`docs/apps/[nome].md` ou `docs/packages/[nome].md`) quando `/spec`, `/back`,
-`/front` ou `/checkpoint` rodam com esse escopo (ver
+Cada app/package só ganha `docs/apps/[nome]/` (ou `docs/packages/[nome]/`),
+com seu `README.md` de índice, quando `/spec`, `/back`, `/front`,
+`/review`, `/retomar` ou `/checkpoint` rodam com esse escopo (ver
 `docs/context/conventions.md#documentação-em-monorepo-appspackages`) — não
-precisa ser criado antecipadamente. O índice raiz é o resumo (propósito,
-stack, link); detalhe completo (specs, decisions, arquitetura) mora em
-`$SCOPE/docs/`.
+precisa ser criado antecipadamente. Toda a documentação gerada fica sob
+`docs/` na raiz — nunca dentro de `apps/[nome]/` ou `packages/[nome]/`. O
+`README.md` é o resumo (propósito, stack, link); detalhe completo (specs,
+decisions, arquitetura) mora nas subpastas de `docs/apps/[nome]/` (ou
+`docs/packages/[nome]/`).
 
 ## Fluxo de dados
 

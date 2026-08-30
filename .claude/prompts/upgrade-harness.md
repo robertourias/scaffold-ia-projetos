@@ -46,6 +46,8 @@ Verifique cada sinal e classifique a distância da versão atual:
 | `.claude/commands/commit.md` existe, ou `/commit` é mencionado em `.claude/README.md` / `README.md` | Comando descontinuado — removido, sem substituto (commit volta a ser manual) |
 | `docs/context/product.md` sem seção "Restrições Não-Funcionais" | `/init-project` desta versão nunca rodou (ou rodou numa versão anterior ao Bloco 1 estendido) |
 | `.claude/settings.json` (do usuário, não o example) com `"defaultMode": "auto"` | Bug de versão muito antiga — `"auto"` não é um valor válido de `defaultMode` |
+| Existe `apps/<app>/docs/` ou `packages/<pkg>/docs/` (documentação dentro da pasta de código do projeto) | Convenção antiga de monorepo — docs de escopo ficavam aninhadas no próprio app/package em vez de sob `docs/` na raiz |
+| Existe `docs/apps/<nome>.md` ou `docs/packages/<nome>.md` (arquivo solto, não pasta) | Convenção antiga de índice — era um único arquivo resumo; a versão atual usa `docs/apps/<nome>/README.md` dentro de uma pasta que também guarda `context/`, `architecture/`, `specs/` daquele escopo |
 
 Monte um resumo do que falta **antes** de tocar em qualquer arquivo e
 apresente ao usuário. Pare e peça confirmação para prosseguir — este prompt
@@ -88,6 +90,40 @@ projeto:
   em `.claude/` antes de remover o antigo.
 
 Só remova após listar tudo e o usuário confirmar.
+
+## Passo 2.5 — Reorganizar documentação de monorepo (se aplicável)
+
+Só se aplica se o Passo 0 encontrou `apps/<app>/docs/`, `packages/<pkg>/docs/`
+ou `docs/apps/<nome>.md`/`docs/packages/<nome>.md` (arquivo solto). Se
+nenhum desses sinais apareceu, pule este passo — inclusive se o projeto nem
+for monorepo.
+
+A convenção atual (`docs/context/conventions.md#documentação-em-monorepo-appspackages`)
+exige que **toda** documentação viva sob `docs/` na raiz, nunca dentro da
+pasta de código de um app/package. Migre:
+
+1. **Para cada `apps/<app>/docs/` ou `packages/<pkg>/docs/` encontrado:**
+   mova o conteúdo inteiro para `docs/apps/<app>/` (ou
+   `docs/packages/<pkg>/`), preservando a subestrutura (`context/`,
+   `architecture/`, `specs/`, `archive/` viram os mesmos nomes no destino).
+   Use `git mv` para preservar histórico. Depois de mover, confirme que
+   `apps/<app>/docs/` (ou `packages/<pkg>/docs/`) ficou vazio e remova a
+   pasta.
+2. **Para cada `docs/apps/<nome>.md` ou `docs/packages/<nome>.md` (arquivo
+   solto) encontrado:** crie a pasta `docs/apps/<nome>/` (ou
+   `docs/packages/<nome>/`) se ainda não existir (o Passo 1 pode já ter
+   criado ao mover o `docs/` do app), mova o conteúdo do arquivo solto para
+   `docs/apps/<nome>/README.md` (ou `docs/packages/<nome>/README.md`), e
+   remova o arquivo antigo.
+3. **Atualize referências quebradas:** procure em `docs/architecture/overview.md`
+   (coluna "Docs próprios" da tabela "Projetos do Monorepo") e em
+   `docs/context/current-state.md` (campo `**Spec ativo:**`, se apontar para
+   uma spec movida) por caminhos antigos e corrija para o novo local.
+4. **Não mova nada sem git mv / sem confirmar que preservou o conteúdo** —
+   compare a listagem de arquivos antes/depois de cada pasta migrada.
+
+Liste ao usuário o que foi movido (origem → destino) antes de seguir para o
+próximo passo.
 
 ## Passo 3 — Preencher guardrails e constituição, se ausentes
 
@@ -155,6 +191,10 @@ Rode esta checklist mecânica antes de reportar sucesso:
 - Nenhum link markdown quebrado em `docs/` ou `.claude/` (procure por
   referências a caminhos que não existem mais, ex: `docs/skills/`,
   `docs/commands/`, `/commit`)
+- Se o Passo 2.5 rodou: nenhuma pasta `apps/<app>/docs/` ou
+  `packages/<pkg>/docs/` restante, e nenhum `docs/apps/<nome>.md` /
+  `docs/packages/<nome>.md` solto — só `docs/apps/<nome>/` (pasta) e
+  `docs/packages/<nome>/` (pasta)
 
 Se algo falhar, corrija antes de reportar — não entregue migração
 parcialmente quebrada.
@@ -167,6 +207,7 @@ Encerre com um resumo estruturado:
 ✅ .claude/ atualizado para a versão atual do scaffold
 🗑️ Removido: [lista de docs/commands/, docs/skills/, etc. — ou "nada, tudo tinha customização, ver abaixo"]
 ⚠️ Customização preservada (não removida automaticamente): [lista ou "nenhuma"]
+📁 Docs de monorepo reorganizadas: [lista origem → destino, ou "não aplicável"]
 🛡️ Guardrails: [já existia | gerado agora] — [n] regras GR-XXX
 📜 Constituição: [já existia | gerada agora] — [n] princípios CN-XXX
 ⚙️ settings.json: [merge feito | já estava atualizado] — defaultMode corrigido: [sim/não aplicável]

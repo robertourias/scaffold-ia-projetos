@@ -25,7 +25,7 @@ Conforme o conteúdo do diff, leia também:
 
 - diff com backend → `docs/context/decisions.md` (seção Backend)
 - diff com frontend → `docs/context/decisions.md` (seção Frontend) + `docs/context/ui-guidelines.md`
-- escopo `apps/<app>` → `$SCOPE/docs/context/decisions.md` e `$SCOPE/docs/architecture/` (sobrepõem o global)
+- escopo `apps/<app>` → `docs/$SCOPE/context/decisions.md` e `docs/$SCOPE/architecture/` (sobrepõem o global)
 - Spec associada → leia os Critérios de Aceite e a seção "Verificação"
 
 ## Passo 2 — Obter o diff

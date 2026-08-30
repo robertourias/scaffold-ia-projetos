@@ -92,11 +92,11 @@ Depois de escrever as tarefas, preencha a tabela FR → Tarefa → Teste.
 
 ## Passo 7 — Gerar e parar
 
-Salve em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `$SCOPE/docs/specs/` se houver
+Salve em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `docs/$SCOPE/specs/` se houver
 escopo) com `Status: review`.
 
 Atualize `**Spec ativo:**` em `docs/context/current-state.md` (ou
-`$SCOPE/docs/context/current-state.md`) para o caminho gerado — o hook
+`docs/$SCOPE/context/current-state.md`) para o caminho gerado — o hook
 `spec-gate.mjs` depende deste campo para bloquear implementação antes da
 aprovação.
 

@@ -25,10 +25,10 @@ Leia os seguintes arquivos em ordem:
 3. O spec/plano referenciado em current-state.md (se existir e tiver `Status: approved`)
 
 **Se $SCOPE específico informado**, leia também:
-- `$SCOPE/docs/context/decisions.md`
-- Specs aprovados em `$SCOPE/docs/specs/`
+- `docs/$SCOPE/context/decisions.md`
+- Specs aprovados em `docs/$SCOPE/specs/`
 
-Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua a partir do git log e de specs aprovados encontrados em `docs/specs/` **e** em `apps/*/docs/specs/` e `packages/*/docs/specs/`.
+Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua a partir do git log e de specs aprovados encontrados em `docs/specs/` **e** em `docs/apps/*/specs/` e `docs/packages/*/specs/`.
 
 ## Passo 2 — Apresentar resumo
 
@@ -72,7 +72,7 @@ Após exibir o resumo, pergunte:
 > "Nenhum contexto encontrado. Se o projeto ainda não foi inicializado, use `/init-project [descrição do produto]`."
 
 **Múltiplos specs aprovados sem current-state:**
-> Liste todos os specs com `Status: approved` encontrados em `docs/specs/` e em `apps/*/docs/specs/`, e pergunte qual está sendo trabalhado antes de apresentar o resumo.
+> Liste todos os specs com `Status: approved` encontrados em `docs/specs/` e em `docs/apps/*/specs/` e `docs/packages/*/specs/`, e pergunte qual está sendo trabalhado antes de apresentar o resumo.
 
 ## Regras
 

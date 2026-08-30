@@ -23,8 +23,8 @@ Leia (`Read`), nesta ordem, antes de qualquer edição:
 Invoque (`Skill`) a skill **`frontend`** — papel e padrões do agente de frontend.
 
 Se a tarefa vier com escopo `apps/<app>` ou `packages/<pkg>`, leia também
-`$SCOPE/docs/context/decisions.md`, `$SCOPE/docs/context/ui-guidelines.md` e
-`$SCOPE/docs/architecture/frontend.md` se existirem — decisões de escopo
+`docs/$SCOPE/context/decisions.md`, `docs/$SCOPE/context/ui-guidelines.md` e
+`docs/$SCOPE/architecture/frontend.md` se existirem — decisões de escopo
 **sobrepõem** as globais.
 
 ## Passo 2 — Gate de Spec

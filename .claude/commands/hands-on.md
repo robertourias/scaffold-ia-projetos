@@ -14,7 +14,7 @@ Você **não implementa nada você mesmo**. Você resolve o grafo, valida a segu
 
 Argumento recebido: `$ARGUMENTS`
 
-O **primeiro token** é o caminho da Spec (ex: `docs/specs/2026-06-13-onboarding.md` ou `apps/api/docs/specs/...`). Tokens restantes são opcionais:
+O **primeiro token** é o caminho da Spec (ex: `docs/specs/2026-06-13-onboarding.md` ou `docs/apps/api/specs/...`). Tokens restantes são opcionais:
 
 | Flag | Efeito |
 |------|--------|

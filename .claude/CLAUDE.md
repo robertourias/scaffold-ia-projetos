@@ -93,10 +93,12 @@ packages/
   types/      → Tipos TypeScript compartilhados
   utils/      → Funções utilitárias compartilhadas
 ```
-Cada app/package pode ter `docs/{context,architecture,specs}` próprio (`$SCOPE`
-nos comandos `back`/`front`/`spec`/`review`/`retomar`/`checkpoint`). Raiz =
-monorepo inteiro; `$SCOPE/docs/` = local a um app/package. Convenção:
-`docs/context/conventions.md#documentação-em-monorepo-appspackages`.
+Cada app/package pode ter `docs/{context,architecture,specs}` próprio dentro de
+`docs/$SCOPE/` (ex: `docs/apps/api/`) — **nunca** dentro do próprio
+`apps/api/` (`$SCOPE` nos comandos `back`/`front`/`spec`/`review`/`retomar`/
+`checkpoint`). Toda documentação, com ou sem escopo, vive sob `docs/` na
+raiz. Raiz sem subpasta = monorepo inteiro; `docs/$SCOPE/` = local a um
+app/package. Convenção: `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
 
 ## Slash commands disponíveis
 ```

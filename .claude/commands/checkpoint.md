@@ -13,9 +13,9 @@ Analise `$ARGUMENTS`:
 - Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE**. O checkpoint fica restrito ao trabalho feito naquele app/package.
 - Caso contrário → **$SCOPE = monorepo global**.
 
-Atualize `docs/context/current-state.md` (ou `$SCOPE/docs/context/current-state.md`, se `$SCOPE` informado) com o estado atual antes de encerrar a sessão. Se `$SCOPE` foi informado e o arquivo ainda não existir, crie-o (mesmo conteúdo-modelo do Passo 2, só que restrito ao escopo).
+Atualize `docs/context/current-state.md` (ou `docs/$SCOPE/context/current-state.md`, se `$SCOPE` informado) com o estado atual antes de encerrar a sessão. Se `$SCOPE` foi informado e o arquivo ainda não existir, crie-o (mesmo conteúdo-modelo do Passo 2, só que restrito ao escopo). Documentação de escopo específico vive sob `docs/$SCOPE/` na raiz — nunca dentro de `apps/<app>/` ou `packages/<pkg>/`.
 
-Se `$SCOPE` foi informado e `docs/apps/<nome>.md` (ou `docs/packages/<nome>.md`) ainda não existir na raiz, crie-o com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
+Se `$SCOPE` foi informado e `docs/$SCOPE/README.md` ainda não existir, crie-o com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
 
 ## Passo 1 — Coletar informações
 
@@ -28,12 +28,12 @@ git log --oneline -15
 Se `$SCOPE` informado, restrinja: `git log --oneline -15 -- $SCOPE`.
 
 Identifique também:
-- Quais specs em `docs/specs/` (ou `$SCOPE/docs/specs/`) têm `Status: approved` e estão sendo trabalhados
+- Quais specs em `docs/specs/` (ou `docs/$SCOPE/specs/`) têm `Status: approved` e estão sendo trabalhados
 - O que foi feito nesta sessão com base no contexto da conversa e nos commits
 
 ## Passo 2 — Atualizar current-state.md
 
-Reescreva `docs/context/current-state.md` (ou `$SCOPE/docs/context/current-state.md`) com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog).
+Reescreva `docs/context/current-state.md` (ou `docs/$SCOPE/context/current-state.md`) com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog).
 
 ```markdown
 # Status do Projeto
@@ -100,10 +100,10 @@ Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual — sempre na raiz, cha
 
 ## Passo 4 — Arquivar specs concluídas
 
-Liste os arquivos em `docs/specs/` (ou `$SCOPE/docs/specs/`, se `$SCOPE` informado), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
+Liste os arquivos em `docs/specs/` (ou `docs/$SCOPE/specs/`, se `$SCOPE` informado), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
 
-- Se sim: mova o arquivo para `docs/archive/` (ou `$SCOPE/docs/archive/`, criando a pasta se não existir).
-- Se houver tarefa incompleta: mantenha em `docs/specs/` (ou `$SCOPE/docs/specs/`) — ainda em andamento.
+- Se sim: mova o arquivo para `docs/archive/` (ou `docs/$SCOPE/archive/`, criando a pasta se não existir).
+- Se houver tarefa incompleta: mantenha em `docs/specs/` (ou `docs/$SCOPE/specs/`) — ainda em andamento.
 
 Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-delivery.md`, garantido mesmo se o merge não passou por lá.
 
@@ -112,7 +112,7 @@ Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-del
 Exiba:
 
 ```
-✅ Checkpoint salvo em docs/context/current-state.md [ou $SCOPE/docs/context/current-state.md]
+✅ Checkpoint salvo em docs/context/current-state.md [ou docs/$SCOPE/context/current-state.md]
 📌 Última ação: [resumo]
 📦 Specs arquivadas: [lista ou "(nenhuma)"]
 ⏭ Próxima sessão: /retomar [$SCOPE]

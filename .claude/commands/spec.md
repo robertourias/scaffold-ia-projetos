@@ -29,16 +29,16 @@ Analise `$ARGUMENTS`:
 - Caso contrário → **$SCOPE = monorepo global**.
 
 **Leitura adicional — quando $SCOPE específico informado.** Leia também, se existirem:
-- `$SCOPE/docs/context/decisions.md`
-- `$SCOPE/docs/architecture/overview.md` (ou `backend.md`/`frontend.md`)
+- `docs/$SCOPE/context/decisions.md`
+- `docs/$SCOPE/architecture/overview.md` (ou `backend.md`/`frontend.md`)
 
 Decisões de escopo específico sobrepõem os padrões globais onde houver conflito. `docs/context/product.md` e o backlog continuam sempre lidos da raiz — regra de negócio e priorização são do produto, não do app/package.
 
-**Saída de artefatos:**
-- Escopo específico → gere a Spec em `$SCOPE/docs/specs/YYYY-MM-DD-<topic>.md`
+**Saída de artefatos** (sempre sob `docs/` na raiz — nunca dentro de `apps/<app>/` ou `packages/<pkg>/`):
+- Escopo específico → gere a Spec em `docs/$SCOPE/specs/YYYY-MM-DD-<topic>.md` (ex: `docs/apps/api/specs/...`)
 - Escopo global → gere em `docs/specs/YYYY-MM-DD-<topic>.md`
 
-**Escopo específico e `docs/apps/<nome>.md` (ou `docs/packages/<nome>.md`) ainda não existe na raiz?** Crie-o agora com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages` (propósito, stack se diferir, link para `$SCOPE/docs/`).
+**Escopo específico e `docs/$SCOPE/README.md` ainda não existe?** Crie-o agora com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages` (propósito, stack se diferir, link para as subpastas locais).
 
 ## Tratamento de Ambiguidade
 
@@ -82,12 +82,12 @@ Se o contexto da conversa estiver pesado antes de iniciar, avise o usuário:
 
 ## Execução
 
-Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `$SCOPE/docs/specs/YYYY-MM-DD-<topic>.md`, se `$SCOPE` informado) com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
+Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `docs/$SCOPE/specs/YYYY-MM-DD-<topic>.md`, se `$SCOPE` informado) com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
 
 ## Após gerar — atualizar o Spec ativo (obrigatório)
 
 Depois de salvar a Spec, atualize `**Spec ativo:**` em `docs/context/current-state.md`
-(ou `$SCOPE/docs/context/current-state.md` se houver escopo) para o caminho do
+(ou `docs/$SCOPE/context/current-state.md` se houver escopo) para o caminho do
 arquivo gerado. Não espere pelo `/checkpoint` de fim de sessão.
 
 Isso não é cosmético: `.claude/hooks/spec-gate.mjs` lê esse campo para bloquear

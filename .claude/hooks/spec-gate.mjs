@@ -13,9 +13,11 @@
  * a Spec" de "agente editou a Spec" a partir só do path do arquivo.
  *
  * Sinal de qual Spec está ativa: `**Spec ativo:**` em
- * docs/context/current-state.md, escrito por /checkpoint e lido por /retomar.
- * Sem esse sinal (projeto que ainda não rodou /checkpoint, ou tarefa avulsa
- * sem Spec), o hook não tem o que checar — falha em aberto.
+ * docs/context/current-state.md (ou docs/apps/<app>/context/current-state.md
+ * / docs/packages/<pkg>/context/current-state.md em monorepo com escopo),
+ * escrito por /checkpoint e lido por /retomar. Sem esse sinal (projeto que
+ * ainda não rodou /checkpoint, ou tarefa avulsa sem Spec), o hook não tem o
+ * que checar — falha em aberto.
  *
  * Escopo do bloqueio: só código-fonte. Edição dentro de docs/ (o planner
  * escrevendo a própria Spec, checkpoint atualizando current-state.md) e
@@ -55,17 +57,20 @@ if (
   ok();
 }
 
-// Acha o current-state.md mais próximo: raiz, ou $SCOPE/docs/context/ se a
-// edição for dentro de um apps/<app> ou packages/<pkg> com contexto próprio.
+// Acha o current-state.md mais próximo: raiz, ou docs/<apps|packages>/<nome>/
+// context/ se a edição for dentro de um apps/<app> ou packages/<pkg> com
+// contexto próprio. Documentação de escopo mora sob docs/ na raiz, nunca
+// dentro do próprio apps/<app> ou packages/<pkg>.
 function findCurrentState(fromRel) {
   const parts = fromRel.split("/");
   const scopeIdx = parts.findIndex((p) => p === "apps" || p === "packages");
   if (scopeIdx !== -1 && parts.length > scopeIdx + 1) {
     const scoped = path.join(
       root,
+      "docs",
       parts[scopeIdx],
       parts[scopeIdx + 1],
-      "docs/context/current-state.md",
+      "context/current-state.md",
     );
     if (existsSync(scoped)) return scoped;
   }

@@ -54,27 +54,33 @@ Não pule este protocolo para manter a IA sempre sintonizada com o estado real d
 
 ## Documentação em Monorepo (apps/packages)
 
-Em projeto monorepo, `docs/` tem dois níveis. Não duplique conteúdo entre eles — cada fato mora em exatamente um lugar.
+Em projeto monorepo, **toda documentação vive em `docs/` na raiz** — nunca
+dentro de `apps/<app>/` ou `packages/<pkg>/`. Código e documentação não se
+misturam. O que muda por escopo é o **subdiretório dentro de `docs/`**, não a
+raiz onde ela é gerada. Não duplique conteúdo entre níveis — cada fato mora
+em exatamente um lugar.
 
-**`docs/` na raiz — nível monorepo:**
-- Visão do produto como um todo, decisões que atravessam apps/packages, infraestrutura compartilhada, lista de projetos (`docs/architecture/overview.md`, seção "Projetos do Monorepo"), guardrails e constituição globais.
+**`docs/` raiz, sem subpasta de escopo — nível monorepo:**
+- Visão do produto como um todo, decisões que atravessam apps/packages, infraestrutura compartilhada, lista de projetos (`docs/architecture/overview.md`, seção "Projetos do Monorepo"), guardrails e constituição globais, changelog (`docs/changelog/`, sempre único para o monorepo inteiro, mesmo com `$SCOPE`).
 - Specs de feature que tocam mais de um app/package, ou que não pertencem a nenhum específico.
+- **Comando rodado sem `$SCOPE`** (manutenção geral, sem app/package informado) → atualiza a documentação **global** aqui, mesmo que o código tocado esteja dentro de um app/package. Antes de escrever, verifique se o que está sendo documentado é cross-cutting (fica na raiz) ou específico de um projeto identificável pelos arquivos alterados (nesse caso, infira o `$SCOPE` e documente em `docs/$SCOPE/`, avisando qual local foi escolhido).
 
-**`$SCOPE/docs/` (ex: `apps/api/docs/`, `packages/ui/docs/`) — nível do app/package:**
-- Mesma árvore da raiz, só que local: `context/decisions.md`, `context/current-state.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`.
+**`docs/$SCOPE/` (ex: `docs/apps/api/`, `docs/packages/ui/`) — nível do app/package:**
+- Mesma árvore da raiz, só que dentro do subdiretório do projeto: `context/decisions.md`, `context/current-state.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`, `archive/`.
 - Decisões e specs que só fazem sentido dentro daquele app/package (ex: uma decisão de cache que só existe na API).
-- **Não recrie** `guardrails.md`, `constitution.md` ou `product.md` no escopo local — esses são sempre globais.
-- Não precisa ser criado antecipadamente: `/spec`, `/back`, `/front` e `/checkpoint` criam os arquivos em `$SCOPE/docs/` na primeira vez que geram algo com escopo, exatamente como fariam na raiz.
+- **Não recrie** `guardrails.md`, `constitution.md`, `product.md` ou `changelog/` dentro de `docs/$SCOPE/` — esses são sempre globais, na raiz de `docs/`.
+- Não precisa ser criado antecipadamente: `/spec`, `/back`, `/front`, `/review`, `/retomar` e `/checkpoint` criam os arquivos em `docs/$SCOPE/` na primeira vez que geram algo com aquele escopo, exatamente como fariam na raiz.
+- **Nunca crie `apps/<app>/docs/` ou `packages/<pkg>/docs/`** — documentação dentro da pasta de código do projeto se perde do índice central e não é o que este scaffold espera. Se encontrar uma dessas pastas (harness antigo), veja `.claude/prompts/upgrade-harness.md` para migrar o conteúdo para `docs/$SCOPE/`.
 
-**Regra de conflito:** decisão em `$SCOPE/docs/context/decisions.md` sobrepõe a equivalente em `docs/context/decisions.md` só dentro daquele escopo — não é uma decisão nova para o monorepo inteiro.
+**Regra de conflito:** decisão em `docs/$SCOPE/context/decisions.md` sobrepõe a equivalente em `docs/context/decisions.md` só dentro daquele escopo — não é uma decisão nova para o monorepo inteiro.
 
-**`docs/apps/<nome>.md` e `docs/packages/<nome>.md` — índice raiz por projeto:**
-- Um arquivo por app/package, direto em `docs/apps/` ou `docs/packages/` na raiz (não dentro de `$SCOPE/docs/`).
-- Conteúdo mínimo: propósito em 1-2 frases, stack (só se diferir da tabela geral do overview), link para `$SCOPE/docs/` (specs, decisions, arquitetura local daquele app/package).
-- **Criado automaticamente** por `/spec`, `/back`, `/front` ou `/checkpoint` na primeira vez que rodam com aquele `$SCOPE`, se o arquivo ainda não existir — mesmo gatilho que já cria `$SCOPE/docs/`.
-- A tabela "Projetos do Monorepo" em `docs/architecture/overview.md` linka para este arquivo na coluna "Docs próprios", em vez de apontar direto para `$SCOPE/docs/`.
+**`docs/$SCOPE/README.md` — índice do projeto:**
+- Um `README.md` dentro da própria pasta de escopo (`docs/apps/<nome>/README.md` ou `docs/packages/<nome>/README.md`).
+- Conteúdo mínimo: propósito em 1-2 frases, stack (só se diferir da tabela geral do overview), link para os subdiretórios locais (`context/`, `architecture/`, `specs/`).
+- **Criado automaticamente** por `/spec`, `/back`, `/front` ou `/checkpoint` na primeira vez que rodam com aquele `$SCOPE`, se o arquivo ainda não existir — mesmo gatilho que já cria `docs/$SCOPE/`.
+- A tabela "Projetos do Monorepo" em `docs/architecture/overview.md` linka para este README na coluna "Docs próprios".
 
-Template mínimo (`docs/apps/<nome>.md` ou `docs/packages/<nome>.md`):
+Template mínimo (`docs/apps/<nome>/README.md` ou `docs/packages/<nome>/README.md`):
 
 ```markdown
 # <nome>
@@ -83,10 +89,11 @@ Template mínimo (`docs/apps/<nome>.md` ou `docs/packages/<nome>.md`):
 **Propósito:** [uma frase]
 **Stack:** [só liste o que diferir da tabela geral em docs/architecture/overview.md]
 
-Docs locais (specs, decisions, arquitetura): `$SCOPE/docs/` — ex: `apps/<nome>/docs/`
+Docs locais (specs, decisions, arquitetura): nesta mesma pasta —
+`context/`, `architecture/`, `specs/`.
 ```
 
-**Economia de contexto:** ao trabalhar com `$SCOPE` informado, leia o "sempre carregado" da raiz (guardrails, constitution) **mais** os arquivos equivalentes de `$SCOPE/docs/`, se existirem. Nunca leia `docs/` ou `$SCOPE/docs/` de um app/package diferente do que está em foco — isso é contexto que não serve à tarefa e só custa tokens.
+**Economia de contexto:** ao trabalhar com `$SCOPE` informado, leia o "sempre carregado" da raiz (guardrails, constitution) **mais** os arquivos equivalentes de `docs/$SCOPE/`, se existirem. Nunca leia `docs/<outro-scope>/` de um app/package diferente do que está em foco — isso é contexto que não serve à tarefa e só custa tokens.
 
 ## Comentários
 

@@ -17,7 +17,7 @@ ter feito, fecha o que puder confirmar e reporta o que falta.
 Argumento recebido: `$ARGUMENTS`
 
 O **primeiro token** é o caminho da Spec (ex: `docs/specs/2026-06-13-onboarding.md`
-ou `apps/api/docs/specs/...`). O restante é a **descrição livre** do que o
+ou `docs/apps/api/specs/...`). O restante é a **descrição livre** do que o
 usuário ajustou manualmente.
 
 Se nenhum caminho for informado, peça o caminho da Spec e pare.

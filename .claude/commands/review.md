@@ -37,8 +37,8 @@ Se o diff contiver código **frontend** (React, Next.js, componentes, hooks, pá
 ## Leitura adicional — quando $SCOPE específico informado
 
 Leia também, se existirem:
-- `$SCOPE/docs/context/decisions.md`
-- `$SCOPE/docs/architecture/` (arquivos relevantes)
+- `docs/$SCOPE/context/decisions.md`
+- `docs/$SCOPE/architecture/` (arquivos relevantes)
 
 As decisões do escopo específico **sobrepõem** os padrões globais onde houver conflito.
 
