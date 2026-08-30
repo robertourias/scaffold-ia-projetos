@@ -68,6 +68,24 @@ Em projeto monorepo, `docs/` tem dois níveis. Não duplique conteúdo entre ele
 
 **Regra de conflito:** decisão em `$SCOPE/docs/context/decisions.md` sobrepõe a equivalente em `docs/context/decisions.md` só dentro daquele escopo — não é uma decisão nova para o monorepo inteiro.
 
+**`docs/apps/<nome>.md` e `docs/packages/<nome>.md` — índice raiz por projeto:**
+- Um arquivo por app/package, direto em `docs/apps/` ou `docs/packages/` na raiz (não dentro de `$SCOPE/docs/`).
+- Conteúdo mínimo: propósito em 1-2 frases, stack (só se diferir da tabela geral do overview), link para `$SCOPE/docs/` (specs, decisions, arquitetura local daquele app/package).
+- **Criado automaticamente** por `/spec`, `/back`, `/front` ou `/checkpoint` na primeira vez que rodam com aquele `$SCOPE`, se o arquivo ainda não existir — mesmo gatilho que já cria `$SCOPE/docs/`.
+- A tabela "Projetos do Monorepo" em `docs/architecture/overview.md` linka para este arquivo na coluna "Docs próprios", em vez de apontar direto para `$SCOPE/docs/`.
+
+Template mínimo (`docs/apps/<nome>.md` ou `docs/packages/<nome>.md`):
+
+```markdown
+# <nome>
+
+**Tipo:** app | package compartilhado
+**Propósito:** [uma frase]
+**Stack:** [só liste o que diferir da tabela geral em docs/architecture/overview.md]
+
+Docs locais (specs, decisions, arquitetura): `$SCOPE/docs/` — ex: `apps/<nome>/docs/`
+```
+
 **Economia de contexto:** ao trabalhar com `$SCOPE` informado, leia o "sempre carregado" da raiz (guardrails, constitution) **mais** os arquivos equivalentes de `$SCOPE/docs/`, se existirem. Nunca leia `docs/` ou `$SCOPE/docs/` de um app/package diferente do que está em foco — isso é contexto que não serve à tarefa e só custa tokens.
 
 ## Comentários

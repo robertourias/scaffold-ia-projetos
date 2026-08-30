@@ -27,13 +27,16 @@
 
 | Path | Tipo | Propósito | Stack (se diferir da tabela acima) | Docs próprios |
 |------|------|-----------|--------------------------------------|---------------|
-| `apps/[nome]` | app | [uma frase] | [ex: usa Redis só aqui] | `apps/[nome]/docs/` |
-| `packages/[nome]` | package compartilhado | [uma frase] | | `packages/[nome]/docs/` |
+| `apps/[nome]` | app | [uma frase] | [ex: usa Redis só aqui] | `docs/apps/[nome].md` |
+| `packages/[nome]` | package compartilhado | [uma frase] | | `docs/packages/[nome].md` |
 
-Cada app/package só ganha `docs/` próprio quando `/spec`, `/back`, `/front` ou
-`/checkpoint` rodam com esse escopo (ver
+Cada app/package só ganha `$SCOPE/docs/` e seu índice raiz
+(`docs/apps/[nome].md` ou `docs/packages/[nome].md`) quando `/spec`, `/back`,
+`/front` ou `/checkpoint` rodam com esse escopo (ver
 `docs/context/conventions.md#documentação-em-monorepo-appspackages`) — não
-precisa ser criado antecipadamente.
+precisa ser criado antecipadamente. O índice raiz é o resumo (propósito,
+stack, link); detalhe completo (specs, decisions, arquitetura) mora em
+`$SCOPE/docs/`.
 
 ## Fluxo de dados
 

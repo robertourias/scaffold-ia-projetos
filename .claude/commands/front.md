@@ -41,6 +41,8 @@ As decisões de escopo específico **sobrepõem** os padrões globais onde houve
 - Escopo específico → salve artefatos em `$SCOPE/docs/`
 - Escopo global → salve em `docs/`
 
+**Escopo específico e `docs/apps/<nome>.md` (ou `docs/packages/<nome>.md`) ainda não existe na raiz?** Crie-o agora com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
+
 ## Tratamento de Ambiguidade
 
 Antes de implementar, detecte falta de contexto. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.

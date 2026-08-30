@@ -15,6 +15,8 @@ Analise `$ARGUMENTS`:
 
 Atualize `docs/context/current-state.md` (ou `$SCOPE/docs/context/current-state.md`, se `$SCOPE` informado) com o estado atual antes de encerrar a sessão. Se `$SCOPE` foi informado e o arquivo ainda não existir, crie-o (mesmo conteúdo-modelo do Passo 2, só que restrito ao escopo).
 
+Se `$SCOPE` foi informado e `docs/apps/<nome>.md` (ou `docs/packages/<nome>.md`) ainda não existir na raiz, crie-o com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
+
 ## Passo 1 — Coletar informações
 
 Execute e analise:

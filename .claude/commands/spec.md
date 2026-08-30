@@ -38,6 +38,8 @@ Decisões de escopo específico sobrepõem os padrões globais onde houver confl
 - Escopo específico → gere a Spec em `$SCOPE/docs/specs/YYYY-MM-DD-<topic>.md`
 - Escopo global → gere em `docs/specs/YYYY-MM-DD-<topic>.md`
 
+**Escopo específico e `docs/apps/<nome>.md` (ou `docs/packages/<nome>.md`) ainda não existe na raiz?** Crie-o agora com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages` (propósito, stack se diferir, link para `$SCOPE/docs/`).
+
 ## Tratamento de Ambiguidade
 
 Antes de gerar a Spec, detecte falta de contexto. Proponha uma interpretação concreta e peça confirmação — pergunta aberta só quando não houver palpite razoável.
