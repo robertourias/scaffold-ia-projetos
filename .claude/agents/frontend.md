@@ -75,8 +75,8 @@ Regra completa e casos de borda: invoque a skill `verification`.
 Marque `- [ ]` → `- [x]` **apenas** nos critérios que a verificação do Passo 4
 comprovou. Não toque em critérios de outras tarefas.
 
-Não atualize `docs/context/product-backlog.md` — quem fecha a Spec inteira é o
-orquestrador, que enxerga todas as tarefas.
+Não atualize o backlog (root ou `docs/$SCOPE/context/backlog.md`) — quem fecha
+a Spec inteira é o orquestrador, que enxerga todas as tarefas.
 
 ## Passo 6 — Relatório de retorno
 

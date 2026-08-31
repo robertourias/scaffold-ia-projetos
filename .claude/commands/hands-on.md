@@ -191,8 +191,8 @@ Cada subagente já roda a verificação obrigatória e marca os próprios crité
 
 1. **Verificação final do conjunto.** Rode os comandos de `docs/context/guardrails.md` (type-check, lint, testes) uma vez sobre o projeto inteiro e cole a saída. Ondas paralelas passam isoladamente e quebram juntas — só esta rodada final prova que a integração fechou.
 2. Confirme que **todos** os checkboxes da Spec estão `[x]`. Checkbox marcado por um agente que reportou `⚠️ não verificado` não conta — reabra a tarefa.
-3. **Se restar Pendência Manual** (acumulada no Passo 3.4) em qualquer tarefa, **não** marque a TASK como `done` no `product-backlog`, mesmo com a verificação automática passando. A Spec fica `approved` com pendência em aberto até o humano rodar `/recheck`.
-4. Se tudo passou e não houver Pendência Manual, atualize o `Status` da TASK para `done` no `product-backlog`.
+3. **Se restar Pendência Manual** (acumulada no Passo 3.4) em qualquer tarefa, **não** marque a TASK como `done` no backlog de origem (root ou `docs/$SCOPE/context/backlog.md`, conforme o prefixo do ID), mesmo com a verificação automática passando. A Spec fica `approved` com pendência em aberto até o humano rodar `/recheck`.
+4. Se tudo passou e não houver Pendência Manual, atualize o `Status` da TASK para `done` no backlog de origem (root ou `docs/$SCOPE/context/backlog.md`).
 5. Emita um resumo curto: ondas executadas, tarefas concluídas, tarefas puladas, saída da verificação final, e uma seção **Pendências Manuais** (lista `tarefa — critério — instrução`, ou "(nenhuma)"). Se houver pendências, direcione o usuário: resolva manualmente e rode `/recheck <spec>` para fechar.
 
 ## Regras

@@ -32,7 +32,7 @@ Analise `$ARGUMENTS`:
 - `docs/$SCOPE/context/decisions.md`
 - `docs/$SCOPE/architecture/overview.md` (ou `backend.md`/`frontend.md`)
 
-Decisões de escopo específico sobrepõem os padrões globais onde houver conflito. `docs/context/product.md` e o backlog continuam sempre lidos da raiz — regra de negócio e priorização são do produto, não do app/package.
+Decisões de escopo específico sobrepõem os padrões globais onde houver conflito. `docs/context/product.md` continua sempre lido da raiz — regra de negócio é do produto, não do app/package. O **backlog** já não é sempre root: ver "Resolução de Argumento" abaixo (`docs/context/product-backlog.md` para tarefas cross-project, `docs/$SCOPE/context/backlog.md` para tarefas de um projeto só — critério em `docs/context/conventions.md#backlog-em-monorepo`).
 
 **Saída de artefatos** (sempre sob `docs/` na raiz — nunca dentro de `apps/<app>/` ou `packages/<pkg>/`):
 - Escopo específico → gere a Spec em `docs/$SCOPE/specs/YYYY-MM-DD-<topic>.md` (ex: `docs/apps/api/specs/...`)
@@ -57,15 +57,18 @@ Faça **2-3 perguntas** se houver dúvida genuína. O resultado deve ser uma Spe
 
 Use o argumento **após remover o `$SCOPE`** resolvido acima (se houver).
 
-### Se o argumento for um ID de tarefa (ex: TASK01, TASK03)
+### Se o argumento for um ID de tarefa (ex: TASK01, TASK03, ou prefixado como API-TASK01)
 
-1. Leia `docs/context/product-backlog.md`.
-2. Localize a linha correspondente ao ID informado (ex: TASK01).
-3. Use o **título** e a **descrição** da tarefa como base.
-4. Se a tarefa tiver dependências, verifique se os specs das dependências já existem. Se não existirem, alerte o usuário.
+1. **Localize o arquivo de backlog correto:**
+   - ID sem prefixo (ex: `TASK01`) ou `$SCOPE` não informado → `docs/context/product-backlog.md` (root).
+   - ID prefixado (ex: `API-TASK01`, `WEB-TASK03`) ou `$SCOPE` informado → `docs/$SCOPE/context/backlog.md`.
+   - Se não encontrar o ID no arquivo esperado, verifique o outro (root vs escopo) antes de alertar o usuário — a tarefa pode ter sido colocada no lugar certo pelo critério cross-project mesmo sem prefixo bater com o `$SCOPE` chamado.
+2. Localize a linha correspondente ao ID informado.
+3. Use o **título** e a **descrição** da tarefa como base. Se a linha tiver coluna "Projetos" preenchida com 2+ escopos, trate como cross-project: a Spec e o Plano de Implementação devem cobrir todos os projetos listados, com ondas separadas por `Agente`/projeto.
+4. Se a tarefa tiver dependências, verifique se os specs das dependências já existem (podem estar em outro arquivo de backlog). Se não existirem, alerte o usuário.
 5. **Antes de gerar**, aplique o tratamento de ambiguidade acima se houver dúvidas genuínas sobre o requisito.
 6. Siga para a geração unificada da Spec + Plano Técnico.
-7. Após gerar o arquivo, **atualize** `docs/context/product-backlog.md`:
+7. Após gerar o arquivo, **atualize o backlog de origem** (root ou `docs/$SCOPE/context/backlog.md`, o mesmo lido no passo 1):
    - Altere o Status da tarefa de `backlog` para `spec-review`
    - Preencha a coluna "Spec" com o caminho do arquivo gerado (ex: `docs/specs/YYYY-MM-DD-<topic>.md`)
 

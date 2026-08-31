@@ -66,7 +66,7 @@ em exatamente um lugar.
 - **Comando rodado sem `$SCOPE`** (manutenção geral, sem app/package informado) → atualiza a documentação **global** aqui, mesmo que o código tocado esteja dentro de um app/package. Antes de escrever, verifique se o que está sendo documentado é cross-cutting (fica na raiz) ou específico de um projeto identificável pelos arquivos alterados (nesse caso, infira o `$SCOPE` e documente em `docs/$SCOPE/`, avisando qual local foi escolhido).
 
 **`docs/$SCOPE/` (ex: `docs/apps/api/`, `docs/packages/ui/`) — nível do app/package:**
-- Mesma árvore da raiz, só que dentro do subdiretório do projeto: `context/decisions.md`, `context/current-state.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`, `archive/`.
+- Mesma árvore da raiz, só que dentro do subdiretório do projeto: `context/decisions.md`, `context/current-state.md`, `context/backlog.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`, `archive/`.
 - Decisões e specs que só fazem sentido dentro daquele app/package (ex: uma decisão de cache que só existe na API).
 - **Não recrie** `guardrails.md`, `constitution.md`, `product.md` ou `changelog/` dentro de `docs/$SCOPE/` — esses são sempre globais, na raiz de `docs/`.
 - Não precisa ser criado antecipadamente: `/spec`, `/back`, `/front`, `/review`, `/retomar` e `/checkpoint` criam os arquivos em `docs/$SCOPE/` na primeira vez que geram algo com aquele escopo, exatamente como fariam na raiz.
@@ -94,6 +94,32 @@ Docs locais (specs, decisions, arquitetura): nesta mesma pasta —
 ```
 
 **Economia de contexto:** ao trabalhar com `$SCOPE` informado, leia o "sempre carregado" da raiz (guardrails, constitution) **mais** os arquivos equivalentes de `docs/$SCOPE/`, se existirem. Nunca leia `docs/<outro-scope>/` de um app/package diferente do que está em foco — isso é contexto que não serve à tarefa e só custa tokens.
+
+## Backlog em Monorepo
+
+Produto com mais de um projeto (ex: web, api, bff) pode ter tarefas que
+pertencem a um projeto só e tarefas que exigem mudança em vários ao mesmo
+tempo. Critério de colocação — decidido por `/backlog` e `/groom` no momento
+em que a tarefa é criada, não depois:
+
+- **Toca 1 projeto só** → `docs/apps/<nome>/context/backlog.md` ou
+  `docs/packages/<nome>/context/backlog.md`. IDs prefixados pelo nome do
+  projeto em maiúsculas: `API-TASK01`, `WEB-TASK03`, `UI-TASK02`. Numeração
+  independente por arquivo.
+- **Toca 2+ projetos** (ex: feature que muda web, api e bff juntos) →
+  `docs/context/product-backlog.md` (root), sem prefixo (`TASK01`, `TASK02`,
+  ...), com uma coluna **"Projetos"** listando todos os escopos envolvidos.
+  Gera **uma única TASK** — não duplique a mesma feature nos backlogs de
+  escopo; o fan-out por projeto acontece dentro do Plano de Implementação
+  quando `/spec` roda sobre essa TASK (ondas por `Agente`/arquivo, convenção
+  já usada pelo `/hands-on`).
+
+Dependência entre tarefas de arquivos diferentes referencia o ID completo na
+coluna Dependências (ex: `API-TASK05` dependendo do root `TASK02`).
+
+`/spec $SCOPE TASKXX` já resolve o `$SCOPE` do mesmo jeito que resolve para
+specs e decisions — sem escopo lê o backlog root, com escopo lê
+`docs/$SCOPE/context/backlog.md`.
 
 ## Comentários
 

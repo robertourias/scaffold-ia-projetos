@@ -1,6 +1,6 @@
 ---
 description: "Gera o product backlog (TASK01..TASKNN) a partir de docs/context/product.md"
-argument-hint: "[contexto adicional opcional]"
+argument-hint: "[apps/<nome> | packages/<nome>] [contexto adicional opcional]"
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -33,9 +33,14 @@ Antes de gerar o backlog, se detectar **falta de contexto** nos dados de `docs/c
 
 Espere respostas antes de continuar. Use sua melhor interpretação se o usuário preferir que você prossiga mesmo com ambiguidade.
 
+## Resolução de $SCOPE
+
+- Se o **primeiro token** de `$ARGUMENTS` começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/api`). O restante é contexto adicional.
+- Caso contrário → **$SCOPE = monorepo global** (root).
+
 ## Execução
 
-Contexto adicional do usuário (opcional): $ARGUMENTS
+Contexto adicional do usuário (opcional, após remover `$SCOPE` se houver): $ARGUMENTS
 
 ### Processo
 
@@ -45,26 +50,35 @@ Contexto adicional do usuário (opcional): $ARGUMENTS
    - User Journeys
    - Roadmap (se definido)
 
-2. **Leia a arquitetura** em `docs/architecture/overview.md` para entender as restrições técnicas.
+2. **Leia a arquitetura** em `docs/architecture/overview.md` para entender as restrições técnicas e a lista de projetos do monorepo (seção "Projetos do Monorepo").
 
-3. **Proponha o backlog** ao usuário antes de gravar. Apresente uma lista numerada com:
-   - ID da tarefa (TASK01, TASK02, ...)
+3. **Para cada feature/tarefa candidata, decida onde ela pertence** (critério de colocação — ver `docs/context/conventions.md#backlog-em-monorepo`):
+   - Toca **1 projeto só** (identificável nos arquivos/domínio afetado) → vai para o backlog **daquele escopo**, mesmo que `/backlog` tenha sido chamado sem `$SCOPE`.
+   - Toca **2+ projetos** (ex: feature que exige mudança em web, api e bff) → vai para o backlog **root**, com a coluna "Projetos" listando todos os escopos envolvidos.
+   - Se `$SCOPE` foi informado explicitamente, gere apenas as tarefas daquele escopo (não gere tarefas de outros projetos nesta chamada).
+
+4. **Proponha o backlog** ao usuário antes de gravar. Apresente uma lista numerada com:
+   - ID da tarefa (TASK01, TASK02, ... ou prefixado pelo escopo — ver Regras de nomenclatura)
    - Título curto
    - Descrição de 1-2 frases do que será especificado
+   - Projetos envolvidos (só relevante para tarefas root)
    - Fase sugerida (fundação / core / complementar / polimento)
-   - Dependências (quais TASKs devem estar concluídas antes)
+   - Dependências (quais TASKs devem estar concluídas antes — pode referenciar IDs de outro arquivo/escopo)
 
-4. **Pergunte ao usuário**:
+5. **Pergunte ao usuário**:
    > "Este é o backlog proposto. Deseja alterar a ordem, adicionar, remover ou renomear alguma tarefa antes de gravar?"
 
-5. **Após aprovação**, gere o arquivo `docs/context/product-backlog.md` no formato abaixo.
+6. **Após aprovação**, grave no(s) arquivo(s) correspondente(s) — root e/ou `docs/$SCOPE/context/backlog.md` — no formato abaixo. Se `docs/$SCOPE/` ainda não existir, crie-o agora (mesmo gatilho de `/spec`).
 
-### Formato do arquivo `docs/context/product-backlog.md`
+### Formato do arquivo root `docs/context/product-backlog.md`
 
 ```markdown
 # Product Backlog
 
 > Gerado por `/backlog` em YYYY-MM-DD. Fonte: `docs/context/product.md`.
+> Contém apenas tarefas cross-cutting ou que tocam 2+ projetos do monorepo.
+> Tarefas de um único projeto vivem em `docs/apps/<nome>/context/backlog.md`
+> ou `docs/packages/<nome>/context/backlog.md`.
 > Use `/spec TASKXX` para gerar a especificação de cada tarefa.
 
 ## Legenda de Status
@@ -81,16 +95,14 @@ Contexto adicional do usuário (opcional): $ARGUMENTS
 
 ## Fase 1 — Fundação
 
-| ID | Título | Descrição | Status | Dependências | Spec |
-|----|--------|-----------|--------|--------------|------|
-| TASK01 | [título] | [descrição curta] | backlog | — | — |
-| TASK02 | [título] | [descrição curta] | backlog | TASK01 | — |
+| ID | Título | Descrição | Projetos | Status | Dependências | Spec |
+|----|--------|-----------|----------|--------|---------------|------|
+| TASK01 | [título] | [descrição curta] | web, api | backlog | — | — |
+| TASK02 | [título] | [descrição curta] | web, api, bff | backlog | TASK01 | — |
 
 ## Fase 2 — Core
 
-| ID | Título | Descrição | Status | Dependências | Spec |
-|----|--------|-----------|--------|--------------|------|
-| TASK03 | [título] | [descrição curta] | backlog | TASK01, TASK02 | — |
+...
 
 ## Fase 3 — Complementar
 
@@ -101,20 +113,40 @@ Contexto adicional do usuário (opcional): $ARGUMENTS
 ...
 ```
 
+### Formato do arquivo de escopo `docs/$SCOPE/context/backlog.md`
+
+Mesmo layout, sem a coluna "Projetos" (o escopo já está implícito no caminho do arquivo) e com IDs prefixados (ver Regras de nomenclatura):
+
+```markdown
+# Backlog — <nome do projeto>
+
+> Gerado/atualizado por `/backlog apps/api` (ou `/groom apps/api ...`) em YYYY-MM-DD.
+> Tarefas que tocam apenas este projeto. Tarefas cross-project ficam em
+> `docs/context/product-backlog.md`.
+
+## Fase 1 — Fundação
+
+| ID | Título | Descrição | Status | Dependências | Spec |
+|----|--------|-----------|--------|--------------|------|
+| API-TASK01 | [título] | [descrição curta] | backlog | — | — |
+```
+
 ### Regras de nomenclatura
 
-- IDs são sequenciais: TASK01, TASK02, ... TASK99
-- Se o backlog ultrapassar 99 itens, use TASK100, TASK101, etc.
+- **Root**: IDs sequenciais sem prefixo — TASK01, TASK02, ... TASK99, depois TASK100, TASK101, etc.
+- **Escopo**: IDs prefixados com o nome do projeto em maiúsculas (último segmento do path) + `-TASK` — ex: `apps/api` → `API-TASK01`; `apps/web` → `WEB-TASK01`; `packages/ui` → `UI-TASK01`. Numeração é independente por arquivo (o `API-TASK01` não tem relação com `WEB-TASK01`).
+- Dependência entre arquivos diferentes referencia o ID completo (ex: root `TASK02` na coluna Dependências de `API-TASK05`).
 - Cada TASK deve ter escopo suficiente para gerar **um spec completo** — nem granular demais (uma função), nem amplo demais (um módulo inteiro)
 - A coluna "Spec" é preenchida posteriormente pelo comando `/spec` com o link do arquivo gerado
 
 ## Regras
 
-- Não gere o arquivo sem aprovação do usuário.
+- Não gere nenhum arquivo sem aprovação do usuário.
 - Não invente features que não estejam em `docs/context/product.md` ou no input do usuário.
 - Se o usuário fornecer contexto adicional em $ARGUMENTS, combine com o que está em `product.md`.
 - Cada tarefa deve ser auto-descritiva — ao ler o título e descrição, deve ficar claro o que será especificado com `/spec`.
 - Ordene por dependências lógicas: infraestrutura/banco → domínio → backend → frontend → integração → polish.
+- Uma feature que toca 2+ projetos gera **uma única TASK root** (não duplique a mesma feature em cada backlog de escopo) — o fan-out por projeto acontece dentro do Plano de Implementação quando `/spec` for rodado sobre essa TASK.
 
 ---
 

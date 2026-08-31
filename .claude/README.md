@@ -114,6 +114,7 @@ Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
 /backlog
   → planner analisa product.md e propõe tarefas TASK01..TASKNN
   → gera docs/context/product-backlog.md
+  → em monorepo com $SCOPE (ex: /backlog apps/api), gera docs/apps/api/context/backlog.md
 
 # 3. Especificar Requisitos e Plano (Tudo junto!)
 /spec TASK01

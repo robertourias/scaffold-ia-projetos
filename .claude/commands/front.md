@@ -126,7 +126,7 @@ claro no resumo que a Spec está implementada mas pendente de ação manual.
 
 ### 4. Atualizar o status no product-backlog
 
-Abra `docs/context/product-backlog.md` e localize a linha da TASK correspondente à Spec concluída.
+Abra o backlog de origem da TASK e localize a linha correspondente à Spec concluída: ID sem prefixo → `docs/context/product-backlog.md` (root); ID prefixado (ex: `WEB-TASK01`) → `docs/$SCOPE/context/backlog.md` do projeto correspondente ao prefixo.
 
 Altere o valor da coluna `Status`:
 - `in-progress` → `done`

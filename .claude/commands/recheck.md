@@ -88,8 +88,9 @@ nenhum bloco `> 🟡 Pendência Manual:` em aberto.
 
 ### 4a. Tudo fechado
 
-1. Se o `product-backlog.md` tiver a TASK correspondente com `Status:
-   in-progress`, altere para `done`.
+1. Se o backlog de origem da TASK (root `product-backlog.md` para ID sem
+   prefixo, ou `docs/$SCOPE/context/backlog.md` para ID prefixado) tiver a
+   TASK correspondente com `Status: in-progress`, altere para `done`.
 2. Emita:
 
    ```

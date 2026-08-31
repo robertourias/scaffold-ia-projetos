@@ -2,6 +2,12 @@
 
 > **Status do arquivo:** vazio — ainda não gerado.
 >
+> Contém apenas tarefas **cross-cutting ou que tocam 2+ projetos** do
+> monorepo. Tarefas de um único projeto vivem em
+> `docs/apps/<nome>/context/backlog.md` ou
+> `docs/packages/<nome>/context/backlog.md` — ver
+> `docs/context/conventions.md#backlog-em-monorepo`.
+>
 > Este arquivo é gerado por `/backlog` a partir de `docs/context/product.md`,
 > e atualizado por `/groom` (append de novas tarefas) e por `/spec`
 > (preenche a coluna Spec e muda o Status).
@@ -22,6 +28,6 @@
 
 ## Fase 1 — Fundação
 
-| ID | Título | Descrição | Status | Dependências | Spec |
-|----|--------|-----------|--------|--------------|------|
-| — | *(execute `/backlog` para gerar)* | — | — | — | — |
+| ID | Título | Descrição | Projetos | Status | Dependências | Spec |
+|----|--------|-----------|----------|--------|---------------|------|
+| — | *(execute `/backlog` para gerar)* | — | — | — | — | — |
