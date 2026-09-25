@@ -76,6 +76,7 @@ Para trabalho de várias etapas com checkpoints de revisão, avalie também as s
 docs/context/current-state.md    ← estado atual do projeto (use /retomar)
 docs/context/product.md          ← regras de negócio (se não for PLANNER)
 .claude/workflows/release-process.md
+.claude/workflows/context-resolution.md  ← fallback quando um comando não recebe parâmetro
 .claude/workflows/playbook-tokens-qualidade.md  ← modos econômico / rigor / emergência
 .claude/comparativo-scaffold-vs-superpowers.md  ← scaffold vs Superpowers (tokens × qualidade)
 ```
@@ -83,29 +84,22 @@ docs/context/product.md          ← regras de negócio (se não for PLANNER)
 ---
 
 ## Estrutura do monorepo
-```
-apps/
-  web/        → Next.js (App Router)
-  api/        → NestJS
-packages/
-  ui/         → Biblioteca de componentes compartilhada
-  config/     → ESLint, TypeScript, Tailwind configs
-  types/      → Tipos TypeScript compartilhados
-  utils/      → Funções utilitárias compartilhadas
-```
+Estrutura depende do **Modo** em `docs/architecture/overview.md` — atualizada por `/init-project`, `/init-app` e `/init-package`.
+
 Cada app/package pode ter `docs/{context,architecture,specs}` próprio dentro de
 `docs/$SCOPE/` (ex: `docs/apps/api/`) — **nunca** dentro do próprio
-`apps/api/` (`$SCOPE` nos comandos `back`/`front`/`spec`/`review`/`retomar`/
-`checkpoint`). Toda documentação, com ou sem escopo, vive sob `docs/` na
+`apps/api/` (`$SCOPE` nos comandos `back`/`front`/`spec`/`review`). Toda documentação, com ou sem escopo, vive sob `docs/` na
 raiz. Raiz sem subpasta = monorepo inteiro; `docs/$SCOPE/` = local a um
 app/package. Convenção: `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
 
 ## Slash commands disponíveis
 ```
-/init-project [descrição]   ← preenche todos os arquivos de contexto
+/init-project [descrição]   ← inicializa projeto: detecta modo (single | monorepo | microfrontends) e preenche contexto global
+/init-app <nome>            ← (monorepo) cria app + docs locais + questionário de configuração
+/init-package <nome>        ← (monorepo) cria package + docs locais + questionário de configuração
 /backlog                    ← gera product backlog (TASK01, TASK02...) a partir do product.md
-/retomar                    ← reconstrói contexto da sessão anterior
-/checkpoint                 ← atualiza docs e salva estado atual
+/retomar                    ← retoma o último histórico salvo (sem parâmetro)
+/checkpoint                 ← grava resumo da sessão no log do projeto (sem parâmetro)
 /spec   [TASKXX | requisito]← gera spec + plano técnico (Status: review)
 /hands-on [caminho-da-spec] ← executa o Plano de Implementação em ondas (agentes em paralelo)
 /back   [tarefa]            ← agente backend

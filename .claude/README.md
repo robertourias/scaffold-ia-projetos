@@ -21,17 +21,18 @@ ferramenta nem cópia paralela para outros assistentes.
   hooks/                  ← verificação automática (PreToolUse, PostToolUse, Stop)
   workflows/              ← processos de várias fases (carregados sob demanda)
   templates/              ← spec-template.md
-  prompts/                ← bootstrap retroativo e atualização de harness desatualizado
   comparativo-scaffold-vs-superpowers.md
 ```
 
 ## Comandos (`commands/`)
 
 ```
-init-project.md  ← inicializa o projeto preenchendo todos os arquivos de contexto
+init-project.md  ← inicializa o projeto: detecta o modo (single | monorepo | microfrontends) e preenche o contexto global
+init-app.md      ← (monorepo) cria apps/<nome>, docs locais e conduz o questionário de configuração
+init-package.md  ← (monorepo) cria packages/<nome>, docs locais e conduz o questionário de configuração
 backlog.md       ← gera product backlog com tarefas numeradas (TASK01, TASK02...)
-retomar.md       ← reconstrói contexto da sessão anterior para retomar o trabalho
-checkpoint.md    ← salva estado atual e changelog de forma comprimida
+retomar.md       ← retoma o último histórico salvo (sem parâmetro)
+checkpoint.md    ← grava resumo da sessão no log do projeto (sem parâmetro)
 groom.md         ← refina uma nova feature isolada adicionando-a ao backlog sem reprocessá-lo inteiro
 back.md          ← agente backend (suporta escopo e agrupamento/batching de tarefas)
 front.md         ← agente frontend (suporta escopo e agrupamento/batching de tarefas)
@@ -69,7 +70,7 @@ model: claude-haiku-4-5-20251001
 
 ## Sintaxe de escopo
 
-Os comandos `back`, `front`, `spec`, `review`, `retomar` e `checkpoint` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar em `docs/$SCOPE/`, um subdiretório de `docs/` na raiz (nunca dentro de `apps/<app>/` ou `packages/<pkg>/`).
+Os comandos `back`, `front`, `spec` e `review` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar em `docs/$SCOPE/`, um subdiretório de `docs/` na raiz (nunca dentro de `apps/<app>/` ou `packages/<pkg>/`). Sem escopo, os comandos inferem do contexto atual (`.claude/workflows/context-resolution.md`).
 
 Isso existe para separar dois níveis de documentação num monorepo, sem misturar documentação com código-fonte: `docs/` na raiz, sem subpasta de escopo, guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `docs/$SCOPE/` (ex: `docs/apps/api/`) guarda o que é local a **um** app/package (suas próprias decisões, specs, estado) — mas sempre dentro de `docs/` na raiz. Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
 
@@ -84,8 +85,6 @@ Isso existe para separar dois níveis de documentação num monorepo, sem mistur
 /back apps/api implementar endpoint de criação de pedido
 /spec apps/tools nova ferramenta: conversor de unidades
 /review apps/challenges [cole o diff aqui]
-/retomar apps/metronome
-/checkpoint apps/metronome
 ```
 
 **Sem escopo** — trabalha no contexto global do monorepo, salva em `docs/`:
@@ -225,8 +224,7 @@ por **todos** os papéis em **toda** tarefa, mas o conteúdo é específico dest
 produto — por isso vivem em `docs/`, não aqui. Guardrails define comandos de
 verificação obrigatórios, caminhos protegidos, operações proibidas e o gate
 de Spec; constituição define princípios arquiteturais não-negociáveis
-(`CN-XXX`). Gerados pelo `/init-project` (Blocos 6 e 7) ou pelo bootstrap
-retroativo (Passos 5.5 e 5.6) em projeto existente.
+(`CN-XXX`). Gerados pelo `/init-project` (Blocos 6 e 7), inclusive em projeto existente.
 
 Em caso de conflito, guardrails vence qualquer outra instrução — inclusive as
 deste diretório.

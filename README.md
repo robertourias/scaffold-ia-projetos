@@ -29,52 +29,21 @@ cp -r scaffold-ia-projetos/.claude seu-projeto/
 /init-project sistema de gestão de pedidos para restaurantes
 ```
 
-O comando conduz entrevista em **8 blocos** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche automaticamente `docs/context/`, gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez.
+O comando detecta o **Modo** do projeto (`single`, `monorepo` ou `microfrontends`) e conduz entrevista em **8 blocos** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche o contexto global em `docs/context/`, gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez. Em monorepo, crie cada app/package depois com `/init-app <nome>` e `/init-package <nome>`, que geram os docs locais e conduzem o questionário de configuração de cada um.
 
-### Para um projeto existente com harness desatualizado
+### Para um projeto existente
 
-Se o projeto já usa uma versão anterior do scaffold — estrutura antiga
-(`docs/commands/`, `docs/skills/`, `AGENTS.md`), sem guardrails, sem
-subagentes, sem hooks, ou com comando que não existe mais — use o prompt de
-atualização de harness:
-
-```
-cat .claude/prompts/upgrade-harness.md
-# cole o conteúdo no Claude Code, na raiz do projeto existente
-```
-
-Ele diagnostica a distância da versão atual, atualiza `.claude/` inteiro,
-remove estrutura obsoleta (com confirmação — nunca some com customização sem
-avisar), preenche guardrails/constituição se estiverem faltando, e faz
-**merge** do `.claude/settings.json` do usuário em vez de sobrescrever.
-Nenhum arquivo de produto em `docs/context/` é tocado sem necessidade.
-
-Para uma cópia manual e rápida (sem diagnóstico, sem merge de settings — só
-para quem sabe exatamente o que está fazendo):
+Se o projeto já usa uma versão anterior do scaffold, copie o `.claude/` atual
+por cima e remova manualmente a estrutura obsoleta (`docs/commands/`,
+`docs/skills/`, `AGENTS.md`). Faça o **merge** do seu `.claude/settings.json`
+em vez de sobrescrever, e rode `/init-project` para preencher o que faltar
+(guardrails, constituição). Nenhum arquivo de produto em `docs/context/` precisa
+ser tocado sem necessidade.
 
 ```
 cp -r scaffold-ia-projetos/.claude/. seu-projeto/.claude/
 mkdir -p seu-projeto/docs/archive seu-projeto/docs/context/domains
 ```
-
-### Para um projeto existente sem documentação (bootstrap retroativo)
-
-Se o projeto já tem código rodando mas nunca teve `docs/context/` ou
-`docs/architecture/` preenchidos — não é um problema de organização, é um
-problema de conteúdo inexistente — use o prompt de bootstrap retroativo:
-
-```
-cat .claude/prompts/retroactive-documentation.md
-# cole o conteúdo no Claude Code, na raiz do projeto existente
-```
-
-Diferente da migração acima (que só reorganiza arquivos genéricos), este
-prompt **analisa o código real** — `package.json`, configs, estrutura de
-pastas, git log — e gera o conteúdo de `product.md`, `decisions.md`,
-`architecture/overview.md` etc. a partir do que já foi implementado, em vez
-de deixar placeholders para você preencher manualmente. Qualquer informação
-que não possa ser inferida com confiança é marcada como
-`[INFERIDO — confirmar]` em vez de inventada.
 
 ---
 
@@ -118,7 +87,6 @@ docs/
 ├── hooks/                       ← verificação automática (Pre/PostToolUse, Stop)
 ├── workflows/                   ← processos de várias fases (sob demanda)
 ├── templates/                    ← spec-template.md
-├── prompts/                       ← bootstrap retroativo, atualização de harness desatualizado
 └── comparativo-scaffold-vs-superpowers.md
 ```
 
@@ -127,8 +95,8 @@ seu próprio `docs/{context,architecture,specs}` — mesma árvore acima, em
 miniatura, só com o que é local àquele app/package. A raiz fica com o que é do
 monorepo inteiro: produto, decisões cross-cutting, infra, e o inventário de
 projetos em `docs/architecture/overview.md`. Os comandos `/spec`, `/back`,
-`/front`, `/review`, `/retomar` e `/checkpoint` aceitam `apps/<app>` ou
-`packages/<pkg>` como primeiro argumento para operar nesse nível — ver
+`/front` e `/review` aceitam `apps/<app>` ou
+`packages/<pkg>` como primeiro argumento para operar nesse nível (sem ele, inferem do contexto atual — `.claude/workflows/context-resolution.md`); `/retomar` e `/checkpoint` não recebem parâmetro — ver
 [Sintaxe de escopo](.claude/README.md#sintaxe-de-escopo) e a
 [convenção de documentação em monorepo](docs/context/conventions.md#documentação-em-monorepo-appspackages).
 
@@ -180,10 +148,9 @@ Mantenha os dois curtos.
 
 | Situação | Comando | Etapa |
 | --- | --- | --- |
-| Projeto novo | `/init-project` | Blocos 6 (Guardrails) e 7 (Constituição) |
-| Projeto existente sem docs | `.claude/prompts/retroactive-documentation.md` | Passos 5.5 e 5.6 |
+| Projeto novo ou existente | `/init-project` | Blocos 6 (Guardrails) e 7 (Constituição) |
 
-Ambos **inferem do repositório real** (scripts do `package.json`, `.gitignore`,
+O comando **infere do repositório real** (scripts do `package.json`, `.gitignore`,
 pastas de migration, constraints do schema) antes de perguntar, e registram
 `(não configurado)` em vez de inventar um comando que não roda.
 
@@ -246,7 +213,9 @@ Ideia/requisito
 
 | Comando | Exemplo | O quê |
 | --- | --- | --- |
-| `/init-project` | `/init-project sistema de pedidos` | Entrevista, preenche contexto e guardrails |
+| `/init-project` | `/init-project sistema de pedidos` | Detecta o modo, entrevista, preenche contexto global e guardrails |
+| `/init-app` | `/init-app web` | (monorepo) Cria `apps/<nome>`, docs locais e questionário de configuração |
+| `/init-package` | `/init-package ui` | (monorepo) Cria `packages/<nome>`, docs locais e questionário de configuração |
 | `/backlog` | `/backlog` | Gera TASK01..TASKNN do product.md |
 | `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review) |
 | `/groom` | `/groom nova funcionalidade` | Refina uma nova feature isolada adicionando-a ao backlog |
@@ -255,16 +224,12 @@ Ideia/requisito
 | `/front` | `/front criar modal de login` | Agente frontend, inline |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
 | `/recheck` | `/recheck docs/specs/2026-06-13-onboarding.md testei no dispositivo iOS` | Fecha Pendências Manuais de uma Spec após ajuste feito por você |
-| `/checkpoint` | `/checkpoint [apps/<app>]` | Salva estado, gera changelog, arquiva specs concluídas |
-| `/retomar` | `/retomar` | Reconstrói contexto após interrupção |
+| `/checkpoint` | `/checkpoint` | Grava resumo da sessão, gera changelog, arquiva specs concluídas (sem parâmetro) |
+| `/retomar` | `/retomar` | Retoma o último histórico salvo após interrupção (sem parâmetro) |
 
 Referência completa: [`.claude/README.md`](.claude/README.md)
 
 Playbook de modos (quando batch vs hands-on vs Superpowers): [`.claude/workflows/playbook-tokens-qualidade.md`](.claude/workflows/playbook-tokens-qualidade.md)
-
-Bootstrap retroativo para projeto existente sem contexto: [`.claude/prompts/retroactive-documentation.md`](.claude/prompts/retroactive-documentation.md)
-
-Atualizar harness de um projeto que já usa o scaffold mas ficou desatualizado: [`.claude/prompts/upgrade-harness.md`](.claude/prompts/upgrade-harness.md)
 
 ---
 
@@ -465,7 +430,7 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
 | Diretório | Responsabilidade |
 | --- | --- |
 | `specs/` | Specs ativas (Status: review → approved → done) |
-| `context/` | Informações únicas do seu produto — **você preenche** (ou o bootstrap retroativo preenche por você) |
+| `context/` | Informações únicas do seu produto — **você preenche** (ou o `/init-project` preenche por você) |
 | `architecture/` | Visão técnica: backend, frontend, infra |
 | `features/` | Comportamento atual de cada feature entregue |
 | `archive/` | Specs concluídas |
@@ -481,7 +446,6 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
 | `hooks/` | Verificação automática (gate de Spec, lint, type-check) |
 | `workflows/` | Processos de várias fases (feature-delivery, release, playbook tokens×qualidade) |
 | `templates/` | `spec-template.md` |
-| `prompts/` | Bootstrap retroativo e atualização de harness desatualizado |
 | `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 
 ---
@@ -503,13 +467,9 @@ Atualize `.claude/` quando:
 
 Se a **documentação de produto** de um projeto existente ficou pra trás em
 relação ao código (status desatualizado, decisões implementadas mas nunca
-registradas), rode o [bootstrap retroativo](.claude/prompts/retroactive-documentation.md)
-para reconciliar antes de continuar usando o fluxo normal de specs.
-
-Se o **harness em si** (`.claude/`) ficou pra trás em relação à versão atual
-do scaffold — estrutura antiga, sem guardrails, sem subagentes, comando
-descontinuado ainda referenciado — rode o [prompt de atualização de harness](.claude/prompts/upgrade-harness.md),
-que migra a estrutura preservando tudo que é conteúdo de produto.
+registradas), atualize `docs/context/` e `docs/architecture/` manualmente (ou
+rode `/init-project` para reconciliar) antes de continuar usando o fluxo
+normal de specs.
 
 ---
 

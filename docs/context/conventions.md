@@ -70,7 +70,7 @@ em exatamente um lugar.
 - Decisões e specs que só fazem sentido dentro daquele app/package (ex: uma decisão de cache que só existe na API).
 - **Não recrie** `guardrails.md`, `constitution.md`, `product.md` ou `changelog/` dentro de `docs/$SCOPE/` — esses são sempre globais, na raiz de `docs/`.
 - Não precisa ser criado antecipadamente: `/spec`, `/back`, `/front`, `/review`, `/retomar` e `/checkpoint` criam os arquivos em `docs/$SCOPE/` na primeira vez que geram algo com aquele escopo, exatamente como fariam na raiz.
-- **Nunca crie `apps/<app>/docs/` ou `packages/<pkg>/docs/`** — documentação dentro da pasta de código do projeto se perde do índice central e não é o que este scaffold espera. Se encontrar uma dessas pastas (harness antigo), veja `.claude/prompts/upgrade-harness.md` para migrar o conteúdo para `docs/$SCOPE/`.
+- **Nunca crie `apps/<app>/docs/` ou `packages/<pkg>/docs/`** — documentação dentro da pasta de código do projeto se perde do índice central e não é o que este scaffold espera. Se encontrar uma dessas pastas (harness antigo), migre o conteúdo manualmente para `docs/$SCOPE/`.
 
 **Regra de conflito:** decisão em `docs/$SCOPE/context/decisions.md` sobrepõe a equivalente em `docs/context/decisions.md` só dentro daquele escopo — não é uma decisão nova para o monorepo inteiro.
 
