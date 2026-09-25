@@ -1,6 +1,5 @@
 ---
 description: "Reconstrói o contexto da sessão anterior e apresenta onde o trabalho parou. Somente leitura"
-argument-hint: "[apps/<app>]"
 allowed-tools: Read, Grep, Glob, Bash(git log:*), Bash(git status:*)
 model: claude-haiku-4-5-20251001
 ---
@@ -9,24 +8,18 @@ model: claude-haiku-4-5-20251001
 
 Reconstrua o contexto completo do projeto para retomar o trabalho. **Não implemente nada ainda** — apenas leia, reconstrua e apresente o estado.
 
-## Resolução de escopo
+## Sem parâmetro
 
-Analise `$ARGUMENTS` (se fornecido):
-
-- Se o primeiro token começa com `apps/` ou `packages/` → **$SCOPE** = esse token. Focar o contexto neste app/package.
-- Sem argumento ou argumento genérico → **$SCOPE = monorepo global**.
+Este comando **não recebe argumento**. Ele retoma o último histórico salvo, sempre a partir da raiz. Não filtre por escopo: apresente tudo que estava em andamento, agrupado por app/package quando o estado citar mais de um.
 
 ## Passo 1 — Ler fontes de contexto
 
 Leia os seguintes arquivos em ordem:
 
 1. `docs/context/current-state.md` — estado salvo da última sessão
-2. `git log --oneline -15` — commits recentes
-3. O spec/plano referenciado em current-state.md (se existir e tiver `Status: approved`)
-
-**Se $SCOPE específico informado**, leia também:
-- `docs/$SCOPE/context/decisions.md`
-- Specs aprovados em `docs/$SCOPE/specs/`
+2. `docs/changelog/` — arquivo mais recente por nome
+3. `git log --oneline -15` — commits recentes
+4. O spec ativo referenciado em `current-state.md`
 
 Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua a partir do git log e de specs aprovados encontrados em `docs/specs/` **e** em `docs/apps/*/specs/` e `docs/packages/*/specs/`.
 
@@ -36,7 +29,7 @@ Exiba o resumo neste formato exato:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Retomando projeto [— $SCOPE se informado]
+  Retomando projeto
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📅 Última sessão: [data] — [resumo em 1 frase]
@@ -51,7 +44,7 @@ Exiba o resumo neste formato exato:
 
 ⏭ Próxima ação
   → [ação concreta e específica]
-    comando sugerido: /back $SCOPE [tarefa] ou /front $SCOPE [tarefa]
+    comando sugerido: /back ou /front (o contexto atual resolve)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -79,8 +72,4 @@ Após exibir o resumo, pergunte:
 - Não comece a implementar antes de o usuário confirmar.
 - Apresente apenas o que foi encontrado nos arquivos — sem inferências não fundamentadas.
 - Se o próximo passo não estiver claro, diga explicitamente e proponha como descobrir (ex: "leia a seção de tarefas técnicas no spec/plano").
-
----
-
-Argumento recebido (`$ARGUMENTS`): $ARGUMENTS
 

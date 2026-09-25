@@ -1,21 +1,17 @@
 ---
-description: "Salva o estado da sessão em current-state.md, atualiza o changelog e arquiva Specs concluídas"
-argument-hint: "[apps/<app> | packages/<pkg>]"
+description: "Grava resumo da sessão no log do projeto (changelog + current-state) e arquiva Specs concluídas. Sem parâmetro"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git log:*), Bash(git status:*), Bash(mkdir:*), Bash(mv:*)
 ---
 
 # Checkpoint — Salvar estado da sessão
 
-## Resolução de escopo
+## Sem parâmetro
 
-Analise `$ARGUMENTS`:
+Este comando **não recebe argumento**. Ele registra o que foi feito na sessão.
 
-- Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE**. O checkpoint fica restrito ao trabalho feito naquele app/package.
-- Caso contrário → **$SCOPE = monorepo global**.
+Escopo é inferido: leia `**Modo:**` em `docs/architecture/overview.md`. Em `single`, não há escopo. Em `monorepo`/`microfrontends`, descubra os apps/packages tocados pela sessão via `git status --short` e `git log --name-only -15` (regra: `.claude/workflows/context-resolution.md`, seção Escopo). A sessão pode ter tocado **vários** — registre cada um separadamente; nada a perguntar. Sem commits nem mudanças → registre o que foi discutido, sem escopo.
 
-Atualize `docs/context/current-state.md` (ou `docs/$SCOPE/context/current-state.md`, se `$SCOPE` informado) com o estado atual antes de encerrar a sessão. Se `$SCOPE` foi informado e o arquivo ainda não existir, crie-o (mesmo conteúdo-modelo do Passo 2, só que restrito ao escopo). Documentação de escopo específico vive sob `docs/$SCOPE/` na raiz — nunca dentro de `apps/<app>/` ou `packages/<pkg>/`.
-
-Se `$SCOPE` foi informado e `docs/$SCOPE/README.md` ainda não existir, crie-o com o template mínimo de `docs/context/conventions.md#documentação-em-monorepo-appspackages`.
+Estado e log ficam **sempre na raiz**: `docs/context/current-state.md` e `docs/changelog/YYYY-MM-DD.md`. Cada linha de progresso/changelog é prefixada com o escopo (`**apps/api:** ...`). Specs concluídas de um escopo são arquivadas em `docs/$SCOPE/archive/` (raiz → `docs/archive/`). Documentação com escopo vive sob `docs/$SCOPE/`, nunca dentro de `apps/`/`packages/`.
 
 ## Passo 1 — Coletar informações
 
@@ -25,15 +21,15 @@ Execute e analise:
 git log --oneline -15
 ```
 
-Se `$SCOPE` informado, restrinja: `git log --oneline -15 -- $SCOPE`.
+Se houver escopo(s) inferido(s), restrinja também por escopo: `git log --oneline -15 -- <escopo>`.
 
 Identifique também:
-- Quais specs em `docs/specs/` (ou `docs/$SCOPE/specs/`) têm `Status: approved` e estão sendo trabalhados
+- Quais specs em `docs/specs/` (ou `docs/$SCOPE/specs/` do(s) escopo(s) inferido(s)) têm `Status: approved` e estão sendo trabalhados
 - O que foi feito nesta sessão com base no contexto da conversa e nos commits
 
 ## Passo 2 — Atualizar current-state.md
 
-Reescreva `docs/context/current-state.md` (ou `docs/$SCOPE/context/current-state.md`) com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog).
+Reescreva `docs/context/current-state.md` (sempre o da raiz) com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog).
 
 ```markdown
 # Status do Projeto
@@ -90,20 +86,19 @@ Antes de salvar o estado, verifique rapidamente:
 3. Se o volume de decisões pendentes for grande (ex: primeira vez rodando
    isso num projeto com histórico acumulado), **não** tente promover tudo
    inline aqui. Pare, registre a pendência em "Bloqueadores / Perguntas
-   abertas" e sugira ao usuário rodar o bootstrap retroativo
-   (`.claude/prompts/retroactive-documentation.md`), que reconcilia
-   `decisions.md` e `architecture/` com o código real.
+   abertas" e sugira ao usuário reconciliar `decisions.md` e `architecture/`
+   com o código real em uma sessão dedicada.
 
 ## Passo 3 — Atualizar CHANGELOG
 
-Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual — sempre na raiz, changelog é único para o monorepo inteiro mesmo com `$SCOPE`) e adicione ou complemente a entrada com o que foi feito nesta sessão. Se `$SCOPE` informado, prefixe a entrada com o path (ex: `**apps/api:** implementado endpoint X`).
+Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual — sempre na raiz, changelog é único para o projeto inteiro) e adicione ou complemente a entrada com o que foi feito nesta sessão. Se houver escopo(s) inferido(s), prefixe cada entrada com o path (ex: `**apps/api:** implementado endpoint X`).
 
 ## Passo 4 — Arquivar specs concluídas
 
-Liste os arquivos em `docs/specs/` (ou `docs/$SCOPE/specs/`, se `$SCOPE` informado), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
+Liste os arquivos em `docs/specs/` (e `docs/$SCOPE/specs/` de cada escopo inferido), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
 
-- Se sim: mova o arquivo para `docs/archive/` (ou `docs/$SCOPE/archive/`, criando a pasta se não existir).
-- Se houver tarefa incompleta: mantenha em `docs/specs/` (ou `docs/$SCOPE/specs/`) — ainda em andamento.
+- Se sim: mova o arquivo para `docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não existir).
+- Se houver tarefa incompleta: mantenha em seu `specs/` de origem — ainda em andamento.
 
 Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-delivery.md`, garantido mesmo se o merge não passou por lá.
 
@@ -112,10 +107,10 @@ Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-del
 Exiba:
 
 ```
-✅ Checkpoint salvo em docs/context/current-state.md [ou docs/$SCOPE/context/current-state.md]
+✅ Checkpoint salvo em docs/context/current-state.md
 📌 Última ação: [resumo]
 📦 Specs arquivadas: [lista ou "(nenhuma)"]
-⏭ Próxima sessão: /retomar [$SCOPE]
+⏭ Próxima sessão: /retomar
 ```
 
 ## Passo 6 — Limpar contexto
