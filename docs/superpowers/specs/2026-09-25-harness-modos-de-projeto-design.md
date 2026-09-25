@@ -1,6 +1,6 @@
 # Harness: modos de projeto (single | monorepo | microfrontends)
 
-**Status:** aguardando revisão
+**Status:** implementado
 
 ## Objetivo
 O scaffold atende três modos de projeto. Comandos do harness passam a operar
