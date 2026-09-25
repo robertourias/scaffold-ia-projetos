@@ -6,6 +6,7 @@
 
 **Produto**: [Nome do produto]
 **Status**: [Desenvolvimento inicial / Ativo / Maduro]
+**Modo**: <!-- a definir: single | monorepo | microfrontends — preenchido por /init-project; lido por todos os comandos -->
 
 ## Stack
 
@@ -23,7 +24,7 @@
 ## Projetos do Monorepo
 
 <!-- Preencha apenas se este projeto for monorepo (apps/ e/ou packages/ na raiz). Se não for, remova esta seção. -->
-<!-- Atualizada por /init-project (Bloco 2) ao detectar monorepo, e manualmente quando um app/package novo é criado. -->
+<!-- Atualizada por /init-app e /init-package (uma linha por app/package). Remova a seção se o Modo for `single`. -->
 
 | Path | Tipo | Propósito | Stack (se diferir da tabela acima) | Docs próprios |
 |------|------|-----------|--------------------------------------|---------------|
