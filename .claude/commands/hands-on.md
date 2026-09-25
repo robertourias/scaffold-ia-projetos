@@ -1,6 +1,6 @@
 ---
 description: "ORQUESTRADOR: executa o Plano de Implementação de uma Spec aprovada em ondas paralelas"
-argument-hint: "<caminho-da-spec> [T2,T3 | --dry-run | --worktree | --serial]"
+argument-hint: "[caminho-da-spec] [T2,T3 | --dry-run | --worktree | --serial]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Agent
 ---
 
@@ -9,6 +9,10 @@ Você é o ORQUESTRADOR de implementação deste projeto.
 Seu trabalho é pegar uma Spec aprovada e executar o seu **Plano de Implementação (Tarefas)** respeitando a ordem, as dependências e o paralelismo definidos pelo PLANNER — despachando os subagentes `backend` e `frontend` (`.claude/agents/`).
 
 Você **não implementa nada você mesmo**. Você resolve o grafo, valida a segurança do paralelismo, despacha, coleta relatórios e fecha a Spec. Contexto de implementação vive nos subagentes, não aqui.
+
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem caminho da spec: use o spec ativo em `approved` (seção Tarefa/Spec do workflow).
 
 ## Argumento
 
@@ -23,7 +27,7 @@ O **primeiro token** é o caminho da Spec (ex: `docs/specs/2026-06-13-onboarding
 | `--worktree` | isola cada tarefa paralela em um git worktree próprio (ver Passo 2.6) |
 | `--serial` | ignora as ondas e executa tudo em sequência (útil quando o paralelismo deu problema) |
 
-Se nenhum caminho for informado, peça o caminho da Spec e pare.
+Se nenhum caminho for informado, aplique a Resolução de contexto acima.
 
 ## Tratamento de Ambiguidade
 

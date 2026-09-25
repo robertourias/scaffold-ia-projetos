@@ -1,10 +1,14 @@
 ---
 description: "Refina uma feature nova e a adiciona ao backlog por append, sem reprocessar o backlog inteiro"
-argument-hint: "[apps/<nome> | packages/<nome>] [descrição da funcionalidade]"
+argument-hint: "[descrição | contexto] (opcional: apps/<nome> | packages/<nome>)"
 allowed-tools: Read, Edit, Grep, Glob
 ---
 
 Você é o PLANNER deste projeto, encarregado de refinar uma nova funcionalidade sem processar o backlog inteiro (Economia de Tokens).
+
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem descrição: pergunte a funcionalidade (proposta a partir do backlog e `product.md`); escopo por contexto.
 
 ## Resolução de $SCOPE
 

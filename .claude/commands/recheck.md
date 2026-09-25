@@ -1,6 +1,6 @@
 ---
 description: "Rechecagem pós-ajuste manual: fecha Pendências Manuais de uma Spec (ver skill verification) e conclui ou lista o que ainda falta"
-argument-hint: "<caminho-da-spec> [descrição do que foi ajustado manualmente]"
+argument-hint: "[caminho-da-spec] [o que foi ajustado]"
 allowed-tools: Read, Edit, Grep, Glob
 ---
 
@@ -12,6 +12,10 @@ Manual").
 Você **não implementa nada**. Só relê a Spec, cruza com o que o usuário diz
 ter feito, fecha o que puder confirmar e reporta o que falta.
 
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem caminho da spec: use a spec `approved` com Pendências Manuais abertas (única) do escopo resolvido.
+
 ## Argumento
 
 Argumento recebido: `$ARGUMENTS`
@@ -20,7 +24,7 @@ O **primeiro token** é o caminho da Spec (ex: `docs/specs/2026-06-13-onboarding
 ou `docs/apps/api/specs/...`). O restante é a **descrição livre** do que o
 usuário ajustou manualmente.
 
-Se nenhum caminho for informado, peça o caminho da Spec e pare.
+Se nenhum caminho for informado, aplique a Resolução de contexto acima.
 
 Se nenhuma descrição for informada, pergunte objetivamente o que foi ajustado
 antes de mexer em qualquer checkbox — sem descrição não há como saber quais

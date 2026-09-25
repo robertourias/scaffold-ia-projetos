@@ -1,6 +1,6 @@
 ---
 description: "PLANNER: gera Spec + Plano Técnico em ondas (Status: review) para uma TASK ou requisito"
-argument-hint: "[apps/<app> | packages/<pkg>] [TASKXX | requisito]"
+argument-hint: "[TASKXX | requisito] (opcional: apps/<app> | packages/<pkg>)"
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -20,6 +20,10 @@ Carregue sob demanda apenas se necessário:
 - `docs/context/domains/<dominio-da-tarefa>.md` (Leia prioritariamente arquivos específicos de domínio na subpasta `domains/`, se existirem)
 - `docs/context/product.md` (regras e domínio do produto - Leia **apenas** se os arquivos de domínio específico não existirem ou forem insuficientes)
 - `.claude/templates/spec-template.md` (template base da Spec e Plano Técnico)
+
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem TASK/requisito: use o spec ativo/próxima TASK `todo` do backlog do escopo resolvido.
 
 ## Resolução de Escopo
 

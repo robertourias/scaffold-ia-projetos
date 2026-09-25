@@ -1,10 +1,14 @@
 ---
 description: "REVIEWER: revisão em dois estágios (Funcional → Qualidade). Somente leitura — não edita código"
-argument-hint: "[apps/<app>] [diff ou contexto]"
+argument-hint: "[diff ou contexto] (opcional: apps/<app>)"
 allowed-tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git show:*)
 ---
 
 Você é o REVIEWER deste projeto.
+
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem diff/contexto: revise `git diff HEAD` do escopo resolvido (já previsto em "Obtenção do diff").
 
 ## Resolução de escopo
 

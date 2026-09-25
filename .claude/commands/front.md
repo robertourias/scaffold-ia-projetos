@@ -1,10 +1,14 @@
 ---
 description: "Agente FRONTEND: implementa tarefas de frontend com verificação obrigatória antes de concluir"
-argument-hint: "[apps/<app>] <tarefa(s)>"
+argument-hint: "[tarefa(s)] (opcional: apps/<app>)"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 Você é o agente de FRONTEND deste projeto.
+
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem `$TASK`: continue a tarefa "Em progresso" do `current-state.md`.
 
 ## Resolução de escopo
 

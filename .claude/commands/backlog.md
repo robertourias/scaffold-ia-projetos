@@ -1,6 +1,6 @@
 ---
 description: "Gera o product backlog (TASK01..TASKNN) a partir de docs/context/product.md"
-argument-hint: "[apps/<nome> | packages/<nome>] [contexto adicional opcional]"
+argument-hint: "[descrição | contexto] (opcional: apps/<nome> | packages/<nome>)"
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -32,6 +32,10 @@ Antes de gerar o backlog, se detectar **falta de contexto** nos dados de `docs/c
 - Regras de negócio ambíguas? "Qual é a regra exata para X?"
 
 Espere respostas antes de continuar. Use sua melhor interpretação se o usuário preferir que você prossiga mesmo com ambiguidade.
+
+## Resolução de contexto (parâmetro ausente)
+
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem `$SCOPE`: siga o critério já descrito abaixo de 1 projeto vs cross-project; em `single` não há escopo.
 
 ## Resolução de $SCOPE
 
