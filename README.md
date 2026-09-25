@@ -29,7 +29,7 @@ cp -r scaffold-ia-projetos/.claude seu-projeto/
 /init-project sistema de gestão de pedidos para restaurantes
 ```
 
-O comando detecta o **Modo** do projeto (`single`, `monorepo` ou `microfrontends`) e conduz entrevista em **8 blocos** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche o contexto global em `docs/context/`, gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez. Em monorepo, crie cada app/package depois com `/init-app <nome>` e `/init-package <nome>`, que geram os docs locais e conduzem o questionário de configuração de cada um.
+O comando detecta o **Modo** do projeto (`single`, `monorepo` ou `microfrontends`) e conduz entrevista em **9 blocos (0–8)** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche o contexto global em `docs/context/`. Também gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez. Em monorepo, crie cada app/package depois com `/init-app <nome>` e `/init-package <nome>`, que geram os docs locais e conduzem o questionário de configuração de cada um.
 
 ### Para um projeto existente
 
@@ -399,7 +399,7 @@ mkdir -p seu-projeto/docs/archive seu-projeto/docs/context/domains
 ```
 
 Se seu projeto ainda tem `docs/commands/`, `docs/skills/`, `docs/workflows/`
-ou `docs/prompts/` de uma versão anterior, remova-os — o conteúdo equivalente
+ou a antiga pasta de prompts em `docs/` de uma versão anterior, remova-os — o conteúdo equivalente
 já veio com o `.claude/` copiado acima.
 
 Se a documentação de produto (`docs/context/`) estiver desatualizada ou

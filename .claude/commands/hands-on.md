@@ -42,7 +42,7 @@ Durante a execução, proponha sempre que possível em vez de perguntar em abert
 
 ## Passo 1 — Ler e validar a Spec
 
-1. Leia o arquivo da Spec informado.
+1. Leia o arquivo da Spec informado ou resolvido.
 2. Verifique o cabeçalho `**Status:**`:
    - `approved` → prossiga.
    - `review` → **pare** e avise: a Spec ainda não foi aprovada pelo humano. Não implemente.
@@ -165,7 +165,7 @@ Para cada onda, **em ordem**:
    ```
    Spec: <caminho> (Status: approved)
    Tarefa: <id> — <título>
-   Escopo: <apps/<app> | monorepo global>
+   Escopo: <apps/<app> | raiz>
    Descrição: <texto da tarefa, incluindo contratos>
    Arquivos declarados: <lista do campo Arquivos:>
    Critérios de Aceite:

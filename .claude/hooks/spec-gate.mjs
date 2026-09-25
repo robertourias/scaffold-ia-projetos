@@ -13,8 +13,9 @@
  * a Spec" de "agente editou a Spec" a partir só do path do arquivo.
  *
  * Sinal de qual Spec está ativa: `**Spec ativo:**` em
- * docs/context/current-state.md (ou docs/apps/<app>/context/current-state.md
- * / docs/packages/<pkg>/context/current-state.md em monorepo com escopo),
+ * docs/context/current-state.md da raiz (o estado da sessão é sempre da raiz;
+ * docs/apps/<app>/context/current-state.md e docs/packages/<pkg>/context/
+ * current-state.md são apenas fallback legado),
  * escrito por /checkpoint e lido por /retomar. Sem esse sinal (projeto que
  * ainda não rodou /checkpoint, ou tarefa avulsa sem Spec), o hook não tem o
  * que checar — falha em aberto.
@@ -57,7 +58,8 @@ if (
   ok();
 }
 
-// Acha o current-state.md mais próximo: raiz, ou docs/<apps|packages>/<nome>/
+// Acha o current-state.md mais próximo (fallback legado por escopo; o estado
+// da sessão atual é sempre o da raiz): raiz, ou docs/<apps|packages>/<nome>/
 // context/ se a edição for dentro de um apps/<app> ou packages/<pkg> com
 // contexto próprio. Documentação de escopo mora sob docs/ na raiz, nunca
 // dentro do próprio apps/<app> ou packages/<pkg>.

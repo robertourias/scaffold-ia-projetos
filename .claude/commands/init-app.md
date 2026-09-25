@@ -11,7 +11,7 @@ Você registra e configura um **app** em projeto Turborepo. Não gera código do
 ## Pré-condições
 
 1. Leia `**Modo:**` em `docs/architecture/overview.md` (fallback: `.claude/workflows/context-resolution.md`, seção Modo).
-   - `single` → **pare**: "Este projeto é single. `/init-app` só existe em monorepo/microfrontends. Rode `/init-project` para mudar o modo."
+   - `single` → **pare**: "Este projeto é single. `/init-app` só existe em monorepo/microfrontends. Edite `**Modo:**` em `docs/architecture/overview.md` (ou rode `/init-project`) para mudar o modo."
 2. Leia `docs/context/guardrails.md` e `docs/context/constitution.md`.
 
 ## Nome
@@ -46,7 +46,7 @@ Preencha apenas ao terminar todas as perguntas.
 
 1. `docs/apps/<nome>/context/decisions.md` — decisões do app (stack, comandos, packages consumidos). Sem `<!-- TODO -->`; "a definir" → `<!-- a definir -->`.
 2. `docs/apps/<nome>/README.md` — propósito, tipo, stack, comandos.
-3. `docs/architecture/overview.md` — acrescente uma linha em "Projetos do Monorepo": `apps/<nome>` | app (<tipo>) | propósito | stack se diferir | `docs/apps/<nome>/README.md`. Se o app já constar, atualize a linha.
+3. `docs/architecture/overview.md` — acrescente uma linha em "Projetos do Monorepo": `apps/<nome>` | app (<tipo>) | propósito | stack se diferir | `docs/apps/<nome>/README.md`. Se o app já constar, atualize a linha. Crie a seção "Projetos do Monorepo" se não existir.
 
 ## Finalização
 

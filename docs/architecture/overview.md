@@ -6,7 +6,7 @@
 
 **Produto**: [Nome do produto]
 **Status**: [Desenvolvimento inicial / Ativo / Maduro]
-**Modo**: <!-- a definir: single | monorepo | microfrontends — preenchido por /init-project; lido por todos os comandos -->
+**Modo:** <!-- a definir: single | monorepo | microfrontends — preenchido por /init-project; lido por todos os comandos -->
 
 ## Stack
 
@@ -23,7 +23,6 @@
 
 ## Projetos do Monorepo
 
-<!-- Preencha apenas se este projeto for monorepo (apps/ e/ou packages/ na raiz). Se não for, remova esta seção. -->
 <!-- Atualizada por /init-app e /init-package (uma linha por app/package). Remova a seção se o Modo for `single`. -->
 
 | Path | Tipo | Propósito | Stack (se diferir da tabela acima) | Docs próprios |
@@ -31,11 +30,11 @@
 | `apps/[nome]` | app | [uma frase] | [ex: usa Redis só aqui] | `docs/apps/[nome]/README.md` |
 | `packages/[nome]` | package compartilhado | [uma frase] | | `docs/packages/[nome]/README.md` |
 
-Cada app/package só ganha `docs/apps/[nome]/` (ou `docs/packages/[nome]/`),
-com seu `README.md` de índice, quando `/spec`, `/back`, `/front`,
-`/review`, `/retomar` ou `/checkpoint` rodam com esse escopo (ver
-`docs/context/conventions.md#documentação-em-monorepo-appspackages`) — não
-precisa ser criado antecipadamente. Toda a documentação gerada fica sob
+Cada app/package ganha `docs/apps/[nome]/` (ou `docs/packages/[nome]/`),
+com seu `README.md` de índice, criado por `/init-app` e `/init-package`;
+`/spec`, `/back` e `/front` criam o que faltar como fallback (ver
+`docs/context/conventions.md#documentação-em-monorepo-appspackages`).
+`/checkpoint` e `/retomar` operam só na raiz. Toda a documentação gerada fica sob
 `docs/` na raiz — nunca dentro de `apps/[nome]/` ou `packages/[nome]/`. O
 `README.md` é o resumo (propósito, stack, link); detalhe completo (specs,
 decisions, arquitetura) mora nas subpastas de `docs/apps/[nome]/` (ou

@@ -11,7 +11,7 @@ Você registra e configura um **package** compartilhado em projeto Turborepo. N�
 ## Pré-condições
 
 1. Leia `**Modo:**` em `docs/architecture/overview.md` (fallback: `.claude/workflows/context-resolution.md`, seção Modo).
-   - `single` → **pare**: "Este projeto é single. `/init-package` só existe em monorepo/microfrontends. Rode `/init-project` para mudar o modo."
+   - `single` → **pare**: "Este projeto é single. `/init-package` só existe em monorepo/microfrontends. Edite `**Modo:**` em `docs/architecture/overview.md` (ou rode `/init-project`) para mudar o modo."
 2. Leia `docs/context/guardrails.md` e `docs/context/constitution.md`.
 
 ## Nome
@@ -44,7 +44,7 @@ Preencha apenas ao terminar todas as perguntas.
 
 1. `docs/packages/<nome>/context/decisions.md` — decisões (tipo, build, exports, consumidores, comandos).
 2. `docs/packages/<nome>/README.md` — propósito, tipo, consumidores, comandos.
-3. `docs/architecture/overview.md` — linha em "Projetos do Monorepo": `packages/<nome>` | package (<tipo>) | propósito | stack se diferir | `docs/packages/<nome>/README.md`. Já existe → atualize.
+3. `docs/architecture/overview.md` — linha em "Projetos do Monorepo": `packages/<nome>` | package (<tipo>) | propósito | stack se diferir | `docs/packages/<nome>/README.md`. Já existe → atualize. Crie a seção "Projetos do Monorepo" se não existir.
 
 ## Finalização
 

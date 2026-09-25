@@ -1,5 +1,5 @@
 ---
-description: "Inicializa o scaffold: entrevista em 8 blocos, preenche docs/ em profundidade, gera guardrails do projeto e o README do repositório"
+description: "Inicializa o scaffold: entrevista em 9 blocos (0–8), preenche docs/ em profundidade, gera guardrails do projeto e o README do repositório"
 argument-hint: "[descrição do produto]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*)
 ---
@@ -27,12 +27,14 @@ Conduza uma entrevista estruturada **uma pergunta por vez**. Não faça múltipl
 - dependência `@module-federation/*` ou `module-federation.config.*` → sugira `microfrontends` (monorepo Turborepo com host + remotes)
 - nenhum sinal → sugira `single`
 
+Se `**Modo:**` já estiver preenchido, pergunte se é só troca de modo; nesse caso grave o campo, recrie a seção "Projetos do Monorepo" e pare.
+
 Pergunte (uma pergunta, já com o palpite): "Este projeto é **single** (um app), **monorepo** (Turborepo, vários apps/packages) ou **microfrontends** (Module Federation)?"
 
 Grave o valor no campo `**Modo:**` do overview. O modo define o resto da entrevista:
 - `single` → Blocos 1–8 completos (stack incluída).
 - `monorepo`/`microfrontends` → Blocos 2–4 cobrem só o que é **compartilhado** (CI/CD, hospedagem, banco/infra comuns, estilo de código). Stack **por app/package** é coletada depois por `/init-app` e `/init-package`. Este comando **não** cria apps nem packages.
-- `microfrontends` acrescenta ao Bloco 2: qual app é o **host**, quais são os **remotes**, libs compartilhadas (singletons: react, react-dom) e como o contrato entre host e remotes é versionado.
+- `microfrontends` acrescenta ao Bloco 2: qual app é o **host**, quais são os **remotes**, libs compartilhadas (singletons: react, react-dom) e como o contrato entre host e remotes é versionado. Essas respostas vão para a subseção `### Microfrontends` de `docs/architecture/overview.md`.
 
 ---
 

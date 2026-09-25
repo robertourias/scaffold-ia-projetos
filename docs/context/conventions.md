@@ -66,10 +66,10 @@ em exatamente um lugar.
 - **Comando rodado sem `$SCOPE`** (manutenção geral, sem app/package informado) → atualiza a documentação **global** aqui, mesmo que o código tocado esteja dentro de um app/package. Antes de escrever, verifique se o que está sendo documentado é cross-cutting (fica na raiz) ou específico de um projeto identificável pelos arquivos alterados (nesse caso, infira o `$SCOPE` e documente em `docs/$SCOPE/`, avisando qual local foi escolhido).
 
 **`docs/$SCOPE/` (ex: `docs/apps/api/`, `docs/packages/ui/`) — nível do app/package:**
-- Mesma árvore da raiz, só que dentro do subdiretório do projeto: `context/decisions.md`, `context/current-state.md`, `context/backlog.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`, `archive/`.
+- Mesma árvore da raiz, só que dentro do subdiretório do projeto: `context/decisions.md`, `context/backlog.md`, `architecture/backend.md` ou `architecture/frontend.md`, `specs/`, `archive/`.
 - Decisões e specs que só fazem sentido dentro daquele app/package (ex: uma decisão de cache que só existe na API).
 - **Não recrie** `guardrails.md`, `constitution.md`, `product.md` ou `changelog/` dentro de `docs/$SCOPE/` — esses são sempre globais, na raiz de `docs/`.
-- Não precisa ser criado antecipadamente: `/spec`, `/back`, `/front`, `/review`, `/retomar` e `/checkpoint` criam os arquivos em `docs/$SCOPE/` na primeira vez que geram algo com aquele escopo, exatamente como fariam na raiz.
+- Criado por `/init-app` e `/init-package`; `/spec`, `/back` e `/front` criam o que faltar em `docs/$SCOPE/` como fallback, na primeira vez que geram algo com aquele escopo. `/checkpoint` e `/retomar` operam só na raiz. O estado da sessão (`**Spec ativo:**`) fica sempre em `docs/context/current-state.md` da raiz.
 - **Nunca crie `apps/<app>/docs/` ou `packages/<pkg>/docs/`** — documentação dentro da pasta de código do projeto se perde do índice central e não é o que este scaffold espera. Se encontrar uma dessas pastas (harness antigo), migre o conteúdo manualmente para `docs/$SCOPE/`.
 
 **Regra de conflito:** decisão em `docs/$SCOPE/context/decisions.md` sobrepõe a equivalente em `docs/context/decisions.md` só dentro daquele escopo — não é uma decisão nova para o monorepo inteiro.
@@ -77,7 +77,7 @@ em exatamente um lugar.
 **`docs/$SCOPE/README.md` — índice do projeto:**
 - Um `README.md` dentro da própria pasta de escopo (`docs/apps/<nome>/README.md` ou `docs/packages/<nome>/README.md`).
 - Conteúdo mínimo: propósito em 1-2 frases, stack (só se diferir da tabela geral do overview), link para os subdiretórios locais (`context/`, `architecture/`, `specs/`).
-- **Criado automaticamente** por `/spec`, `/back`, `/front` ou `/checkpoint` na primeira vez que rodam com aquele `$SCOPE`, se o arquivo ainda não existir — mesmo gatilho que já cria `docs/$SCOPE/`.
+- **Criado automaticamente** por `/init-app` e `/init-package`; `/spec`, `/back` e `/front` o criam como fallback na primeira vez que rodam com aquele `$SCOPE`, se ainda não existir.
 - A tabela "Projetos do Monorepo" em `docs/architecture/overview.md` linka para este README na coluna "Docs próprios".
 
 Template mínimo (`docs/apps/<nome>/README.md` ou `docs/packages/<nome>/README.md`):

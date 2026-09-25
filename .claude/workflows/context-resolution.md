@@ -22,7 +22,7 @@ Se nenhum resolver ou houver empate → ambiguidade.
 Comandos que precisam de spec/TASK:
 1. Spec ativo em `current-state.md` (`Status: approved`).
 2. Única spec `approved` em `docs/specs/` (ou `docs/$SCOPE/specs/`).
-3. Próxima TASK `todo` do backlog do escopo resolvido.
+3. Próxima TASK com Status `backlog` (para /spec) ou `spec-approved`/`in-progress` (para /back, /front, /hands-on) do backlog do escopo resolvido.
 Nenhuma → ambiguidade.
 
 ## Ambiguidade

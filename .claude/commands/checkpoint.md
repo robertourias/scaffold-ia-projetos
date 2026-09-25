@@ -21,7 +21,7 @@ Execute e analise:
 git log --oneline -15
 ```
 
-Se houver escopo(s) inferido(s), restrinja também por escopo: `git log --oneline -15 -- <escopo>`.
+Se houver escopo(s) inferido(s), restrinja também por escopo: `git log --oneline -15 -- <escopo>`. Se o repositório não tiver commits, `git log` falha — siga com `git status` e a conversa.
 
 Identifique também:
 - Quais specs em `docs/specs/` (ou `docs/$SCOPE/specs/` do(s) escopo(s) inferido(s)) têm `Status: approved` e estão sendo trabalhados

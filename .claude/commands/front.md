@@ -15,7 +15,7 @@ Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows
 Analise `$ARGUMENTS`:
 
 - Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/metronome`). O restante é a **$TASK**.
-- Caso contrário → **$SCOPE = monorepo global** e `$ARGUMENTS` inteiro é a **$TASK**.
+- Caso contrário → `$SCOPE` não informado: resolva pela seção Escopo de `.claude/workflows/context-resolution.md`; em `single`, ou se não resolver, use a raiz `docs/`. `$ARGUMENTS` inteiro é a **$TASK**.
 
 ## Gerenciamento Inteligente de Contexto (Lazy Loading)
 

@@ -66,7 +66,7 @@ Você opera de forma a minimizar o consumo de tokens e a troca de contexto, gera
 6. **Geração do Artefato**:
    - Escreva a especificação e o plano técnico juntos em `docs/specs/YYYY-MM-DD-<topic>.md` usando o template `.claude/templates/spec-template.md`.
    - Coloque o documento em `Status: review` para aprovação do usuário.
-   - Atualize `**Spec ativo:**` em `docs/context/current-state.md` (ou no escopo) para o caminho gerado — o hook `spec-gate.mjs` depende deste campo para bloquear implementação antes da aprovação. Não deixe para o `/checkpoint`.
+   - Atualize `**Spec ativo:**` em `docs/context/current-state.md` (sempre o da raiz; o escopo fica visível no caminho da Spec) para o caminho gerado — o hook `spec-gate.mjs` depende deste campo para bloquear implementação antes da aprovação. Não deixe para o `/checkpoint`.
    - Instrua o usuário a revisar a Spec e as Tarefas e, se tudo estiver correto, mudar para `Status: approved` e iniciar a execução com os agentes `/back` e `/front`.
 
 ---

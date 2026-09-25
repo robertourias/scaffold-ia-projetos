@@ -72,7 +72,7 @@ model: claude-haiku-4-5-20251001
 
 Os comandos `back`, `front`, `spec` e `review` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar em `docs/$SCOPE/`, um subdiretório de `docs/` na raiz (nunca dentro de `apps/<app>/` ou `packages/<pkg>/`). Sem escopo, os comandos inferem do contexto atual (`.claude/workflows/context-resolution.md`).
 
-Isso existe para separar dois níveis de documentação num monorepo, sem misturar documentação com código-fonte: `docs/` na raiz, sem subpasta de escopo, guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `docs/$SCOPE/` (ex: `docs/apps/api/`) guarda o que é local a **um** app/package (suas próprias decisões, specs, estado) — mas sempre dentro de `docs/` na raiz. Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
+Isso existe para separar dois níveis de documentação num monorepo, sem misturar documentação com código-fonte: `docs/` na raiz, sem subpasta de escopo, guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `docs/$SCOPE/` (ex: `docs/apps/api/`) guarda o que é local a **um** app/package (suas próprias decisões e specs) — mas sempre dentro de `docs/` na raiz. Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
 
 ```
 /comando [apps/<app> | packages/<pkg>] tarefa
@@ -87,13 +87,12 @@ Isso existe para separar dois níveis de documentação num monorepo, sem mistur
 /review apps/challenges [cole o diff aqui]
 ```
 
-**Sem escopo** — trabalha no contexto global do monorepo, salva em `docs/`:
+**Sem escopo** — o escopo é inferido do contexto atual (em `single`, sempre `docs/`):
 ```
 /back implementar módulo de autenticação
 /front criar componente Button no design system
 /spec fluxo de onboarding
 /review [cole o diff aqui]
-/retomar
 ```
 
 ## Playbook e comparativo

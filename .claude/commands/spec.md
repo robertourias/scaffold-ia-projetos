@@ -23,14 +23,14 @@ Carregue sob demanda apenas se necessário:
 
 ## Resolução de contexto (parâmetro ausente)
 
-Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem TASK/requisito: use o spec ativo/próxima TASK `todo` do backlog do escopo resolvido.
+Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows/context-resolution.md` (Modo → Escopo → Tarefa/Spec → Ambiguidade) e atue no contexto atual do projeto. Parâmetro válido sempre vence. Sem TASK/requisito: use o spec ativo/próxima TASK com Status `backlog` (para /spec) ou `spec-approved`/`in-progress` (para /back, /front, /hands-on) do backlog do escopo resolvido.
 
 ## Resolução de Escopo
 
 Analise `$ARGUMENTS`:
 
 - Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/metronome`). O restante (TASKXX ou requisito) é processado normalmente.
-- Caso contrário → **$SCOPE = monorepo global**.
+- Caso contrário → `$SCOPE` não informado: resolva pela seção Escopo de `.claude/workflows/context-resolution.md`; em `single`, ou se não resolver, use a raiz `docs/`.
 
 **Leitura adicional — quando $SCOPE específico informado.** Leia também, se existirem:
 - `docs/$SCOPE/context/decisions.md`
@@ -94,7 +94,7 @@ Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantam
 ## Após gerar — atualizar o Spec ativo (obrigatório)
 
 Depois de salvar a Spec, atualize `**Spec ativo:**` em `docs/context/current-state.md`
-(ou `docs/$SCOPE/context/current-state.md` se houver escopo) para o caminho do
+(sempre o da raiz; o escopo fica visível no caminho da Spec, ex: `docs/$SCOPE/specs/...`) para o caminho do
 arquivo gerado. Não espere pelo `/checkpoint` de fim de sessão.
 
 Isso não é cosmético: `.claude/hooks/spec-gate.mjs` lê esse campo para bloquear

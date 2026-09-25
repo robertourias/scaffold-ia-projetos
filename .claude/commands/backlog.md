@@ -40,7 +40,7 @@ Parâmetro ausente ou não reconhecido **não é erro**: siga `.claude/workflows
 ## Resolução de $SCOPE
 
 - Se o **primeiro token** de `$ARGUMENTS` começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/api`). O restante é contexto adicional.
-- Caso contrário → **$SCOPE = monorepo global** (root).
+- Caso contrário → `$SCOPE` não informado: resolva pela seção Escopo de `.claude/workflows/context-resolution.md`; em `single`, ou se não resolver, use a raiz `docs/`.
 
 ## Execução
 

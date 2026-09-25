@@ -95,8 +95,8 @@ Depois de escrever as tarefas, preencha a tabela FR → Tarefa → Teste.
 Salve em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `docs/$SCOPE/specs/` se houver
 escopo) com `Status: review`.
 
-Atualize `**Spec ativo:**` em `docs/context/current-state.md` (ou
-`docs/$SCOPE/context/current-state.md`) para o caminho gerado — o hook
+Atualize `**Spec ativo:**` em `docs/context/current-state.md` (sempre o da raiz;
+o escopo fica visível no caminho da Spec) para o caminho gerado — o hook
 `spec-gate.mjs` depende deste campo para bloquear implementação antes da
 aprovação.
 
