@@ -85,7 +85,7 @@ Após coletar todas as respostas do Bloco 2, preencha `docs/architecture/overvie
 
 **Modo `monorepo`/`microfrontends`:** mantenha aqui só as diretrizes globais (paginação, erros, logging, cobertura). Escolhas de stack por app ficam em `docs/apps/<nome>/context/decisions.md`, via `/init-app`.
 
-As respostas do Bloco 2 já cobrem ORM, auth, filas e cache. Use-as para preencher a seção Backend de `docs/context/decisions.md` sem fazer novas perguntas sobre stack — apenas confirme o que falta e as **diretrizes de implementação**, que o template já traz com defaults sensatos:
+**Modo `single`:** as respostas do Bloco 2 já cobrem ORM, auth, filas e cache. Em `monorepo`/`microfrontends` essas perguntas foram puladas: deixe os campos de stack por app da seção Backend como `<!-- definido por app -->` e preencha só as diretrizes globais. Use-as para preencher a seção Backend de `docs/context/decisions.md` sem fazer novas perguntas sobre stack — apenas confirme o que falta e as **diretrizes de implementação**, que o template já traz com defaults sensatos:
 
 1. Há alguma decisão de backend que não foi coberta acima? (estratégia de paginação, tratamento de erros, convenções de logging, etc.)
 2. O template de `decisions.md` já assume: filtro global de exceções com shape de resposta consistente, paginação cursor-based, e cobertura de teste mínima de 90% em use cases / 80% em controllers / 60% em repositórios. Esses defaults servem, ou este projeto tem necessidade diferente (ex: coverage bar mais baixo no início, ou requisito de auditoria que muda o tratamento de erro)?
@@ -114,8 +114,9 @@ Faça as perguntas nesta ordem, uma por vez:
 8. O template de `decisions.md` já assume: React Testing Library + Jest, MSW para mock de rede, Playwright para E2E, cobertura mínima de 70% em componentes / 90% em hooks e utils / 100% nos fluxos P0 (E2E). Esses defaults servem, ou há necessidade diferente?
 
 Após coletar todas as respostas do Bloco 4:
-- Preencha a seção Frontend de `docs/context/decisions.md` com as escolhas reais das perguntas 1–6, mais a confirmação/customização da pergunta 8. Remova TODOs e aviso de status.
-- Preencha `docs/context/ui-guidelines.md` com o design system (component library, styling, ícones, tokens se informados). Remova TODOs.
+- Modo `single`: preencha a seção Frontend de `docs/context/decisions.md` com as escolhas reais das perguntas 1–6, mais a confirmação/customização da pergunta 8. Remova TODOs e aviso de status.
+- Modo `single`: preencha `docs/context/ui-guidelines.md` com o design system (component library, styling, ícones, tokens se informados). Remova TODOs.
+- Modo `monorepo`/`microfrontends`: preencha apenas design tokens (pergunta 7) e defaults de teste (pergunta 8); os campos por app (estilização, componentes, estado, forms, data fetching, ícones) ficam como `<!-- definido por app -->`. Remova os demais TODOs e o aviso de status.
 
 Informe os dois caminhos preenchidos antes de continuar.
 
@@ -277,10 +278,10 @@ Próximos passos:
 ## Regras
 
 - Uma pergunta por mensagem — sem exceção.
-- O Bloco 0 é obrigatório e vem antes de todos; sem `Modo` gravado os demais comandos precisam inferir.
+- O Bloco 0 é obrigatório e vem antes de todos; o `Modo` gravado é lido por todos os demais comandos.
 - Os Blocos 6 (Guardrails) e 7 (Constituição) são obrigatórios. Se o usuário quiser pular algum, avise o que fica faltando (limites de permissão e definição de "pronto" no caso do 6; princípios arquiteturais não-negociáveis no caso do 7) e peça confirmação explícita antes de pular.
 - O Bloco 8 (README) não tem pergunta própria e não bloqueia nada — mas não pule silenciosamente: se decidir não tocar no README (ex: já é robusto e o usuário não confirmou a seção nova), diga isso explicitamente no resumo final.
-- Não preencha arquivos parcialmente. Preencha apenas quando tiver todas as respostas do bloco.
+- Não preencha arquivos parcialmente. Preencha apenas quando tiver todas as respostas do bloco (em `monorepo`/`microfrontends`, campos por app com `<!-- definido por app -->` são esperados, não parcialidade).
 - Quando preencher um arquivo: remova todos os `<!-- TODO -->`, remova o bloco `**Status do arquivo:** vazio` e sua nota associada, substitua pelo conteúdo real.
 - Se o usuário responder "a definir" ou "não sei ainda", use um comentário `<!-- a definir -->` no campo correspondente — não deixe o placeholder original.
 - Não invente informações. Se uma resposta estiver vaga, peça clarificação antes de escrever.
