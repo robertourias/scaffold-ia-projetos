@@ -20,6 +20,22 @@ Conduza uma entrevista estruturada **uma pergunta por vez**. Não faça múltipl
 
 **Proponha, não pergunte em aberto quando houver como inferir.** Antes de cada bloco com sinal disponível no repositório (`package.json`, lockfile, estrutura de pastas, `.gitignore`), inspecione primeiro e ofereça o palpite como pergunta de confirmação — "Encontrei X no package.json, é esse mesmo?" custa uma resposta de uma palavra; "qual é o X?" custa o usuário digitar o que você já podia ter lido. Pergunta em aberto só quando não há nenhum sinal para inferir de.
 
+### Bloco 0 — Modo do projeto (grava `**Modo:**` em `docs/architecture/overview.md`)
+
+**Obrigatório e primeiro.** Inspecione o repositório antes de perguntar:
+- `turbo.json` ou `apps/` + `packages/` na raiz → sugira `monorepo`
+- dependência `@module-federation/*` ou `module-federation.config.*` → sugira `microfrontends` (monorepo Turborepo com host + remotes)
+- nenhum sinal → sugira `single`
+
+Pergunte (uma pergunta, já com o palpite): "Este projeto é **single** (um app), **monorepo** (Turborepo, vários apps/packages) ou **microfrontends** (Module Federation)?"
+
+Grave o valor no campo `**Modo:**` do overview. O modo define o resto da entrevista:
+- `single` → Blocos 1–8 completos (stack incluída).
+- `monorepo`/`microfrontends` → Blocos 2–4 cobrem só o que é **compartilhado** (CI/CD, hospedagem, banco/infra comuns, estilo de código). Stack **por app/package** é coletada depois por `/init-app` e `/init-package`. Este comando **não** cria apps nem packages.
+- `microfrontends` acrescenta ao Bloco 2: qual app é o **host**, quais são os **remotes**, libs compartilhadas (singletons: react, react-dom) e como o contrato entre host e remotes é versionado.
+
+---
+
 ### Bloco 1 — Produto (preenche `docs/context/product.md`)
 
 Faça as perguntas nesta ordem, uma por vez:
@@ -45,6 +61,8 @@ lockfile presente. Se já houver `typeorm`, `prisma`, `@auth/*`, `pg`, `redis`,
 `bullmq` etc. instalados, **proponha o que encontrou** em vez de perguntar às
 cegas — "Vi `@prisma/client` no package.json, é o ORM em uso?".
 
+**Modo `monorepo`/`microfrontends`:** pule as perguntas 1–2 e 4–5 (ORM, auth, fila, cache — são por app). Faça apenas 3 (banco compartilhado, se houver), 6 (hospedagem) e 7 (CI/CD). Na tabela de tecnologias do overview, deixe as linhas por-app como `<!-- definido por app: ver /init-app -->`.
+
 Faça as perguntas nesta ordem, uma por vez:
 
 1. Qual o ORM escolhido? (TypeORM / Prisma / Drizzle / outro)
@@ -57,26 +75,15 @@ Faça as perguntas nesta ordem, uma por vez:
 
 Após coletar todas as respostas do Bloco 2, preencha `docs/architecture/overview.md`. Preencha a tabela de tecnologias com as escolhas reais, remova todos os `<!-- TODO -->` e o aviso de status. Informe o caminho do arquivo preenchido antes de continuar.
 
-**Sincronize a estrutura do monorepo em `.claude/CLAUDE.md`.** A seção
-"Estrutura do monorepo" desse arquivo vem com um exemplo fixo
-(`apps/web`, `apps/api`, `packages/ui`...) que não é atualizado em nenhum
-outro lugar — se este projeto tiver uma estrutura diferente (monorepo com
-outros nomes de app, ou nem for monorepo), essa seção fica incorreta para
-sempre. Liste `apps/` e `packages/` (se existirem) e substitua o bloco pela
-estrutura real. Se o projeto não for monorepo, substitua por uma árvore de
-`src/` de alto nível ou remova a seção — não deixe o exemplo genérico.
+**Sincronize a estrutura em `.claude/CLAUDE.md`.** Reescreva a seção 'Estrutura do monorepo' de `.claude/CLAUDE.md` como ponteiro: 'Estrutura depende do **Modo** em `docs/architecture/overview.md` — atualizada por `/init-project`, `/init-app` e `/init-package`.'
 
-**Se for monorepo**, preencha também a seção "Projetos do Monorepo" em
-`docs/architecture/overview.md`: uma linha por app/package (path, tipo,
-propósito em uma frase, stack se diferir da tabela geral). Não crie `docs/`
-dentro de cada app/package agora — isso só acontece quando `/spec`, `/back`,
-`/front` ou `/checkpoint` rodarem com aquele escopo pela primeira vez (ver
-`docs/context/conventions.md#documentação-em-monorepo-appspackages`). Se o
-projeto não for monorepo, remova a seção "Projetos do Monorepo" do overview.
+**Monorepo/microfrontends:** a tabela "Projetos do Monorepo" do overview começa vazia (apenas cabeçalho) — é preenchida por `/init-app` e `/init-package`. Modo `single`: remova a seção.
 
 ---
 
 ### Bloco 3 — Decisões de Backend (preenche `docs/context/decisions.md` — seção Backend)
+
+**Modo `monorepo`/`microfrontends`:** mantenha aqui só as diretrizes globais (paginação, erros, logging, cobertura). Escolhas de stack por app ficam em `docs/apps/<nome>/context/decisions.md`, via `/init-app`.
 
 As respostas do Bloco 2 já cobrem ORM, auth, filas e cache. Use-as para preencher a seção Backend de `docs/context/decisions.md` sem fazer novas perguntas sobre stack — apenas confirme o que falta e as **diretrizes de implementação**, que o template já traz com defaults sensatos:
 
@@ -88,6 +95,8 @@ Preencha a seção Backend de `docs/context/decisions.md` com as escolhas coleta
 ---
 
 ### Bloco 4 — Frontend (preenche `docs/context/decisions.md` — seção Frontend e `docs/context/ui-guidelines.md`)
+
+**Modo `monorepo`/`microfrontends`:** pergunte só design tokens compartilhados e defaults de teste (pergunta 7 e 8). Estilização, biblioteca de componentes, estado e forms são por app — `/init-app` — ou por package `ui` — `/init-package`.
 
 Antes de perguntar, leia `package.json`. Se já houver `tailwindcss`,
 `@radix-ui/*`, `zustand`, `react-hook-form`, `@tanstack/react-query` etc.
@@ -239,7 +248,7 @@ Após preencher todos os arquivos, exiba um resumo:
 ```
 ✅ Arquivos preenchidos:
   - docs/context/product.md
-  - docs/architecture/overview.md
+  - docs/architecture/overview.md  (Modo: <valor>)
   - docs/context/decisions.md
   - docs/context/ui-guidelines.md
   - docs/context/conventions.md  (ou: ⚠️ aguardando termos de domínio)
@@ -247,7 +256,7 @@ Após preencher todos os arquivos, exiba um resumo:
   - docs/context/constitution.md
   - .claude/settings.json        (guardrails de permissão)
   - README.md                    (reescrito | seção "Desenvolvimento com IA" adicionada)
-  - .claude/CLAUDE.md             (estrutura do monorepo sincronizada com a real)
+  - .claude/CLAUDE.md             (seção "Estrutura do monorepo" reescrita como ponteiro para o Modo)
 
 🛡️ Guardrails ativos:
   - Verificação: [comandos configurados, ou ⚠️ "(não configurado)"]
@@ -260,12 +269,15 @@ Após preencher todos os arquivos, exiba um resumo:
   - [liste verificações "(não configurado)"]
 
 Próximos passos:
-  /backlog → gerar o product backlog com tarefas numeradas (TASK01, TASK02...)
+  monorepo/microfrontends → /init-app <nome> e /init-package <nome> para cada unidade
+  depois → /backlog para gerar o product backlog (TASK01, TASK02...)
+  single → /backlog
 ```
 
 ## Regras
 
 - Uma pergunta por mensagem — sem exceção.
+- O Bloco 0 é obrigatório e vem antes de todos; sem `Modo` gravado os demais comandos precisam inferir.
 - Os Blocos 6 (Guardrails) e 7 (Constituição) são obrigatórios. Se o usuário quiser pular algum, avise o que fica faltando (limites de permissão e definição de "pronto" no caso do 6; princípios arquiteturais não-negociáveis no caso do 7) e peça confirmação explícita antes de pular.
 - O Bloco 8 (README) não tem pergunta própria e não bloqueia nada — mas não pule silenciosamente: se decidir não tocar no README (ex: já é robusto e o usuário não confirmou a seção nova), diga isso explicitamente no resumo final.
 - Não preencha arquivos parcialmente. Preencha apenas quando tiver todas as respostas do bloco.
