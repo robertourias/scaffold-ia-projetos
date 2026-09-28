@@ -32,6 +32,15 @@ pendências fechar.
 
 ## Passo 1 — Ler a Spec e localizar Pendências Manuais
 
+0. Rode `git status --porcelain`. Mudança **rastreada** fora da Spec e do
+   backlog de origem (ajustes manuais que o humano já fez no código ao
+   resolver a pendência) → liste os arquivos e pergunte: "Esses ajustes em
+   <arquivos> fazem parte da pendência resolvida? Faço o stage deles no
+   commit de pendência manual?" Com confirmação, guarde a lista — ela vira o
+   stage do commit `fix(<escopo>): <slug> — pendência manual` no Passo 4a,
+   sempre **antes** do commit `docs(spec): conclui <slug>`. Sem confirmação,
+   não toque nesses arquivos. Mudanças não rastreadas (`??`) nunca bloqueiam
+   e nunca são tocadas.
 1. Leia o arquivo da Spec.
 2. Verifique `**Status:**`. Se for `review`, avise que a Spec nunca chegou a
    ser implementada (não passou pelo gate de aprovação) e pare — `/recheck`
@@ -96,10 +105,13 @@ nenhum bloco `> 🟡 Pendência Manual:` em aberto.
 2. Se o backlog de origem da TASK (root `product-backlog.md` para ID sem
    prefixo, ou `docs/$SCOPE/context/backlog.md` para ID prefixado) tiver a
    TASK correspondente com `Status: in-progress`, altere para `done`.
-3. Commit `docs(spec): conclui <slug>` (Spec + backlog), regras de
+3. Se o Passo 1.0 coletou arquivos confirmados pelo humano, commit primeiro
+   (antes do commit de fechamento): stage explícito só desses arquivos,
+   mensagem `fix(<escopo>): <slug> — pendência manual`.
+4. Commit `docs(spec): conclui <slug>` (Spec + backlog), regras de
    `.claude/workflows/git-flow.md`. Se estiver em `spec/<slug>`, sugira abrir
    o PR (`/hands-on` Passo 4 descreve o corpo).
-4. Emita:
+5. Emita:
 
    ```
    ✅ Spec concluída: <caminho>
@@ -108,6 +120,11 @@ nenhum bloco `> 🟡 Pendência Manual:` em aberto.
    ```
 
 ### 4b. Ainda falta algo
+
+Se o Passo 3 alterou a Spec (algum item foi marcado resolvido nesta
+rodada), commit separado, stage explícito (só a Spec): `docs(spec): recheck
+<slug>`. Sem mudança na Spec (nenhum item resolvido nesta rodada), não há o
+que commitar.
 
 Não altere o `Status` da TASK. Emita:
 
@@ -124,10 +141,14 @@ Pendente:
 
 - Nunca marque `[x]` sem correspondência explícita com o que o usuário
   descreveu — igual ao gate de evidência da skill `verification`.
-- Nunca implemente código ou rode comandos de verificação automática aqui —
-  isso é trabalho de `/back`, `/front` ou `/hands-on`. `/recheck` só lida com
-  o que já estava marcado como Pendência Manual (ação humana), mais a leitura
-  final de fechamento.
+- Nunca implemente código ou rode comandos de **verificação automática**
+  (testes, lint, type-check, build) aqui — isso é trabalho de `/back`,
+  `/front` ou `/hands-on`. A proibição é sobre comandos de verificação, não
+  sobre `git add`/`git commit`: os commits descritos no Passo 1.0 e no Passo
+  4 (`fix(...): pendência manual`, `docs(spec): recheck <slug>`,
+  `docs(spec): conclui <slug>`) fazem parte do papel deste comando. `/recheck`
+  só lida com o que já estava marcado como Pendência Manual (ação humana),
+  mais a leitura final de fechamento e esses commits.
 - Nunca altere `Status: review` → `approved` (gate humano, fora do escopo
   deste comando) nem invente conteúdo de Spec que não esteja lá.
 

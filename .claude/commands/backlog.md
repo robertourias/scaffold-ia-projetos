@@ -1,7 +1,7 @@
 ---
 description: "Gera o product backlog (TASK01..TASKNN) a partir de docs/context/product.md"
 argument-hint: "[descrição | contexto] (opcional: apps/<nome> | packages/<nome>)"
-allowed-tools: Read, Write, Edit, Grep, Glob
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 # Geração de Product Backlog
@@ -151,6 +151,17 @@ Mesmo layout, sem a coluna "Projetos" (o escopo já está implícito no caminho 
 - Cada tarefa deve ser auto-descritiva — ao ler o título e descrição, deve ficar claro o que será especificado com `/spec`.
 - Ordene por dependências lógicas: infraestrutura/banco → domínio → backend → frontend → integração → polish.
 - Uma feature que toca 2+ projetos gera **uma única TASK root** (não duplique a mesma feature em cada backlog de escopo) — o fan-out por projeto acontece dentro do Plano de Implementação quando `/spec` for rodado sobre essa TASK.
+
+## Commit
+
+Depois de gravar o(s) arquivo(s) de backlog (Processo, passo 6), commit
+(regras de `.claude/workflows/git-flow.md`; stage explícito: só o(s)
+arquivo(s) de backlog escritos neste passo — root e/ou
+`docs/$SCOPE/context/backlog.md`):
+
+`docs(backlog): <resumo>`
+
+Nunca `git add -A`.
 
 ---
 

@@ -47,8 +47,11 @@ corrigir. Não corrija a Spec você mesmo.
 4. Backlog: se a Spec veio de uma TASK (backlog de origem — root para ID sem
    prefixo, `docs/$SCOPE/context/backlog.md` para ID prefixado; a coluna
    "Spec" aponta para esta Spec), mude o Status da TASK para `spec-approved`.
-5. Commit (regras de `.claude/workflows/git-flow.md`, stage explícito: Spec,
-   backlog se mudou, `current-state.md` se mudou):
+5. Commit (regras de `.claude/workflows/git-flow.md`, stage explícito: Spec
+   — incluindo edições manuais que o humano tenha feito nela durante a
+   review, mesmo antes de rodar `/approve` (ver "Working tree" em
+   git-flow.md: pendência rastreada na própria Spec não bloqueia, entra
+   neste commit) — backlog se mudou, `current-state.md` se mudou):
    `docs(spec): aprova <slug>`.
 
 ## Passo 4 — Confirmar

@@ -216,7 +216,7 @@ Ideia/requisito
       ↓
 [6] /review [diff] — review final (no /hands-on) + PR
       ↓
-[7] /checkpoint (sem parâmetro — grava resumo da sessão, arquiva Specs done) → git commit
+[7] /checkpoint (sem parâmetro — grava resumo da sessão, arquiva Specs done, commita)
       ↓
 [8] Specs concluídas migram para docs/archive/ (feito por /checkpoint)
 ```

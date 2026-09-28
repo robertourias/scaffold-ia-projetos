@@ -124,7 +124,7 @@ git worktree add ../.wt-<spec-slug>-<task-id> -b wave/<spec-slug>/<task-id> spec
 Ao fim da onda, para cada worktree, na ordem das tarefas:
 
 ```
-git -C <worktree> add <arquivos declarados da tarefa>
+git -C <worktree> add <arquivos declarados da tarefa + arquivos reportados pelo implementador>
 git -C <worktree> commit -m "wip(<task-id>): <título>"
 git switch spec/<spec-slug>
 git merge --squash wave/<spec-slug>/<task-id>
@@ -137,12 +137,13 @@ com `--no-ff`, o `wip` entraria no histórico e a review da onda (Passo 3.5,
 que revisa `git diff HEAD`) não veria diff nenhum, porque tudo já estaria
 commitado.
 
-Conflito no merge -> **pare a onda**, reporte os arquivos em conflito e não
-avance. Ao final: `git worktree remove <path>` e `git branch -D` de cada
-branch (maiúsculo — o squash nunca "mescla" de verdade, então `-d` recusa
-apagar). Com todas as tarefas da onda trazidas (ainda não commitadas) para
-`spec/<spec-slug>`, siga para a review (Passo 3.5) e o commit da onda
-(Passo 3.6) normalmente.
+Qualquer saída ≠ 0 do `merge --squash` (conflito ou qualquer outra falha) →
+**pare a onda**, reporte os arquivos em conflito (ou o erro) e não avance. Só
+depois que o `merge --squash` daquela tarefa terminou com sucesso: `git
+worktree remove --force <path>` e `git branch -D` de cada branch (maiúsculo
+— o squash nunca "mescla" de verdade, então `-d` recusa apagar). Com todas as
+tarefas da onda trazidas (ainda não commitadas) para `spec/<spec-slug>`,
+siga para a review (Passo 3.5) e o commit da onda (Passo 3.6) normalmente.
 
 **Quando compensa:** tarefas longas em apps/packages realmente independentes do
 monorepo, ou quando já houve sobrescrita antes.
@@ -212,6 +213,7 @@ Para cada onda, **em ordem**:
    Spec: <caminho> (Status: approved)
    Tarefa: <id> — <título>
    Escopo: <apps/<app> | raiz>
+   Diretório de trabalho: <worktree>   ← só com --worktree (Passo 2.6)
    Descrição: <texto da tarefa, incluindo contratos>
    Arquivos declarados: <lista do campo Arquivos:>
    Critérios de Aceite:
@@ -288,28 +290,42 @@ Os subagentes marcam os próprios critérios; fechar Spec, backlog e branch é
      commit.
    - Achados 🟡/🟢 que restarem → `## Notas de Review`:
      `- [final] arquivo:linha — texto`.
-   - Restando 🔴 depois da rodada → **não** feche a Spec: pule os itens 4–6,
-     vá direto ao resumo do item 8 listando os achados abertos, e **não**
-     ofereça PR.
+   - Restando 🔴 depois da rodada → **não** feche a Spec: pule os itens 4–6 e
+     vá direto ao resumo do item 8 listando os achados abertos — **não**
+     ofereça PR. Se a Spec mudou nesta rodada (achados anotados em
+     `## Notas de Review`, por exemplo), commit separado, stage explícito
+     (só a Spec): `docs(spec): notas de review <slug>`. Se a rodada de
+     correção alterou código que não chegou a ser commitado (o achado
+     persistiu e o `fix(...): review final` não ocorreu), avise o humano
+     explicitamente que a working tree está suja, liste os arquivos
+     alterados e não commitados, e oriente a retomada: resolva manualmente
+     (`git add`/`git commit` ou `git stash`) e rode `/hands-on <spec>` de
+     novo para repetir a review final.
 3. **Execução parcial** (filtro do Passo 2, ex. `T2,T3`, deixou tarefas fora
    desta rodada com critérios ainda `[ ]`): pule os itens 4–6 — Spec e TASK
-   não mudam de Status — e registre "execução parcial" no resumo do item 8.
+   não mudam de Status. Se a Spec mudou nesta rodada, commit separado, stage
+   explícito (só a Spec): `docs(spec): notas de review <slug>`. Registre
+   "execução parcial" no resumo do item 8.
 4. Confirme que **todos** os checkboxes estão `[x]`, exceto os que carregam
    Pendência Manual. `[x]` de agente que reportou `⚠️ não verificado` não
    conta — reabra a tarefa.
 5. **Com Pendência Manual** (acumulada no Passo 3.4): Spec continua
-   `approved`, TASK continua `in-progress`. Commit das anotações se houver
-   mudança pendente. Não ofereça PR ainda; direcione para `/recheck <spec>`.
+   `approved`, TASK continua `in-progress`. Se a Spec mudou (achados
+   atribuídos, Pendência Manual anotada), commit separado, stage explícito
+   (só a Spec): `docs(spec): notas de review <slug>`. Não ofereça PR ainda;
+   direcione para `/recheck <spec>`.
 6. **Sem Pendência Manual e sem 🔴:** Spec → `**Status:** done` com
    `**Concluído em:** YYYY-MM-DD` logo abaixo; TASK → `done`; commit
    `docs(spec): conclui <slug>` (Spec, backlog, `current-state.md`).
 7. **PR** (só quando o item 6 fechou a Spec). Ofereça abrir o PR (push e
    `gh pr create` pedem confirmação):
    `git push -u origin spec/<slug>` e
-   `gh pr create --base <branch padrão> --head spec/<slug> --title "<título da Spec>" --body-file <arquivo temporário>`
+   `gh pr create --base <branch padrão> --head spec/<slug> --title "<título da Spec>" --body-file .git/PR_BODY.md`
    com corpo: problema (seção 1), FRs, tabela de verificação com a saída real
    do item 1, Pendências Manuais "(nenhuma)", e o conteúdo de
-   `## Notas de Review`. Sem `gh` → imprima os comandos.
+   `## Notas de Review`. Grave o corpo em `.git/PR_BODY.md` — dentro de
+   `.git`, nunca rastreado pelo git, sem stage nem limpeza depois. Sem `gh`
+   → imprima os comandos.
 8. Resumo curto: ondas, rodadas de review por onda, commits, tarefas puladas,
    verificação final, "execução parcial" quando aplicável, achados 🔴
    abertos da review final quando aplicável, Pendências Manuais

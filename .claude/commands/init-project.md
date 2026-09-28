@@ -1,7 +1,7 @@
 ---
 description: "Inicializa o scaffold: entrevista em 9 blocos (0–8), preenche docs/ em profundidade, gera guardrails do projeto e o README do repositório"
 argument-hint: "[descrição do produto]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 # Inicialização de Projeto
@@ -303,6 +303,17 @@ Próximos passos:
   depois → /backlog para gerar o product backlog (TASK01, TASK02...)
   single → /backlog
 ```
+
+Pergunte ao humano se pode commitar o que foi escrito: "Posso commitar os
+arquivos gerados (<liste exatamente os arquivos do resumo acima que foram
+de fato escritos/alterados nesta sessão — pule os que ficaram
+`<!-- a definir -->` sem mudança, e o CI se não foi instalado>)?" Só com
+confirmação, stage explícito desses arquivos (nunca `git add -A`) e commit:
+
+`docs: inicializa contexto do projeto`
+
+Sem confirmação, não commite — informe que as mudanças seguem no working
+tree para o humano revisar e commitar manualmente.
 
 ## Regras
 

@@ -117,7 +117,8 @@ atualização, o gate mecânico fica cego para a Spec recém-criada.
 O "Plano de Implementação (Tarefas)" **deve sempre** incluir a subseção "Ordem de Execução & Dependências" (tabela de ondas/waves) e os campos `Depende de:` / `Paralelizável com:` em cada tarefa, conforme o template. Esse plano é o contrato consumido pelo comando `/hands-on`, que executa as tarefas respeitando a ordem e disparando agentes em paralelo dentro de cada onda.
 
 Depois de atualizar backlog e `current-state.md`, faça o commit (stage
-explícito: Spec, backlog de origem se mudou, `docs/context/current-state.md`):
+explícito: Spec, backlog de origem se mudou, `docs/context/current-state.md`,
+e `docs/$SCOPE/README.md` se este comando o criou nesta execução):
 
 `docs(spec): <título da Spec> (review)`
 
