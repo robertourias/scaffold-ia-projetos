@@ -88,3 +88,39 @@ test("--upgrade e --force juntos → erro", () => {
   mkdirSync(path.join(dir, "x"));
   assert.equal(run(dir, "--upgrade", "--force").status, 1);
 });
+
+test("--force não interativo com docs/ divergente fora de product.md recusa sem --yes", () => {
+  const dir = tmp();
+  run(dir);
+  rmSync(path.join(dir, "docs/context/product.md"));
+  writeFileSync(path.join(dir, "docs/context/decisions.md"), "PREENCHIDO\n");
+  const r = run(dir, "--force");
+  assert.equal(r.status, 1);
+  assert.equal(read(dir, "docs/context/decisions.md"), "PREENCHIDO\n");
+});
+
+test("reinstalação sem flag não regrava .scaffold-version; --upgrade regrava", () => {
+  const dir = tmp();
+  run(dir);
+  writeFileSync(path.join(dir, ".claude/.scaffold-version"), "0.9.0\n");
+  assert.equal(run(dir).status, 0);
+  assert.equal(read(dir, ".claude/.scaffold-version").trim(), "0.9.0");
+  const r = run(dir, "--upgrade");
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(read(dir, ".claude/.scaffold-version").trim(), VERSION);
+});
+
+test("--upgrade sem mudanças não imprime overwrite; com mudança imprime só o arquivo alterado", () => {
+  const dir = tmp();
+  run(dir);
+  let r = run(dir, "--upgrade");
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(!/overwrite/.test(r.stdout));
+
+  writeFileSync(path.join(dir, ".claude/commands/spec.md"), "LOCAL");
+  r = run(dir, "--upgrade");
+  assert.equal(r.status, 0, r.stderr);
+  const overwriteLines = r.stdout.split("\n").filter((l) => l.includes("overwrite"));
+  assert.equal(overwriteLines.length, 1);
+  assert.match(overwriteLines[0], /commands[\\/]spec\.md/);
+});
