@@ -105,7 +105,7 @@ Alvo: edição via ferramenta em Spec (mesmo casamento de caminho da regra 1) cu
 
 ### 6. Permissões
 
-`.claude/settings.example.json`: `Bash(git commit:*)` sai de `ask` e entra em `allow`; `Bash(git switch:*)` entra em `allow`. `push`, `merge`, `rebase`, `gh pr` seguem em `ask`. Nenhum `deny` muda.
+`.claude/settings.example.json`: `Bash(git commit:*)` sai de `ask` e entra em `allow`; `Bash(git switch:*)` entra em `allow`. `push`, `merge`, `rebase`, `gh pr` seguem em `ask`. `deny` ganha `Bash(git commit --no-verify:*)` e `Bash(git commit -n:*)` (commit passa a ser automático; o `--no-verify` continua proibido). Limitação: o casamento é por prefixo — a flag no meio do comando não é pega; o hook de commit e o guardrail seguem valendo.
 
 ### 7. Testes e docs
 

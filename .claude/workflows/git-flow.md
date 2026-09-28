@@ -26,6 +26,8 @@ Exemplo: `docs/specs/2026-10-01-login-social.md` → `spec/login-social`.
 
 Arquivo não rastreado fora dessa lista nunca é adicionado.
 
+Nunca `--no-verify` (bloqueado em `permissions.deny`).
+
 ## Mensagens
 
 Conventional Commits:
