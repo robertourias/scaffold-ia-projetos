@@ -173,10 +173,18 @@ autodeclaração do agente. O `/init-project` avisa explicitamente quando isso a
 ```
 Ideia/requisito
       ↓
-[1] /init-project (uma vez no início)
+[1] /init-project (uma vez no início) — detecta o Modo: single | monorepo | microfrontends
       ↓
-[2] /backlog (gera TASK01..TASKNN) ← ou pule para [3] se for feature avulsa
-      ↓
+      ┌─ single ────────────────────────────────────────────────┐
+      │                                                          ↓
+      │                                            [2] /backlog (gera TASK01..TASKNN)
+      │                                                          ↓ ou pule para [3] se for feature avulsa
+      └─ monorepo/microfrontends ─┐                              │
+                                   ↓                              │
+                     /init-app <nome> · /init-package <nome>      │
+                     (uma vez por app/package)                    │
+                                   └──────────────────────────────┘
+                                                  ↓
 [3] /spec TASK01 (gera spec + plano de tarefas técnicas)
       ↓
       ⛔ GATE: você edita spec/plano → Status: approved (mecânico: .claude/hooks/spec-gate.mjs)
@@ -187,14 +195,16 @@ Ideia/requisito
       ↓
 [6] /review [diff]
       ↓
-[7] /checkpoint (salva estado) → git commit
+[7] /checkpoint (sem parâmetro — grava resumo da sessão) → git commit
       ↓
 [8] Specs concluídas migram para docs/archive/ (feito por /checkpoint)
 ```
 
-**Diagrama do fluxo** (sequência de comandos, gate humano, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
+**Diagrama do fluxo** (sequência de comandos, ramo single/monorepo, gate humano, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
 
 ![Fluxo de entrega do Scaffold IA](docs/assets/fluxo-workflow.png)
+
+**Single vs. monorepo/microfrontends:** em `single`, `/init-project` já cobre a stack inteira e o próximo passo é direto `/backlog`. Em `monorepo`/`microfrontends`, `/init-project` cobre só o que é compartilhado (CI/CD, hospedagem, banco); cada app/package precisa passar por `/init-app <nome>` ou `/init-package <nome>` (que criam a pasta, se ainda não existir, e os docs locais em `docs/apps|packages/<nome>/`) antes de gerar o backlog. Os dois caminhos convergem no mesmo `/spec` em diante — `/back`, `/front`, `/review`, `/checkpoint` e `/retomar` funcionam igual, com o escopo inferido do contexto quando não informado (`.claude/workflows/context-resolution.md`).
 
 **Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código — e agora um hook bloqueia mecanicamente a edição de código enquanto a Spec ativa não estiver aprovada.
 
