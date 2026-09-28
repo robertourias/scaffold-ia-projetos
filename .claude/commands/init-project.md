@@ -188,6 +188,23 @@ Se algum comando de verificação ficou como `(não configurado)`, diga explicit
 sandbox. Um comando shell criativo o suficiente contorna a lista. Guardrail forte
 depende dos hooks de verificação e do gate humano de Spec — não da lista de permissões.
 
+**6d. CI (opcional)**
+
+Leia `.claude/templates/ci/verify.yml` e monte o workflow do projeto:
+
+- troque cada `run:` marcado com `# scaffold:type-check|lint|test|build` pelo
+  comando real da seção 1 de `docs/context/guardrails.md`; verificação
+  `(não configurado)` → remova o passo inteiro;
+- gerenciador de pacotes pelo lockfile: `pnpm-lock.yaml` → descomente
+  `pnpm/action-setup`, `cache: pnpm`, `pnpm install --frozen-lockfile`;
+  `yarn.lock` → `cache: yarn`, `yarn install --frozen-lockfile`; senão npm;
+- versão do Node: `.nvmrc` ou `engines.node` do `package.json` quando houver;
+- branch em `push.branches`: o branch padrão do repositório.
+
+Pergunte: "Instalo em `.github/workflows/verify.yml`?" Se o arquivo já
+existir, mostre a diferença e confirme antes de sobrescrever. Sem CI
+instalado, registre isso em "Ainda requer revisão manual" do resumo final.
+
 ---
 
 ### Bloco 7 — Constituição (preenche `docs/context/constitution.md`)
@@ -260,6 +277,7 @@ Após preencher todos os arquivos, exiba um resumo:
   - .claude/settings.json        (guardrails de permissão)
   - README.md                    (reescrito | seção "Desenvolvimento com IA" adicionada)
   - .claude/CLAUDE.md             (seção "Estrutura do monorepo" reescrita como ponteiro para o Modo)
+  - .github/workflows/verify.yml   (instalado | não instalado)
 
 🛡️ Guardrails ativos:
   - Verificação: [comandos configurados, ou ⚠️ "(não configurado)"]
