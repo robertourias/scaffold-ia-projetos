@@ -11,10 +11,9 @@ mais ser carregada por `/spec`, `/retomar` ou `/hands-on`. Arquivar mantém
 
 ## Regra de arquivamento
 
-Uma Spec só sai de `docs/specs/` quando:
-
-1. `Status: approved`, **e**
-2. **Todos** os Critérios de Aceite de **todas** as tarefas estão `[x]`.
+Uma Spec só sai de `docs/specs/` quando `Status: done` (ou, legado, `approved`
+com **todos** os Critérios de Aceite de **todas** as tarefas `[x]`) — movida
+pelo `/checkpoint` com `git mv`.
 
 Se houver qualquer `[ ]`, a Spec permanece em `docs/specs/`.
 

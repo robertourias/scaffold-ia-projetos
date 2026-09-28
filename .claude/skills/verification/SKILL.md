@@ -90,6 +90,18 @@ Logo abaixo do critério de aceite afetado, insira (mantendo o checkbox
 o que rechecar. Não use esse formato para falhas normais (caso 2) — só para o
 que está genuinamente fora do seu alcance como agente.
 
+## Emenda em Spec aprovada
+
+Mudança normativa numa Spec `approved` (texto de FR, tarefa, contrato,
+critério) exige, **na mesma edição**, uma entrada em `## Emendas`:
+`- YYYY-MM-DD — <o que mudou> — <por quê> — <quem>`. O hook `spec-gate.mjs`
+pede confirmação humana para essas edições. FR novo ou removido **não** é
+emenda — é mudança de escopo: pare e escale ao humano.
+
+Não são emendas (não precisam de registro): marcar checkbox, anotar
+Pendência Manual (aberta ou resolvida por `/recheck`), escrever em `## Notas
+de Review`, fechar a Spec (`approved → done` + `**Concluído em:**`).
+
 ## Proibido
 
 - `--no-verify`, `--passWithNoTests`, `--force` para fazer um comando passar

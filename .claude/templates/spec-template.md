@@ -126,6 +126,21 @@ Como provar que esta Spec foi entregue. Comandos reais de
 
 ---
 
+## Notas de Review
+
+<!-- Preenchido pelo /hands-on: achados 🟢/💡 da review por onda e da final,
+no formato `- [onda N] arquivo:linha — texto`. Não é normativo. -->
+
+---
+
+## Emendas
+
+<!-- Mudança normativa depois da aprovação (FR, tarefa, contrato, critério).
+Formato: `- YYYY-MM-DD — <o que mudou> — <por quê> — <quem>`.
+FR novo ou removido não é emenda: pare e escale ao humano. -->
+
+---
+
 <!-- 
 GATE DE APROVAÇÃO
 Revise as regras de negócio e as tarefas técnicas.

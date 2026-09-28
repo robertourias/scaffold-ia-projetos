@@ -2,7 +2,7 @@
 
 Specs **ativas** desta feature em diante — geradas por `/spec`, executadas por
 `/hands-on` ou por `/back`/`/front`, e movidas para `docs/archive/` quando
-concluídas (todos os Critérios de Aceite `[x]` e `Status: approved`).
+`Status: done`.
 
 ## O que vive aqui
 
@@ -11,11 +11,20 @@ Um arquivo por feature em andamento: `YYYY-MM-DD-<topic>.md`, no formato de
 
 ## Ciclo de vida
 
-```
-/spec  → Status: review   (aqui, aguardando aprovação humana)
-       → Status: approved (aqui, agente pode implementar)
-       → Status: done     (todos os critérios [x] → /checkpoint move para docs/archive/)
-```
+| Momento | Spec (`**Status:**`) | TASK no backlog |
+|---|---|---|
+| `/spec` gera | `review` | `spec-review` |
+| `/approve` | `approved` (+ `Aprovado por`) | `spec-approved` |
+| `/hands-on` inicia | `approved` | `in-progress` |
+| fim sem Pendência Manual e review final sem 🔴 | `done` + `**Concluído em:**` | `done` |
+| fim com Pendência Manual | `approved` | `in-progress` |
+| `/recheck` fecha a última pendência | `done` + `Concluído em` | `done` |
+| `/back`/`/front` marcam o último critério sem pendência | `done` + `Concluído em` | `done` |
+| `/checkpoint` | move Specs `done` para `docs/archive/` | — |
+
+Cada Spec vive no branch `spec/<slug>` do `/spec` ao PR — ver
+`.claude/workflows/git-flow.md`. Mudança normativa numa Spec `approved` é
+registrada em `## Emendas` (o hook `spec-gate.mjs` pede confirmação).
 
 ## Regra de leitura
 
