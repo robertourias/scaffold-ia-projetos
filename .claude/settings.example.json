@@ -51,7 +51,6 @@
     ],
     "ask": [
       "Bash(git push:*)",
-      "Bash(git commit:*)",
       "Bash(git rebase:*)",
       "Bash(git merge:*)",
       "Bash(gh pr:*)",
@@ -84,6 +83,8 @@
       "Bash(git show:*)",
       "Bash(git branch:*)",
       "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git switch:*)",
       "Bash(git stash:*)",
       "Bash(npm run test:*)",
       "Bash(npm run lint:*)",
