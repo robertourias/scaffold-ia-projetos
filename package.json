@@ -1,0 +1,46 @@
+{
+  "name": "@robertourias/scaffold-ia",
+  "version": "1.0.0",
+  "description": "Scaffold de harness para projetos com agentes de IA (Claude Code): papeis, specs, guardrails e docs de contexto.",
+  "bin": {
+    "scaffold-ia": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    ".claude/agents",
+    ".claude/commands",
+    ".claude/hooks",
+    ".claude/skills",
+    ".claude/templates",
+    ".claude/workflows",
+    ".claude/CLAUDE.md",
+    ".claude/README.md",
+    ".claude/settings.example.json",
+    "docs/architecture",
+    "docs/context",
+    "docs/features",
+    "docs/specs",
+    "docs/archive"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertourias/scaffold-ia-projetos.git"
+  },
+  "homepage": "https://github.com/robertourias/scaffold-ia-projetos#readme",
+  "bugs": {
+    "url": "https://github.com/robertourias/scaffold-ia-projetos/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "ai-agents",
+    "scaffold",
+    "harness",
+    "spec-driven"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
