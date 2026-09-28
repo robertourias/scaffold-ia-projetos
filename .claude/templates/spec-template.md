@@ -129,5 +129,5 @@ Como provar que esta Spec foi entregue. Comandos reais de
 <!-- 
 GATE DE APROVAÇÃO
 Revise as regras de negócio e as tarefas técnicas.
-Se tudo estiver correto, altere o Status acima de "review" para "approved" para liberar os agentes de frontend/backend para iniciar a implementação.
+Se tudo estiver correto, rode `/approve <caminho-desta-spec>` para liberar a implementação (ou altere o Status para approved no editor).
 -->

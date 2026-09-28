@@ -89,7 +89,7 @@ Se o contexto da conversa estiver pesado antes de iniciar, avise o usuário:
 
 ## Execução
 
-Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `docs/$SCOPE/specs/YYYY-MM-DD-<topic>.md`, se `$SCOPE` informado) com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana antes de qualquer desenvolvimento.
+Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `docs/$SCOPE/specs/YYYY-MM-DD-<topic>.md`, se `$SCOPE` informado) com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana (via `/approve <caminho-da-spec>`) antes de qualquer desenvolvimento.
 
 ## Após gerar — atualizar o Spec ativo (obrigatório)
 

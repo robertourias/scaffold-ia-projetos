@@ -92,11 +92,17 @@ Pare a execução e pergunte antes de prosseguir quando a tarefa envolver:
 ## 6. Gate de Spec
 
 - Implementação só começa com Spec em `Status: approved`.
-- **Somente humano** altera `review` → `approved`. Agente que alterar esse campo
-  está violando o gate — se a Spec parece pronta, avise e pare.
+- **Somente humano** aprova: via `/approve <spec>` (valida e grava
+  `Status: approved` + `Aprovado por`) ou editando o Status no editor. Agente
+  que tentar aprovar via ferramenta cai em confirmação obrigatória do
+  `spec-gate.mjs`.
 - Agente marca `[x]` num Critério de Aceite **apenas** com evidência de verificação
   (seção 1) na mesma resposta.
-- **Mecânico, não só honra:** `.claude/hooks/spec-gate.mjs` bloqueia edição de
-  código enquanto a Spec declarada em `**Spec ativo:**`
-  (`docs/context/current-state.md`) estiver `Status: review`. Depende desse
-  campo estar atualizado — `/spec` o atualiza ao gerar a Spec.
+- **Mecânico, não só honra:** `.claude/hooks/spec-gate.mjs` aplica duas regras.
+  (1) Qualquer edição via ferramenta que tire o Status de uma Spec de `review`
+  (para `approved`, `done` ou outro valor) exige confirmação humana no prompt
+  do hook. (2) Enquanto a Spec declarada em `**Spec ativo:**`
+  (`docs/context/current-state.md`) estiver `Status: review`, edições aos
+  arquivos declarados no `Arquivos:` de suas tarefas (todo código, se nenhum
+  declarado) são bloqueadas. Depende desse campo estar atualizado — `/spec` o
+  atualiza ao gerar a Spec.

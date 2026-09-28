@@ -101,7 +101,7 @@ o escopo fica visível no caminho da Spec) para o caminho gerado — o hook
 aprovação.
 
 **Pare aqui.** Não implemente. Retorne o caminho do arquivo e instrua: revisar,
-corrigir e mudar `Status: review` → `Status: approved` — só um humano faz isso.
+corrigir e rodar `/approve <caminho-da-spec>` — só um humano faz isso.
 
 ## Escalar antes de planejar
 
