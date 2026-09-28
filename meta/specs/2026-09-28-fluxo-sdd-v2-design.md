@@ -1,6 +1,6 @@
 # Harness: fluxo SDD v2 (sub-projeto B)
 
-**Status:** aguardando revisão
+**Status:** implementado
 **Data:** 2026-09-28
 
 Parte B de 4 da evolução do harness (A endurecimento ✅ → B fluxo SDD v2 → C
