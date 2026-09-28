@@ -209,7 +209,7 @@ Ideia/requisito
 
 **Diagrama do fluxo** (sequência de comandos, ramo single/monorepo, gate humano, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
 
-![Fluxo de entrega do Scaffold IA](docs/assets/fluxo-workflow.png)
+![Fluxo de entrega do Scaffold IA](meta/assets/fluxo-workflow.png)
 
 **Single vs. monorepo/microfrontends:** em `single`, `/init-project` já cobre a stack inteira e o próximo passo é direto `/backlog`. Em `monorepo`/`microfrontends`, `/init-project` cobre só o que é compartilhado (CI/CD, hospedagem, banco); cada app/package precisa passar por `/init-app <nome>` ou `/init-package <nome>` (que criam a pasta, se ainda não existir, e os docs locais em `docs/apps|packages/<nome>/`) antes de gerar o backlog. Os dois caminhos convergem no mesmo `/spec` em diante — `/back`, `/front`, `/review`, `/checkpoint` e `/retomar` funcionam igual, com o escopo inferido do contexto quando não informado (`.claude/workflows/context-resolution.md`).
 
