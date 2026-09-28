@@ -235,6 +235,17 @@ projeto consumidor, `npx @robertourias/scaffold-ia --check` diagnostica a
 versão instalada e alterações locais; use `--upgrade` somente após revisar o
 drift reportado.
 
+Para atualizar um projeto em andamento sem perder a documentação mapeada:
+
+```bash
+npx --yes @robertourias/scaffold-ia@latest --upgrade
+```
+
+Esse comando atualiza `.claude/`, preserva `docs/` e `.claude/settings.json`,
+e atualiza `.claude/.scaffold-version`. Não use `--force` para esse caso, pois
+ele pode sobrescrever `docs/`. Customizações locais dentro de `.claude/` podem
+ser substituídas; confira `git diff -- .claude` antes e depois.
+
 ## Packs de stack (`packs/`)
 
 O harness separa processo de tecnologia. O núcleo é composto por comandos,

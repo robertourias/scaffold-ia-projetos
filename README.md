@@ -506,6 +506,28 @@ Antes de publicar, rode `npm run check`. Para diagnosticar um projeto que já
 recebeu o scaffold, use `npx @robertourias/scaffold-ia --check`; o comando é
 somente leitura e informa versão instalada e drift local.
 
+### Atualizar um projeto existente
+
+Para atualizar os arquivos do harness sem perder a documentação já preenchida
+em `docs/`, use:
+
+```bash
+npx --yes @robertourias/scaffold-ia@latest --upgrade
+```
+
+`--upgrade` atualiza `.claude/`, cria arquivos novos, preserva `docs/` e
+`.claude/settings.json`, e atualiza `.claude/.scaffold-version`. Antes de
+atualizar, é possível diagnosticar a instalação:
+
+```bash
+npx --yes @robertourias/scaffold-ia@latest --check
+git diff -- .claude
+```
+
+Não use `--force` para atualizações normais: ele pode sobrescrever documentos
+preenchidos em `docs/`. Customizações locais dentro de `.claude/` também podem
+ser sobrescritas por `--upgrade`; revise o diff antes de continuar.
+
 Atualize `docs/` quando:
 - Decisão arquitetural → `architecture/`
 - Regra de negócio → `context/product.md` ou `context/domains/`
