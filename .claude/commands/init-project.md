@@ -170,7 +170,7 @@ Após coletar todas as respostas:
 - Copie `.claude/settings.example.json` como base.
 - Acrescente ao array `permissions.deny` os caminhos de segredo do item 5 e as operações destrutivas do item 7.
 - Acrescente a `permissions.ask` as escritas em caminhos protegidos do item 4 (ex: `"Write(./infra/**)"`, `"Edit(./infra/**)"`).
-- Ajuste `permissions.allow`: mantenha apenas os comandos de verificação que **existem** de fato neste projeto (respostas 1–3) e o gerenciador de pacotes realmente usado (npm/pnpm/yarn — descubra pelo lockfile).
+- Ajuste `permissions.allow`: mantenha apenas os comandos de verificação que **existem** de fato neste projeto (respostas 1–3) e o gerenciador de pacotes realmente usado (npm/pnpm/yarn — descubra pelo lockfile). Não adicione `cat`/`head`/`tail`/`grep`/`find` ao `allow` — as ferramentas Read/Grep/Glob já cobrem e respeitam o `deny` de segredos.
 - Mantenha o bloco `hooks` como está — é o que torna a verificação automática. Confirme que `.claude/hooks/verify-file.mjs` e `.claude/hooks/verify-project.mjs` foram copiados junto com o scaffold; se não, avise o usuário.
 - Valide o JSON antes de salvar.
 - Avise o usuário: `.claude/settings.json` é versionado e vale para o time; preferências pessoais vão em `.claude/settings.local.json` (já ignorado pelo git).
