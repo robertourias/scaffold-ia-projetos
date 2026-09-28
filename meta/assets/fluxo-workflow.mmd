@@ -4,14 +4,16 @@ graph TD
   Modo{"Modo?"}
   InitUnits["2  /init-app &lt;nome&gt;<br/>/init-package &lt;nome&gt;<br/>Um por app/package: cria a pasta (se faltar)<br/>+ docs/apps|packages/&lt;nome&gt;/"]
   Backlog["3  /backlog<br/>Gera TASK01..TASKNN a partir de<br/>product.md (root ou por escopo)"]
-  Spec["4  /spec TASK01<br/>Levantamento → gera Spec + plano<br/>técnico  (Status: review)"]
-  Gate{{"⛔ GATE HUMANO — /approve &lt;spec&gt;<br/>valida FR, Arquivos e Verificação,<br/>grava Status: approved + Aprovado por<br/>(spec-gate.mjs bloqueia antes e pede confirmação)"}}
+  Spec["4  /spec TASK01<br/>Levantamento → gera Spec + plano<br/>técnico  (Status: review)<br/>branch spec/&lt;slug&gt; + commit"]
+  Gate{{"⛔ GATE HUMANO — /approve &lt;spec&gt;<br/>valida FR, Arquivos e Verificação,<br/>grava Status: approved + Aprovado por<br/>(spec-gate.mjs bloqueia antes e pede confirmação)<br/>commit docs(spec): aprova"}}
   Back["5  /back tarefa1, tarefa2...<br/>(ou /hands-on em ondas<br/>via subagente backend)"]
   Front["/front tela1, tela2...<br/>(ou /hands-on em ondas<br/>via subagente frontend)"]
+  WaveReview["Review da onda (reviewer)<br/>🔴/🟡 → correção, até 3 rodadas<br/>limpa → commit da onda"]
   Pend{{"Pendência Manual anotada na Spec<br/>(critério fora do alcance do agente:<br/>device real, credencial, decisão de negócio)"}}
   Resolve["Você resolve manualmente<br/>e descreve o que ajustou"]
   Recheck["/recheck &lt;spec&gt; &lt;o que foi ajustado&gt;<br/>Fecha o(s) critério(s) confirmado(s),<br/>relê a Spec inteira"]
-  Review["6  /review [diff]<br/>Revisão em 2 estágios: Funcional → Qualidade<br/>(subagente reviewer — sem Edit/Write)"]
+  Review["6  Review final (/hands-on)<br/>diff do branch inteiro · 1 rodada<br/>(ou /review avulso)"]
+  PR["PR spec/&lt;slug&gt; → main<br/>(gh pr create, com confirmação)<br/>CI verify.yml roda"]
   Checkpoint["7  /checkpoint (sem parâmetro)<br/>Salva current-state.md, gera changelog,<br/>arquiva Specs concluídas → git commit"]
   Archive(("8  docs/archive/<br/>Spec concluída"))
   Retomar["/retomar (sem parâmetro)<br/>Reconstrói contexto após interrupção<br/>(lê current-state.md + changelog + git log)"]
@@ -22,13 +24,16 @@ graph TD
   Backlog --> Spec --> Gate
   Gate --> Back
   Gate --> Front
-  Back --> Review
-  Front --> Review
+  Back --> WaveReview
+  Front --> WaveReview
+  WaveReview -->|próxima onda| Back
+  WaveReview -->|última onda| Review
   Back -.-> Pend
   Front -.-> Pend
   Pend --> Resolve --> Recheck
   Recheck -. ainda falta algo .-> Back
-  Review --> Checkpoint
+  Review -->|sem 🔴, sem pendência| PR
+  PR --> Checkpoint
   Recheck -->|tudo fechado| Checkpoint
   Checkpoint --> Archive
   Checkpoint -. "próxima tarefa (/spec TASK02)" .-> Spec
@@ -45,7 +50,7 @@ graph TD
   class Start,Archive start;
   class Init,Checkpoint initStyle;
   class Modo,Gate,Pend gateStyle;
-  class InitUnits,Backlog,Spec flowStyle;
+  class InitUnits,Backlog,Spec,PR flowStyle;
   class Back,Front,Recheck workStyle;
-  class Review reviewStyle;
+  class Review,WaveReview reviewStyle;
   class Resolve,Retomar noteStyle;

@@ -20,7 +20,9 @@ ferramenta nem cópia paralela para outros assistentes.
   skills/                 ← skills de papel, formato padrão .claude/skills/<nome>/SKILL.md
   hooks/                  ← verificação automática (PreToolUse, PostToolUse, Stop)
   workflows/              ← processos de várias fases (carregados sob demanda)
+    git-flow.md            ← branch, stage e commit do fluxo (spec/<slug>, ondas, PR)
   templates/              ← spec-template.md
+    ci/verify.yml          ← template de CI instalado pelo /init-project (Bloco 6d)
 ```
 
 ## Comandos (`commands/`)
@@ -193,6 +195,10 @@ Os papéis existem também como subagentes: `backend`, `frontend`, `reviewer`,
 
 `/hands-on` despacha `backend` e `frontend` por tarefa (Passo 3). Para tarefa
 pequena e avulsa, `/back` e `/front` inline continuam mais baratos.
+
+Cada onda do `/hands-on` passa pelo `reviewer` antes do commit (até 3 rodadas
+de correção); a Spec fecha com uma review final sobre o branch inteiro e a
+oferta de abrir o PR `spec/<slug>` → branch padrão.
 
 Detalhes: [`.claude/agents/README.md`](agents/README.md).
 
