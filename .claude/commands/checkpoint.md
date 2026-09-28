@@ -95,12 +95,17 @@ Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual — sempre na raiz, cha
 
 ## Passo 4 — Arquivar specs concluídas
 
-Liste os arquivos em `docs/specs/` (e `docs/$SCOPE/specs/` de cada escopo inferido), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
+Liste os arquivos em `docs/specs/` (e `docs/$SCOPE/specs/` de cada escopo inferido), exceto `spec-template.md`.
 
-- Se sim: mova com `git mv` (ou `mv`) — não recrie o arquivo com Write — para
-  `docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não
-  existir).
-- Se houver tarefa incompleta: mantenha em seu `specs/` de origem — ainda em andamento.
+- `Status: done` → arquive.
+- Legado — `Status: approved` com **todos** os Critérios de Aceite `[x]` e sem
+  nenhum bloco `> 🟡 Pendência Manual:` em aberto → arquive também.
+- Caso contrário (tarefa incompleta ou Pendência Manual em aberto): mantenha
+  em seu `specs/` de origem — ainda em andamento.
+
+Arquive com `git mv` (ou `mv`) — não recrie o arquivo com Write — para
+`docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não
+existir).
 
 Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-delivery.md`, garantido mesmo se o merge não passou por lá.
 

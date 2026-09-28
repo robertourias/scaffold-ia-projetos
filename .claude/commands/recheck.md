@@ -1,7 +1,7 @@
 ---
 description: "Rechecagem pós-ajuste manual: fecha Pendências Manuais de uma Spec (ver skill verification) e conclui ou lista o que ainda falta"
 argument-hint: "[caminho-da-spec] [o que foi ajustado]"
-allowed-tools: Read, Edit, Grep, Glob
+allowed-tools: Read, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 Você é o responsável por **rechecar** uma Spec depois que o humano resolveu
@@ -92,10 +92,14 @@ nenhum bloco `> 🟡 Pendência Manual:` em aberto.
 
 ### 4a. Tudo fechado
 
-1. Se o backlog de origem da TASK (root `product-backlog.md` para ID sem
+1. Spec → `**Status:** done` com `**Concluído em:** YYYY-MM-DD`.
+2. Se o backlog de origem da TASK (root `product-backlog.md` para ID sem
    prefixo, ou `docs/$SCOPE/context/backlog.md` para ID prefixado) tiver a
    TASK correspondente com `Status: in-progress`, altere para `done`.
-2. Emita:
+3. Commit `docs(spec): conclui <slug>` (Spec + backlog), regras de
+   `.claude/workflows/git-flow.md`. Se estiver em `spec/<slug>`, sugira abrir
+   o PR (`/hands-on` Passo 4 descreve o corpo).
+4. Emita:
 
    ```
    ✅ Spec concluída: <caminho>

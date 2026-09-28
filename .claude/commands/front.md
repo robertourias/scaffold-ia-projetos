@@ -128,7 +128,11 @@ o resto pronto), **não** avance para o passo 4 — a Spec só fecha via
 `/recheck`, depois que o humano resolver as pendências. Encerre aqui e deixe
 claro no resumo que a Spec está implementada mas pendente de ação manual.
 
-### 4. Atualizar o status no product-backlog
+### 4. Fechar Spec e backlog
+
+Antes de alterar a TASK, se este for o último critério da Spec (passo 3),
+marque a própria Spec como fechada: `**Status:** done` com
+`**Concluído em:** YYYY-MM-DD` (data atual) logo abaixo.
 
 Abra o backlog de origem da TASK e localize a linha correspondente à Spec concluída: ID sem prefixo → `docs/context/product-backlog.md` (root); ID prefixado (ex: `WEB-TASK01`) → `docs/$SCOPE/context/backlog.md` do projeto correspondente ao prefixo.
 
@@ -136,6 +140,14 @@ Altere o valor da coluna `Status`:
 - `in-progress` → `done`
 
 Salve o arquivo.
+
+### 5. Commit
+
+Siga `.claude/workflows/git-flow.md` (stage explícito: arquivos que você
+criou/alterou + Spec + backlog se mudou). Mensagem:
+`<tipo>(<escopo>): <resumo>` — com corpo `Spec: <caminho>` se houver Spec.
+Se o passo 4 fechou a Spec, faça um segundo commit
+`docs(spec): conclui <slug>`. Nunca `git add -A`.
 
 ---
 
