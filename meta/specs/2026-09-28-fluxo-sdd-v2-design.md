@@ -1,6 +1,6 @@
 # Harness: fluxo SDD v2 (sub-projeto B)
 
-**Status:** aguardando revisão
+**Status:** implementado
 **Data:** 2026-09-28
 
 Parte B de 4 da evolução do harness (A endurecimento ✅ → B fluxo SDD v2 → C
@@ -66,8 +66,9 @@ Alvo: edição via ferramenta em Spec (mesmo casamento de caminho da regra 1) cu
 1. Calcula texto antes/depois (mesma mecânica da regra 1; se não calculável → fallback: não pede).
 2. Normaliza os dois textos removendo:
    - marcação de checkbox (`- [x]` → `- [ ]`);
-   - blocos de Pendência Manual (linha `> 🟡 Pendência Manual:` e as linhas `>` seguintes do mesmo bloco);
-   - o conteúdo das seções `## Notas de Review` e `## Emendas` (até o próximo `## ` ou fim);
+   - linhas em branco;
+   - blocos de Pendência Manual (🟡 abertos ou ✅ resolvidos pelo /recheck) — linha de abertura e as linhas `>` seguintes do mesmo bloco;
+   - o conteúdo das seções `## Notas de Review` e `## Emendas`, mesmo numeradas ou com sufixo (ex. `## 9. Emendas`) (até o próximo `## ` ou fim);
    - as linhas `**Status:**`, `**Aprovado por:**`, `**Concluído em:**`.
 3. Normalizados diferentes → `ask` com `permissionDecisionReason: "Emenda em Spec aprovada — registre o que mudou e por quê em ## Emendas."`. Iguais → libera.
 
@@ -104,7 +105,7 @@ Alvo: edição via ferramenta em Spec (mesmo casamento de caminho da regra 1) cu
 
 ### 6. Permissões
 
-`.claude/settings.example.json`: `Bash(git commit:*)` sai de `ask` e entra em `allow`; `Bash(git switch:*)` entra em `allow`. `push`, `merge`, `rebase`, `gh pr` seguem em `ask`. Nenhum `deny` muda.
+`.claude/settings.example.json`: `Bash(git commit:*)` sai de `ask` e entra em `allow`; `Bash(git switch:*)` entra em `allow`. `push`, `merge`, `rebase`, `gh pr` seguem em `ask`. `deny` ganha `Bash(git commit --no-verify:*)` e `Bash(git commit -n:*)` (commit passa a ser automático; o `--no-verify` continua proibido). Limitação: o casamento é por prefixo — a flag no meio do comando não é pega; o hook de commit e o guardrail seguem valendo.
 
 ### 7. Testes e docs
 

@@ -1,0 +1,40 @@
+# Template de CI do scaffold — instalado pelo /init-project (Bloco 6d) em
+# .github/workflows/verify.yml. Os passos marcados com `scaffold:<nome>`
+# (no fim da linha `run:`) recebem os comandos de docs/context/guardrails.md;
+# verificação "(não configurado)" tem o passo removido.
+name: verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Descomente se o projeto usa pnpm (pnpm-lock.yaml). Sem
+      # packageManager no package.json, acrescente with: / version: <versão>:
+      # - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/* # ou node-version-file: .nvmrc
+          cache: npm # troque para pnpm/yarn; remova esta linha se não houver lockfile
+
+      - name: Instalar dependências
+        run: npm ci # pnpm install --frozen-lockfile | yarn install --frozen-lockfile
+
+      - name: Type-check
+        run: echo "defina o comando" # scaffold:type-check
+
+      - name: Lint
+        run: echo "defina o comando" # scaffold:lint
+
+      - name: Testes
+        run: echo "defina o comando" # scaffold:test
+
+      - name: Build
+        run: echo "defina o comando" # scaffold:build

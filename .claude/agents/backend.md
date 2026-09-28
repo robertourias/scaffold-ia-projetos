@@ -72,6 +72,9 @@ comprovou. Não toque em critérios de outras tarefas.
 Não atualize o backlog (root ou `docs/$SCOPE/context/backlog.md`) — quem fecha
 a Spec inteira é o orquestrador, que enxerga todas as tarefas.
 
+Mudança normativa na Spec (não só checkbox): registre em `## Emendas` — regra
+na skill `verification`.
+
 ## Passo 6 — Relatório de retorno
 
 Sua resposta final volta para o orquestrador, não para o usuário. Seja denso:

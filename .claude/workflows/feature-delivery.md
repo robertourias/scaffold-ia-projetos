@@ -19,7 +19,12 @@ Requirement → [Fase 0: Spec & Plan] → ⛔ GATE: aprovação humana → Backe
 2. Conduzir levantamento com o solicitante (uma pergunta por vez), se necessário
 3. Definir regras de negócio, contratos de API e quebra de tarefas técnicas seguindo `.claude/templates/spec-template.md`
 4. Salvar o documento consolidado em `docs/specs/YYYY-MM-DD-<nome-do-topico>.md` com status `review`
-5. **Parar e aguardar** — informar o caminho do arquivo ao solicitante
+5. Criar/trocar para o branch `spec/<slug>` e commitar a Spec — regras de
+   branch, stage e commit em `.claude/workflows/git-flow.md`
+6. **Parar e aguardar** — informar o caminho do arquivo ao solicitante
+
+Ciclo de `**Status:**` da Spec (`review → approved → done`) e quando ela migra
+para `docs/archive/`: [`docs/specs/README.md`](../../docs/specs/README.md).
 
 **⛔ GATE — Aprovação Humana Obrigatória**
 
@@ -58,6 +63,10 @@ O solicitante deve:
 
 **Gate**: All unit + integration tests pass. `npm run test` is green.
 
+Via `/hands-on`, cada onda passa pela review do `reviewer` (até 3 rodadas de
+correção) e só então é commitada — `<tipo>(<escopo>): <slug> — onda N` — ver
+`.claude/workflows/git-flow.md`.
+
 ---
 
 ## Phase 2: Frontend Implementation (Frontend Agent)
@@ -82,6 +91,10 @@ O solicitante deve:
 
 **Gate**: All component tests pass. Feature works against MSW mocks.
 
+Via `/hands-on`, cada onda passa pela review do `reviewer` (até 3 rodadas de
+correção) e só então é commitada — `<tipo>(<escopo>): <slug> — onda N` — ver
+`.claude/workflows/git-flow.md`.
+
 ---
 
 ## Phase 3: Integration
@@ -97,8 +110,14 @@ O solicitante deve:
 
 ## Phase 4: Review (Reviewer Agent)
 
+Via `/hands-on`, cada onda já passou pela review descrita nas Fases 1/2; esta
+fase é a **review final**, sobre o diff do branch `spec/<slug>` inteiro (1
+rodada) — ver `.claude/workflows/git-flow.md`.
+
 - [ ] Self-review using `.claude/skills/quality/SKILL.md` checklist
-- [ ] Open PR with description: what changed, why, how to test
+- [ ] Open PR (`spec/<slug>` → branch padrão, `gh pr create`, com confirmação
+      humana) — o CI (`.github/workflows/verify.yml`, instalado pelo
+      `/init-project`) roda no PR
 - [ ] Address all BLOCKER and WARNING items
 - [ ] Get approval from at least one other agent or team member
 

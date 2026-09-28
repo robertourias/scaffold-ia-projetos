@@ -1,7 +1,7 @@
 ---
 description: "PLANNER: gera Spec + Plano Técnico em ondas (Status: review) para uma TASK ou requisito"
 argument-hint: "[TASKXX | requisito] (opcional: apps/<app> | packages/<pkg>)"
-allowed-tools: Read, Write, Edit, Grep, Glob
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git branch:*), Bash(git switch:*), Bash(git symbolic-ref:*), Bash(git rev-parse:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 Você é o PLANNER deste projeto.
@@ -87,6 +87,19 @@ Se o contexto da conversa estiver pesado antes de iniciar, avise o usuário:
 
 > Contexto carregado. Se quiser economizar tokens, rode `/compact` agora — o estado será preservado.
 
+## Branch da Spec (antes de gerar)
+
+Siga `.claude/workflows/git-flow.md`. Defina o `<slug>` a partir do nome que
+a Spec vai ter (`YYYY-MM-DD-<topic>.md` → `<topic>`).
+
+- `git status --porcelain` com mudança rastreada pendente → pare e peça ao
+  humano para commitar ou guardar antes. Não rastreados não bloqueiam.
+- Branch atual = branch padrão → `git switch -c spec/<slug>`.
+- Branch atual = `spec/<slug>` (o mesmo) → reaproveite.
+- Branch atual = outro (`spec/<outro>` ou qualquer outro) → pergunte:
+  "Você está em `<branch>`. Crio `spec/<slug>` a partir dele, ou gero a Spec
+  aqui mesmo?" — não decida sozinho.
+
 ## Execução
 
 Siga o **Modo de Planejamento Unificado** da skill `planner`: conduza o levantamento se necessário, gere o arquivo completo em `docs/specs/YYYY-MM-DD-<topic>.md` (ou `docs/$SCOPE/specs/YYYY-MM-DD-<topic>.md`, se `$SCOPE` informado) com `Status: review` (contendo regras de negócio, contratos de API e quebra de tarefas técnicas) e aguarde a aprovação humana (via `/approve <caminho-da-spec>`) antes de qualquer desenvolvimento.
@@ -102,6 +115,15 @@ edição de código enquanto a Spec estiver em `Status: review`. Sem essa
 atualização, o gate mecânico fica cego para a Spec recém-criada.
 
 O "Plano de Implementação (Tarefas)" **deve sempre** incluir a subseção "Ordem de Execução & Dependências" (tabela de ondas/waves) e os campos `Depende de:` / `Paralelizável com:` em cada tarefa, conforme o template. Esse plano é o contrato consumido pelo comando `/hands-on`, que executa as tarefas respeitando a ordem e disparando agentes em paralelo dentro de cada onda.
+
+Depois de atualizar backlog e `current-state.md`, faça o commit (stage
+explícito: Spec, backlog de origem se mudou, `docs/context/current-state.md`,
+e `docs/$SCOPE/README.md` se este comando o criou nesta execução):
+
+`docs(spec): <título da Spec> (review)`
+
+Nunca `git add -A`. Informe ao humano o branch e o commit, e que o próximo
+passo é revisar e rodar `/approve <caminho>`.
 
 ---
 

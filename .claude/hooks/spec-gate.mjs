@@ -30,6 +30,14 @@
  * docs/ e .claude/ nunca são bloqueados por esta regra. Sem current-state,
  * sem Spec ativa ou referência quebrada → falha em aberto.
  *
+ * Regra 3 — emenda em Spec aprovada. Com Status antes = approved, compara o
+ * conteúdo normativo antes/depois ignorando checkbox, linhas em branco,
+ * blocos de Pendência Manual (🟡 abertos ou ✅ resolvidos pelo /recheck), as
+ * seções "## Notas de Review"/"## Emendas" (mesmo numeradas ou com sufixo,
+ * ex. "## 9. Emendas") e as linhas Status/Aprovado por/Concluído em.
+ * Diferença → "ask" pedindo registro em ## Emendas. Texto não computável →
+ * não pede. approved → done passa.
+ *
  * Limitação: em modo bypassPermissions o "ask" passa sem prompt.
  * Desligar: SCAFFOLD_VERIFY=0
  */
@@ -142,6 +150,55 @@ if (isSpec) {
       }),
     );
     ok();
+  }
+
+  // --- Regra 3: emenda em Spec aprovada -------------------------------------
+  // Numa Spec approved, compara o conteúdo NORMATIVO antes/depois. Não conta
+  // como emenda: marcar checkbox, linhas em branco, blocos de Pendência
+  // Manual (🟡 aberta ou ✅ resolvida pelo /recheck — mesmo formato de bloco,
+  // linha de abertura + continuações ">"), as seções "## Notas de Review" e
+  // "## Emendas" (mesmo numeradas ou com sufixo, ex. "## 9. Emendas"), e as
+  // linhas Status / Aprovado por / Concluído em (approved → done é
+  // permitido). Sem texto computável → não pede.
+  if (beforeStatus === "approved" && afterText != null) {
+    const normativo = (t) => {
+      const out = [];
+      let inSecaoLivre = false;
+      let inPendencia = false;
+      for (const line of t.split("\n")) {
+        if (/^## /.test(line)) {
+          inSecaoLivre = /^##\s+(?:\d+\.\s*)?(Notas de Review|Emendas)\b/.test(line);
+        }
+        if (inSecaoLivre) continue;
+        if (/^\s*>\s*(🟡|✅) Pendência Manual/.test(line)) {
+          inPendencia = true;
+          continue;
+        }
+        if (inPendencia) {
+          if (/^\s*>/.test(line)) continue;
+          inPendencia = false;
+        }
+        if (/^\s*\*\*(Status|Aprovado por|Concluído em):\*\*/.test(line)) continue;
+        if (!line.trim()) continue; // linha em branco: não conta para o conteúdo normativo
+        out.push(line.replace(/^(\s*[-*]\s+)\[[xX ]\]/, "$1[ ]").trimEnd());
+      }
+      // Sem linhas em branco em `out`, não há mais sequências de \n{3,} a
+      // colapsar — a normalização acima já as elimina por completo.
+      return out.join("\n").trim();
+    };
+    if (normativo(beforeText) !== normativo(afterText)) {
+      process.stdout.write(
+        JSON.stringify({
+          hookSpecificOutput: {
+            hookEventName: "PreToolUse",
+            permissionDecision: "ask",
+            permissionDecisionReason:
+              "Emenda em Spec aprovada — registre o que mudou e por quê em ## Emendas.",
+          },
+        }),
+      );
+      ok();
+    }
   }
 }
 

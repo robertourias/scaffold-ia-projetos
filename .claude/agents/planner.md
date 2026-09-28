@@ -101,7 +101,9 @@ o escopo fica visível no caminho da Spec) para o caminho gerado — o hook
 aprovação.
 
 **Pare aqui.** Não implemente. Retorne o caminho do arquivo e instrua: revisar,
-corrigir e rodar `/approve <caminho-da-spec>` — só um humano faz isso.
+corrigir e rodar `/approve <caminho-da-spec>` — só um humano faz isso. Editar
+uma Spec já `approved` segue a seção "Emenda em Spec aprovada" da skill
+`verification`.
 
 ## Escalar antes de planejar
 

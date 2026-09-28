@@ -76,6 +76,7 @@ docs/context/product.md          ← regras de negócio (se não for PLANNER)
 .claude/workflows/release-process.md
 .claude/workflows/context-resolution.md  ← fallback quando um comando não recebe parâmetro
 .claude/workflows/playbook-tokens-qualidade.md  ← modos econômico / rigor / emergência
+.claude/workflows/git-flow.md  ← branch, stage e commit do fluxo
 ```
 
 ---
@@ -99,7 +100,7 @@ app/package. Convenção: `docs/context/conventions.md#documentação-em-monorep
 /checkpoint                 ← grava resumo da sessão no log do projeto (sem parâmetro)
 /spec   [TASKXX | requisito]← gera spec + plano técnico (Status: review)
 /approve [spec]              ← (só humano) valida e aprova a Spec (review → approved)
-/hands-on [caminho-da-spec] ← executa o Plano de Implementação em ondas (agentes em paralelo)
+/hands-on [caminho-da-spec] ← executa o Plano de Implementação em ondas (agentes em paralelo, review por onda, commit, PR)
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend
 /review [diff ou contexto]  ← revisão em dois estágios

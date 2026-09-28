@@ -17,6 +17,22 @@ Analise `$ARGUMENTS`:
 - Se o **primeiro token** começa com `apps/` ou `packages/` → esse token é o **$SCOPE** (ex: `apps/api`). O restante é a **$TASK**.
 - Caso contrário → `$SCOPE` não informado: resolva pela seção Escopo de `.claude/workflows/context-resolution.md`; em `single`, ou se não resolver, use a raiz `docs/`. `$ARGUMENTS` inteiro é a **$TASK**.
 
+## Passo 0 — Working tree e branch
+
+Regras de `.claude/workflows/git-flow.md`.
+
+1. `git status --porcelain`: mudança rastreada pendente fora dos arquivos
+   que este comando vai commitar (a Spec desta tarefa, o backlog de origem,
+   `docs/context/current-state.md`) → pare e peça ao humano para commitar
+   ou guardar (`git stash`) antes de continuar. Não rastreados nunca
+   bloqueiam.
+2. Se a $TASK vier ou referenciar uma Spec (`docs/specs/...` ou
+   `docs/$SCOPE/specs/...` — mesma identificação do "Gate de Spec" abaixo):
+   o branch deve ser `spec/<slug>`. Já está nele → prossiga. Existe mas você
+   está em outro branch → `git switch spec/<slug>`. Não existe → pergunte ao
+   humano se cria (`git switch -c spec/<slug>`) ou segue no branch atual.
+   Tarefa avulsa (sem Spec) → não force branch.
+
 ## Gerenciamento Inteligente de Contexto (Lazy Loading)
 
 Para economia de tokens, se você já leu e assimilou os arquivos abaixo na conversa ativa desta sessão do chat, use sua memória de trabalho e **NÃO** faça o carregamento/releitura dos mesmos do disco.
@@ -117,17 +133,31 @@ Para cada critério de aceite implementado e verificado, marque o checkbox como 
 Para cada critério com Pendência Manual, **não** marque `[x]` — insira o bloco
 de anotação abaixo do critério (ver skill `verification`).
 
-### 3. Verificar se é a última tarefa da Spec
+### 3. Commit do trabalho
+
+Siga `.claude/workflows/git-flow.md` (stage explícito: arquivos que você
+criou/alterou nesta tarefa + a própria Spec, já com os checkboxes/Pendências
+do passo 2). Mensagem: `<tipo>(<escopo>): <resumo>` — com corpo
+`Spec: <caminho>` se houver Spec. Nunca `git add -A`.
+
+Este commit acontece **sempre** aqui, antes de qualquer decisão sobre fechar
+a Spec — os passos 4–6 tratam só do fechamento, não do trabalho em si.
+
+### 4. Verificar se é a última tarefa da Spec
 
 Verifique se **todos** os checkboxes da Spec estão marcados como `[x]` **e**
 se não resta nenhum bloco `> 🟡 Pendência Manual:` em aberto.
 
-Se sim → prossiga para o passo 4. Se restar Pendência Manual (mesmo com todo
-o resto pronto), **não** avance para o passo 4 — a Spec só fecha via
+Se sim → prossiga para o passo 5. Se restar Pendência Manual (mesmo com todo
+o resto pronto), **não** avance para o passo 5 — a Spec só fecha via
 `/recheck`, depois que o humano resolver as pendências. Encerre aqui e deixe
 claro no resumo que a Spec está implementada mas pendente de ação manual.
 
-### 4. Atualizar o status no product-backlog
+### 5. Fechar Spec e backlog
+
+Antes de alterar a TASK, se este for o último critério da Spec (passo 4),
+marque a própria Spec como fechada: `**Status:** done` com
+`**Concluído em:** YYYY-MM-DD` (data atual) logo abaixo.
 
 Abra o backlog de origem da TASK e localize a linha correspondente à Spec concluída: ID sem prefixo → `docs/context/product-backlog.md` (root); ID prefixado (ex: `API-TASK01`) → `docs/$SCOPE/context/backlog.md` do projeto correspondente ao prefixo.
 
@@ -135,6 +165,15 @@ Altere o valor da coluna `Status`:
 - `in-progress` → `done`
 
 Salve o arquivo.
+
+### 6. Commit de fechamento
+
+Só quando o passo 5 efetivamente fechou a Spec (era o último critério, sem
+Pendência Manual restante): commit separado, stage explícito (só Spec +
+backlog): `docs(spec): conclui <slug>`. Nunca `git add -A`.
+
+Se o passo 4 não avançou para o 5 (Pendência Manual em aberto), não há
+commit aqui — o único commit desta rodada é o do passo 3.
 
 ---
 

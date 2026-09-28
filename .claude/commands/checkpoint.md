@@ -1,6 +1,6 @@
 ---
 description: "Grava resumo da sessão no log do projeto (changelog + current-state) e arquiva Specs concluídas. Sem parâmetro"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git log:*), Bash(git status:*), Bash(mkdir:*), Bash(mv:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git log:*), Bash(git status:*), Bash(mkdir:*), Bash(mv:*), Bash(git mv:*), Bash(git add:*), Bash(git commit:*), Bash(git branch:*)
 ---
 
 # Checkpoint — Salvar estado da sessão
@@ -95,14 +95,40 @@ Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual — sempre na raiz, cha
 
 ## Passo 4 — Arquivar specs concluídas
 
-Liste os arquivos em `docs/specs/` (e `docs/$SCOPE/specs/` de cada escopo inferido), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
+Liste os arquivos em `docs/specs/` (e `docs/$SCOPE/specs/` de cada escopo inferido), exceto `spec-template.md`.
 
-- Se sim: mova com `git mv` (ou `mv`) — não recrie o arquivo com Write — para
-  `docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não
-  existir).
-- Se houver tarefa incompleta: mantenha em seu `specs/` de origem — ainda em andamento.
+- `Status: done` → arquive.
+- Legado — `Status: approved` com **todos** os Critérios de Aceite `[x]` e sem
+  nenhum bloco `> 🟡 Pendência Manual:` em aberto → arquive também.
+- Caso contrário (tarefa incompleta ou Pendência Manual em aberto): mantenha
+  em seu `specs/` de origem — ainda em andamento.
+
+Arquive com `git mv` — não recrie o arquivo com Write — para
+`docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não
+existir).
+
+Se a Spec arquivada for a mesma apontada em `**Spec ativo:**` de
+`docs/context/current-state.md` (já reescrito no Passo 2), atualize esse
+campo para `—` — uma Spec arquivada nunca continua como Spec ativa.
 
 Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-delivery.md`, garantido mesmo se o merge não passou por lá.
+
+## Passo 4.5 — Commit
+
+Stage explícito (nunca `git add -A`/`git add .`/`git commit -a`):
+
+- `docs/context/current-state.md`;
+- o arquivo do changelog do dia (`docs/changelog/YYYY-MM-DD.md`);
+- `docs/context/decisions.md` e/ou `docs/context/ui-guidelines.md`, se o
+  Passo 2.5 promoveu alguma decisão;
+- as Specs arquivadas no Passo 4 (o `git mv` já as moveu; stage o novo
+  caminho em `docs/archive/` ou `docs/$SCOPE/archive/`).
+
+Commit: `docs(checkpoint): <YYYY-MM-DD>` (data atual).
+
+Se o branch atual for `spec/<slug>` (`git branch --show-current`) e já
+houver um PR aberto para ele, lembre o humano de rodar `git push` para
+refletir este commit no PR — este comando nunca dá push sozinho.
 
 ## Passo 5 — Confirmar
 
@@ -129,3 +155,4 @@ Estado salvo. Exiba ao usuário:
 - Se não houve nenhum commit na sessão, registre igualmente o que foi discutido ou decidido.
 - "Em progresso" deve ter exatamente uma task (a que estava sendo feita quando o trabalho foi interrompido).
 - "Próximos passos" devem ser ações concretas, não genéricas — ex: "Implementar CreateOrderUseCase" e não "continuar o backend".
+- Stage sempre explícito no Passo 4.5 — nunca `git add -A`, `git add .` nem `git commit -a`.

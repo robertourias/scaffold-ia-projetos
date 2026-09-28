@@ -206,28 +206,42 @@ Ideia/requisito
                      (uma vez por app/package)                    │
                                    └──────────────────────────────┘
                                                   ↓
-[3] /spec TASK01 (gera spec + plano de tarefas técnicas)
+[3] /spec TASK01 (gera spec + plano de tarefas técnicas, cria branch spec/<slug> e commita)
       ↓
-      ⛔ GATE: /approve <spec> — valida e grava Status: approved + Aprovado por (mecânico: .claude/hooks/spec-gate.mjs)
+      ⛔ GATE: /approve <spec> — valida e grava Status: approved + Aprovado por + commit (mecânico: .claude/hooks/spec-gate.mjs)
       ↓
-[4] /back tarefa1, tarefa2, tarefa3   ou   /hands-on docs/specs/....md (ondas paralelas)
+[4] /back tarefa1, tarefa2, tarefa3   ou   /hands-on docs/specs/....md (ondas paralelas, review + commit por onda)
       ↓
 [5] /front tela1, tela2
       ↓
-[6] /review [diff]
+[6] /review [diff] — review final (no /hands-on) + PR
       ↓
-[7] /checkpoint (sem parâmetro — grava resumo da sessão) → git commit
+[7] /checkpoint (sem parâmetro — grava resumo da sessão, arquiva Specs done, commita)
       ↓
 [8] Specs concluídas migram para docs/archive/ (feito por /checkpoint)
 ```
 
-**Diagrama do fluxo** (sequência de comandos, ramo single/monorepo, gate `/approve`, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
+**Diagrama do fluxo** (sequência de comandos, branch `spec/<slug>`, ramo single/monorepo, gate `/approve`, paralelismo backend/frontend, review por onda + review final, PR e o ramo de Pendência Manual → `/recheck`):
 
 ![Fluxo de entrega do Scaffold IA](meta/assets/fluxo-workflow.png)
 
 **Single vs. monorepo/microfrontends:** em `single`, `/init-project` já cobre a stack inteira e o próximo passo é direto `/backlog`. Em `monorepo`/`microfrontends`, `/init-project` cobre só o que é compartilhado (CI/CD, hospedagem, banco); cada app/package precisa passar por `/init-app <nome>` ou `/init-package <nome>` (que criam a pasta, se ainda não existir, e os docs locais em `docs/apps|packages/<nome>/`) antes de gerar o backlog. Os dois caminhos convergem no mesmo `/spec` em diante — `/back`, `/front`, `/review`, `/checkpoint` e `/retomar` funcionam igual, com o escopo inferido do contexto quando não informado (`.claude/workflows/context-resolution.md`).
 
 **Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código — e agora um hook bloqueia mecanicamente a edição de código enquanto a Spec ativa não estiver aprovada. A aprovação em si é feita pelo `/approve` (só o humano invoca — o modelo não dispara sozinho); qualquer tentativa de aprovar a Spec por uma ferramenta de edição pede confirmação humana no prompt.
+
+### Git, review e CI
+
+Cada Spec vive no branch `spec/<slug>`, do `/spec` ao PR. Cada onda do
+`/hands-on` faz stage explícito (nunca `git add -A`) e um commit próprio,
+precedido pela review da onda (subagente `reviewer`, até 3 rodadas de
+correção); ao fechar a Spec roda uma review final sobre o diff do branch
+inteiro (1 rodada). Sem achados 🔴 e sem Pendência Manual, o `/hands-on`
+oferece abrir o PR `spec/<slug>` → branch padrão (`gh pr create`, sempre com
+confirmação humana). Mudança normativa numa Spec já `approved` entra em
+`## Emendas` — o `spec-gate.mjs` pede confirmação. O CI
+(`.github/workflows/verify.yml`) é instalado pelo `/init-project`. Regras
+completas: [`.claude/workflows/git-flow.md`](.claude/workflows/git-flow.md) e
+[`docs/specs/README.md`](docs/specs/README.md).
 
 ### Playbook (tokens × qualidade)
 
@@ -247,10 +261,10 @@ Ideia/requisito
 | `/init-app` | `/init-app web` | (monorepo) Cria `apps/<nome>`, docs locais e questionário de configuração |
 | `/init-package` | `/init-package ui` | (monorepo) Cria `packages/<nome>`, docs locais e questionário de configuração |
 | `/backlog` | `/backlog` | Gera TASK01..TASKNN do product.md |
-| `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review) |
+| `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review), cria branch spec/<slug> |
 | `/approve` | `/approve docs/specs/….md` | (só humano) Valida a Spec e aprova: Status review → approved |
 | `/groom` | `/groom nova funcionalidade` | Refina uma nova feature isolada adicionando-a ao backlog |
-| `/hands-on` | `/hands-on docs/specs/….md` | Executa o plano da Spec em ondas (paralelo), via subagentes |
+| `/hands-on` | `/hands-on docs/specs/….md` | Executa o plano da Spec em ondas (paralelo), via subagentes, com review por onda, commit e PR |
 | `/back` | `/back implementar auth com JWT` | Agente backend, inline |
 | `/front` | `/front criar modal de login` | Agente frontend, inline |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |

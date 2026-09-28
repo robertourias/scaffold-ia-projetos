@@ -54,6 +54,7 @@ git commit
 | Spec unificada (regras + plano) | Brainstorm + design + plan separados sem necessidade |
 | Checkpoint comprimido | Colar sessão inteira no chat “pra lembrar” |
 | `/hands-on` só com ondas reais | Orquestrar 1 tarefa sequencial com subagentes |
+| `--no-review` quando as ondas são triviais e de baixo risco (a review final continua rodando) | Usar `--no-review` em toda Spec, sem avaliar o risco onda a onda |
 
 **Checklist “estou economizando?”**
 
@@ -77,7 +78,7 @@ sequencial quando o paralelismo é arriscado.
 |------|------------|-------------------|
 | Descoberta / ambiguidade | `/spec` — entrevista **uma pergunta por vez** até esgotar as dúvidas, sem pular para a geração | `docs/specs/YYYY-MM-DD-*.md` (`Status: review`) |
 | Gate humano | `/approve` — valida rastreabilidade FR→tarefa, `Arquivos:` e Verificação antes de aprovar | Spec com `Status: approved` |
-| Implementação controlada | `/hands-on --serial` — ignora as ondas e executa tudo em sequência | Spec com checkboxes e evidência de comando |
+| Implementação controlada | `/hands-on --serial` — mantém a review por onda (padrão, até 3 rodadas de correção antes do commit) mas ignora as ondas e executa tudo em sequência | Spec com checkboxes e evidência de comando |
 | Bug difícil | Reproduza antes de mexer; teste de regressão antes do fix | Teste de regressão + fix |
 | Antes de "pronto" | skill `verification` — nenhum `[x]` sem evidência real de comando | Saída real de test/build |
 | Review final | `/review` (Funcional → Qualidade) | Diff + critérios da Spec |

@@ -1,7 +1,7 @@
 ---
 description: "Refina uma feature nova e a adiciona ao backlog por append, sem reprocessar o backlog inteiro"
 argument-hint: "[descrição | contexto] (opcional: apps/<nome> | packages/<nome>)"
-allowed-tools: Read, Edit, Grep, Glob
+allowed-tools: Read, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 Você é o PLANNER deste projeto, encarregado de refinar uma nova funcionalidade sem processar o backlog inteiro (Economia de Tokens).
@@ -48,6 +48,11 @@ Faça **no máximo 1-2 perguntas curtas**. Dependendo da resposta, prossiga ou r
 4. **Crucial:** Faça **apenas a adição (append)** das novas tarefas ao final do arquivo de destino, na fase apropriada (ou crie a seção/arquivo se não existir, seguindo o template de `.claude/commands/backlog.md`). **Não reescreva nem altere** as tarefas antigas já presentes.
 5. Uma feature cross-project gera **uma única TASK root** — não duplique a mesma feature nos backlogs de escopo.
 6. Exiba no chat a lista de tarefas que foram geradas e adicionadas, e em qual arquivo.
+7. **Commit** (regras de `.claude/workflows/git-flow.md` — a working tree
+   pendente fora do backlog de destino ainda bloqueia; rode
+   `git status --porcelain` antes de escrever). Stage explícito: só o(s)
+   arquivo(s) de backlog alterados neste passo. Mensagem:
+   `docs(backlog): <resumo>`. Nunca `git add -A`.
 
 ---
 

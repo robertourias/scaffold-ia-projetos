@@ -1,7 +1,7 @@
 ---
 description: "Inicializa o scaffold: entrevista em 9 blocos (0–8), preenche docs/ em profundidade, gera guardrails do projeto e o README do repositório"
 argument-hint: "[descrição do produto]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 # Inicialização de Projeto
@@ -188,6 +188,32 @@ Se algum comando de verificação ficou como `(não configurado)`, diga explicit
 sandbox. Um comando shell criativo o suficiente contorna a lista. Guardrail forte
 depende dos hooks de verificação e do gate humano de Spec — não da lista de permissões.
 
+**6d. CI (opcional)**
+
+Leia `.claude/templates/ci/verify.yml` e monte o workflow do projeto:
+
+- troque cada `run:` marcado com `# scaffold:type-check|lint|test|build` pelo
+  comando real da seção 1 de `docs/context/guardrails.md`; verificação
+  `(não configurado)` → remova o passo inteiro;
+- gerenciador de pacotes pelo lockfile: `pnpm-lock.yaml` → descomente
+  `pnpm/action-setup`, `cache: pnpm`, `pnpm install --frozen-lockfile`. Se o
+  `package.json` tiver `packageManager: "pnpm@X"`, apenas descomente
+  `pnpm/action-setup`; senão, descomente com `with:` / `version: <versão do
+  pnpm do projeto, ou "9">`. `yarn.lock` → `cache: yarn`, `yarn install
+  --frozen-lockfile`; senão npm;
+- **sem nenhum lockfile** (`package-lock.json`, `pnpm-lock.yaml`,
+  `yarn.lock`): remova a linha `cache:` do `actions/setup-node` (falha sem
+  lockfile) e troque o passo de instalação para `npm install`; avise o
+  usuário que é recomendável commitar um lockfile;
+- versão do Node: `.nvmrc` presente → troque `node-version: lts/*` por
+  `node-version-file: .nvmrc`; senão, `engines.node` do `package.json` quando
+  houver → `node-version: <valor>`; senão, mantenha `lts/*`;
+- branch em `push.branches`: o branch padrão do repositório.
+
+Pergunte: "Instalo em `.github/workflows/verify.yml`?" Se o arquivo já
+existir, mostre a diferença e confirme antes de sobrescrever. Sem CI
+instalado, registre isso em "Ainda requer revisão manual" do resumo final.
+
 ---
 
 ### Bloco 7 — Constituição (preenche `docs/context/constitution.md`)
@@ -260,6 +286,7 @@ Após preencher todos os arquivos, exiba um resumo:
   - .claude/settings.json        (guardrails de permissão)
   - README.md                    (reescrito | seção "Desenvolvimento com IA" adicionada)
   - .claude/CLAUDE.md             (seção "Estrutura do monorepo" reescrita como ponteiro para o Modo)
+  - .github/workflows/verify.yml   (instalado | não instalado)
 
 🛡️ Guardrails ativos:
   - Verificação: [comandos configurados, ou ⚠️ "(não configurado)"]
@@ -276,6 +303,17 @@ Próximos passos:
   depois → /backlog para gerar o product backlog (TASK01, TASK02...)
   single → /backlog
 ```
+
+Pergunte ao humano se pode commitar o que foi escrito: "Posso commitar os
+arquivos gerados (<liste exatamente os arquivos do resumo acima que foram
+de fato escritos/alterados nesta sessão — pule os que ficaram
+`<!-- a definir -->` sem mudança, e o CI se não foi instalado>)?" Só com
+confirmação, stage explícito desses arquivos (nunca `git add -A`) e commit:
+
+`docs: inicializa contexto do projeto`
+
+Sem confirmação, não commite — informe que as mudanças seguem no working
+tree para o humano revisar e commitar manualmente.
 
 ## Regras
 
