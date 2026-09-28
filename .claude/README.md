@@ -21,7 +21,6 @@ ferramenta nem cópia paralela para outros assistentes.
   hooks/                  ← verificação automática (PreToolUse, PostToolUse, Stop)
   workflows/              ← processos de várias fases (carregados sob demanda)
   templates/              ← spec-template.md
-  comparativo-scaffold-vs-superpowers.md
 ```
 
 ## Comandos (`commands/`)
@@ -95,12 +94,11 @@ Isso existe para separar dois níveis de documentação num monorepo, sem mistur
 /review [cole o diff aqui]
 ```
 
-## Playbook e comparativo
+## Playbook
 
-Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
+Antes de escolher batch vs `/hands-on`, veja:
 
 - [Playbook — tokens × qualidade](workflows/playbook-tokens-qualidade.md) (modos econômico / rigor / emergência)
-- [Comparativo Scaffold vs Superpowers](comparativo-scaffold-vs-superpowers.md)
 
 ## Fluxo completo com backlog (recomendado)
 

@@ -1,18 +1,16 @@
 # Playbook — Tokens × Qualidade
 
-> Guia operacional de 1 página. Escolha o **modo** pela complexidade e risco da tarefa.  
-> Comparativo completo scaffold vs Superpowers: [`.claude/comparativo-scaffold-vs-superpowers.md`](../comparativo-scaffold-vs-superpowers.md)
+> Guia operacional de 1 página. Escolha o **modo** pela complexidade e risco da tarefa.
 
-**Sistema padrão deste repo:** scaffold (`docs/` + comandos).  
-**Superpowers:** ferramentas sob demanda — nunca default em todo turno.
+**Sistema padrão deste repo:** scaffold (`docs/` + comandos).
 
 ---
 
 ## Regra de ouro
 
 1. Memória barata = **arquivo em disco** (`docs/`), não histórico de chat.
-2. Um **orquestrador** por feature: `/hands-on` **ou** Superpowers SDD — nunca os dois.
-3. Spec com `Status: approved` antes de codar (exceto modo emergência).
+2. Um **orquestrador** por feature: `/hands-on` — nunca duas instâncias em paralelo na mesma Spec.
+3. Spec com `Status: approved` (via `/approve`) antes de codar (exceto modo emergência).
 4. Fechar sessão com `/checkpoint`; abrir com `/retomar`.
 
 ---
@@ -51,7 +49,7 @@ git commit
 
 | Faça | Não faça |
 |------|----------|
-| Lazy load do papel (só skills do role) | Carregar todos os `docs/` e Superpowers |
+| Lazy load do papel (só skills do role) | Carregar todos os `docs/` sem necessidade |
 | Batch de tarefas mecânicas | Um comando por checkbox minúsculo |
 | Spec unificada (regras + plano) | Brainstorm + design + plan separados sem necessidade |
 | Checkpoint comprimido | Colar sessão inteira no chat “pra lembrar” |
@@ -62,7 +60,7 @@ git commit
 - [ ] Não li `product.md` inteiro em tarefa de CSS / estilo
 - [ ] Agrupei 2–3 tarefas mecânicas no mesmo `/back` ou `/front`
 - [ ] Usei `/hands-on` só se 2+ tarefas da onda forem independentes
-- [ ] Superpowers **não** entrou nesta sessão (ou só verification pontual)
+- [ ] Não abri skill fora do papel atual "por precaução"
 - [ ] `/checkpoint` antes de fechar
 
 ---
@@ -71,32 +69,32 @@ git commit
 
 **Meta:** qualidade de engenharia e alinhamento — tokens secundários.
 
-Use trechos do Superpowers **por fase**, mantendo o artefato canônico no scaffold.
+Mesmo conjunto de comandos do modo Econômico, usados com mais rigor em cada
+fase: entrevista completa antes de codar, gate humano explícito, execução
+sequencial quando o paralelismo é arriscado.
 
 | Fase | O quê usar | Artefato canônico |
 |------|------------|-------------------|
-| Descoberta | Superpowers `brainstorming` (1 pergunta por vez, 2–3 abordagens) | Depois **traduzir** para `docs/specs/YYYY-MM-DD-*.md` |
-| Plano detalhado (10+ tarefas, risco de drift) | Superpowers `writing-plans` **ou** plano de ondas na Spec scaffold | Preferir **uma** Spec scaffold se o time já trabalha com ela; plan Superpowers só se precisar de código por step |
-| Implementação | `/hands-on` **ou** Superpowers `subagent-driven-development` | Spec/plan com checkboxes |
-| Bug difícil | Superpowers `systematic-debugging` | Reprodução + teste de regressão |
-| Antes de “pronto” | Superpowers `verification-before-completion` | Saída real de test/build |
-| Review final | `/review` + (opcional) Superpowers code-review | Diff + critérios da Spec |
+| Descoberta / ambiguidade | `/spec` — entrevista **uma pergunta por vez** até esgotar as dúvidas, sem pular para a geração | `docs/specs/YYYY-MM-DD-*.md` (`Status: review`) |
+| Gate humano | `/approve` — valida rastreabilidade FR→tarefa, `Arquivos:` e Verificação antes de aprovar | Spec com `Status: approved` |
+| Implementação controlada | `/hands-on --serial` — ignora as ondas e executa tudo em sequência | Spec com checkboxes e evidência de comando |
+| Bug difícil | Reproduza antes de mexer; teste de regressão antes do fix | Teste de regressão + fix |
+| Antes de "pronto" | skill `verification` — nenhum `[x]` sem evidência real de comando | Saída real de test/build |
+| Review final | `/review` (Funcional → Qualidade) | Diff + critérios da Spec |
+| Pós-ajuste manual | `/recheck` — fecha Pendências Manuais ou lista o que ainda falta | Spec com Pendências fechadas |
 
 **Regras do modo Rigor**
 
-- Não pule o gate humano (`Status: approved`).
-- Não rode SDD e `/hands-on` na mesma feature.
-- Após brainstorm Superpowers, **não** deixe o design só em `docs/superpowers/` se o time usa scaffold — copie o essencial para `docs/specs/`.
+- Não pule o gate humano — Spec só avança com `/approve` (`Status: approved`).
+- Prefira `/hands-on --serial` a paralelo quando houver risco de colisão entre tarefas.
 - TDD estrito e evidência de testes **obrigatórios** neste modo.
 
 ```text
 # Exemplo rigor (ambiguidade → implementação controlada)
-brainstorming (Superpowers) → aprovar design
-/spec  (consolidar em docs/specs/… Status: review)
-# humano: approved
-/hands-on docs/specs/…   # ou SDD se plano Superpowers
+/spec  (entrevista uma pergunta por vez → docs/specs/… Status: review)
+/approve docs/specs/…   # humano confirma
+/hands-on docs/specs/… --serial
 /review
-verification-before-completion
 /checkpoint
 ```
 
@@ -128,21 +126,7 @@ verification-before-completion
 | Documentar no checkpoint o que ficou de fora | Esquecer e nunca specar a dívida |
 | Subir para Econômico/Rigor se o fix crescer | Continuar em emergência por dias |
 
-Se em 15 minutos o fix não está claro → **saia da emergência** e use `systematic-debugging` (Rigor).
-
----
-
-## Superpowers — quando puxar (e quando não)
-
-| Skill Superpowers | Quando | Quando **não** |
-|-------------------|--------|----------------|
-| `brainstorming` | Escopo ambíguo, várias abordagens válidas | TASK clara no backlog |
-| `writing-plans` | Plano com muitos steps e risco de drift | Spec scaffold com ondas já suficiente |
-| `subagent-driven-development` | Feature grande, review por tarefa vale o custo | 2–3 tarefas batch no `/back` |
-| `systematic-debugging` | Bug sem causa óbvia | Typo / null óbvio |
-| `test-driven-development` | Comportamento novo crítico | Config/chore sem lógica |
-| `verification-before-completion` | Antes de dizer “pronto” / merge | — (quase sempre barato e útil) |
-| `using-superpowers` full auto | Evitar neste repo como default | — |
+Se em 15 minutos o fix não está claro → **saia da emergência** e mude para o modo Rigor (`/spec` + `/approve` + `/hands-on --serial`).
 
 ---
 
@@ -152,9 +136,11 @@ Se em 15 minutos o fix não está claro → **saia da emergência** e use `syste
 |---------|-------------|
 | `/retomar` | Todo início de sessão |
 | `/spec` | Econômico e Rigor |
+| `/approve` | Rigor (gate humano explícito) |
 | `/back` `/front` | Econômico (batch) |
-| `/hands-on` | Econômico ampliado / Rigor leve |
+| `/hands-on` | Econômico ampliado / Rigor (`--serial`) |
 | `/review` | Todos (obrigatório em Rigor e em emergência sensível) |
+| `/recheck` | Pós-ajuste manual, fecha Pendência Manual |
 | `/checkpoint` | Todo fim de sessão |
 | `/groom` | Feature nova sem reprocessar backlog inteiro |
 | `/backlog` | Início de produto / replan |
@@ -163,12 +149,12 @@ Se em 15 minutos o fix não está claro → **saia da emergência** e use `syste
 
 ## Anti-padrões caros
 
-1. Carregar Superpowers + todos os skills do scaffold no mesmo turno “por precaução”.
-2. Brainstorm formal para “adicionar um campo no form”.
+1. Carregar todos os skills do scaffold no mesmo turno “por precaução”.
+2. Brainstorm informal para “adicionar um campo no form” em vez de ir direto ao `/spec`.
 3. Um subagente por checkbox de 2 minutos.
-4. Dois orquestradores (hands-on + SDD) na mesma Spec.
+4. Duas instâncias de `/hands-on` rodando ao mesmo tempo na mesma Spec.
 5. Sessão longa sem checkpoint → próximo chat redescobre o mundo.
-6. Implementar com `Status: review` ainda na Spec.
+6. Implementar com `Status: review` ainda na Spec (sem passar por `/approve`).
 
 ---
 

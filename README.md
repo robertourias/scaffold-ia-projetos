@@ -93,8 +93,7 @@ docs/
 ├── skills/                     ← skills de papel (.claude/skills/<nome>/SKILL.md)
 ├── hooks/                       ← verificação automática (Pre/PostToolUse, Stop)
 ├── workflows/                   ← processos de várias fases (sob demanda)
-├── templates/                    ← spec-template.md
-└── comparativo-scaffold-vs-superpowers.md
+└── templates/                    ← spec-template.md
 ```
 
 **Monorepo (apps/packages):** cada `apps/<nome>/` e `packages/<nome>/` pode ter
@@ -215,14 +214,13 @@ Ideia/requisito
 
 **Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código — e agora um hook bloqueia mecanicamente a edição de código enquanto a Spec ativa não estiver aprovada.
 
-### Playbook e comparativo (tokens × qualidade)
+### Playbook (tokens × qualidade)
 
 | Documento | Uso |
 | --- | --- |
 | [Playbook — modos econômico / rigor / emergência](.claude/workflows/playbook-tokens-qualidade.md) | Decidir **como** trabalhar em cada tarefa (default do dia a dia) |
-| [Comparativo Scaffold vs Superpowers](.claude/comparativo-scaffold-vs-superpowers.md) | Entender trade-offs de tokens, qualidade e modelo híbrido |
 
-**Regra prática:** scaffold como sistema operacional do projeto; Superpowers só sob demanda (ambiguidade, bug hard, feature de alto risco). Detalhes no playbook.
+**Regra prática:** modo econômico no dia a dia; modo rigor (`/spec` com entrevista, `/approve`, `/hands-on --serial`, `/review`) sob demanda — ambiguidade, bug difícil, feature de alto risco. Detalhes no playbook.
 
 ---
 
@@ -246,7 +244,7 @@ Ideia/requisito
 
 Referência completa: [`.claude/README.md`](.claude/README.md)
 
-Playbook de modos (quando batch vs hands-on vs Superpowers): [`.claude/workflows/playbook-tokens-qualidade.md`](.claude/workflows/playbook-tokens-qualidade.md)
+Playbook de modos (quando batch vs hands-on): [`.claude/workflows/playbook-tokens-qualidade.md`](.claude/workflows/playbook-tokens-qualidade.md)
 
 ---
 
@@ -345,7 +343,6 @@ Tudo mais é descartado ao final de cada feature (specs vão para `docs/archive/
 
 Para não gastar tokens com processo pesado em tarefa simples — nem subinvestir em feature crítica — use o playbook:
 - **[Playbook tokens × qualidade](.claude/workflows/playbook-tokens-qualidade.md)** — modos Econômico (default), Rigor e Emergência
-- **[Comparativo Scaffold vs Superpowers](.claude/comparativo-scaffold-vs-superpowers.md)** — o que cada sistema otimiza e o modelo híbrido recomendado
 
 ---
 
@@ -463,7 +460,6 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
 | `hooks/` | Verificação automática (gate de Spec, lint, type-check) |
 | `workflows/` | Processos de várias fases (feature-delivery, release, playbook tokens×qualidade) |
 | `templates/` | `spec-template.md` |
-| `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 
 ---
 

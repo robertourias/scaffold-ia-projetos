@@ -37,12 +37,6 @@ principal resolve no mesmo tempo que levaria para escrever o prompt de
 delegação. Overhead de spawn (novo contexto, recarregar skills) é real —
 subagente errado desperdiça tokens em vez de economizar.
 
-Para orquestração de múltiplas etapas com checkpoints de revisão humana, ou
-quando o Superpowers estiver disponível no projeto, considere também
-`superpowers:subagent-driven-development` e
-`superpowers:dispatching-parallel-agents` em vez de reinventar o
-despacho manualmente — ver `.claude/workflows/playbook-tokens-qualidade.md`.
-
 ## Quem despacha
 
 `/hands-on` (Passo 3) despacha `backend` e `frontend` por tarefa, conforme o
