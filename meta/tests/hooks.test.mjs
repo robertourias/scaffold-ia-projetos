@@ -97,6 +97,90 @@ for (const [nome, input] of [
   });
 }
 
+test("Edit old_string review → new_string approved (sem **Status:** no new_string) → ask", () => {
+  const cwd = project();
+  const r = run(cwd, { file_path: "docs/specs/s.md", old_string: "review", new_string: "approved" });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.hookEventName, "PreToolUse");
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("Edit review → **Status:** Approved (maiúsculo) → ask", () => {
+  const cwd = project();
+  const r = run(cwd, {
+    file_path: "docs/specs/s.md",
+    old_string: "**Status:** review",
+    new_string: "**Status:** Approved",
+  });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("Edit review → **Status:** done → ask", () => {
+  const cwd = project();
+  const r = run(cwd, {
+    file_path: "docs/specs/s.md",
+    old_string: "**Status:** review",
+    new_string: "**Status:** done",
+  });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("Write removendo a linha Status de Spec em review → ask", () => {
+  const cwd = project();
+  const r = run(cwd, {
+    file_path: "docs/specs/s.md",
+    content: "# Spec\n\n## 6. Plano\n\n### Tarefa 1: T1\n- **Arquivos:** `src/a.ts`\n",
+  });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("Write de Spec NOVA já em review → libera sem ask", () => {
+  const cwd = project();
+  const r = run(cwd, {
+    file_path: "docs/specs/new.md",
+    content: "# Nova\n\n**Status:** review\n",
+  });
+  assert.equal(r.code, 0);
+  assert.equal(r.out.trim(), "");
+});
+
+test("Edit marcando checkbox em Spec já approved → libera sem ask", () => {
+  const cwd = project({ status: "approved" });
+  const r = run(cwd, {
+    file_path: "docs/specs/s.md",
+    old_string: "### Tarefa 1: T1",
+    new_string: "### Tarefa 1: T1\n- [x] critério",
+  });
+  assert.equal(r.code, 0);
+  assert.equal(r.out.trim(), "");
+});
+
+test("Spec review com Arquivos: só em prosa (template) → bloqueia qualquer código", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "spec-gate-"));
+  mkdirSync(path.join(dir, "docs/context"), { recursive: true });
+  mkdirSync(path.join(dir, "docs/specs"), { recursive: true });
+  writeFileSync(
+    path.join(dir, "docs/specs/s.md"),
+    "# Spec\n\n**Status:** review\n\n## 6. Plano\n\n" +
+      "> **Propriedade de arquivos:** duas tarefas da mesma onda não podem declarar\n" +
+      "> o mesmo caminho no campo `Arquivos:`. Elas rodam em paralelo na mesma working\n" +
+      "> tree e se sobrescrevem em silêncio.\n",
+  );
+  writeFileSync(
+    path.join(dir, "docs/context/current-state.md"),
+    "# Status\n\n**Spec ativo:** docs/specs/s.md\n",
+  );
+  const r = run(dir, { file_path: "src/any.ts", new_string: "x" });
+  assert.equal(r.code, 2);
+});
+
 test("edição de Spec sem aprovar → libera sem ask", () => {
   const cwd = project();
   const r = run(cwd, { file_path: "docs/specs/s.md", new_string: "- [x] critério" });

@@ -3,11 +3,20 @@
  * PreToolUse hook — gate de Spec. Matcher esperado: Edit|Write|MultiEdit
  *
  * Regra 1 — autoaprovação. Toda edição feita por ferramenta do Claude passa
- * por este hook; edição humana no editor, não. Então: edição via ferramenta
- * que coloca `**Status:** approved` numa Spec (docs/**\/specs/*.md ou
- * docs/**\/archive/*.md) devolve permissionDecision "ask" — o humano confirma
- * no prompt. É o caminho do /approve; tentativa de autoaprovação vira um
- * prompt que o humano nega.
+ * por este hook; edição humana no editor, não. A decisão é sobre o `Status`
+ * RESULTANTE da edição, não sobre o texto novo isolado: computa o texto final
+ * (Edit: aplica old_string→new_string no arquivo atual, todas as ocorrências
+ * se replace_all, senão só a primeira; MultiEdit: aplica edits[] em sequência;
+ * Write: content) numa Spec (docs/**\/specs/*.md ou docs/**\/archive/*.md), e
+ * compara o Status de antes (arquivo atual, ou null se ele ainda não existe)
+ * com o de depois. Se depois !== "review" e (antes === "review" ou
+ * antes === null) — toda saída de review (approved, Approved, done, aprovado,
+ * remoção da linha Status) ou Spec nova já fora de review — devolve
+ * permissionDecision "ask", o humano confirma no prompt. Se old_string não é
+ * encontrado no arquivo (não dá para computar o resultado), cai no fallback:
+ * checagem literal de `**Status:** approved` em qualquer texto novo. É o
+ * caminho do /approve; tentativa de autoaprovação vira um prompt que o
+ * humano nega.
  *
  * Regra 2 — implementação antes da aprovação. Com a Spec ativa
  * (`**Spec ativo:**` em docs/context/current-state.md) em Status review,
@@ -46,12 +55,52 @@ if (rel.startsWith("..")) ok(); // fora do projeto
 // --- Regra 1: autoaprovação -------------------------------------------------
 const isSpec = /(^|\/)docs\/(.+\/)?(specs|archive)\/[^/]+\.md$/.test(rel);
 if (isSpec) {
-  const texts = [
-    input.new_string,
-    input.content,
-    ...(Array.isArray(input.edits) ? input.edits.map((e) => e?.new_string) : []),
-  ].filter((t) => typeof t === "string");
-  if (texts.some((t) => /\*\*Status:\*\*\s*approved\b/.test(t))) {
+  const fileAbs = path.resolve(root, file);
+  const beforeText = existsSync(fileAbs) ? readFileSync(fileAbs, "utf8") : null;
+  const beforeStatus = beforeText?.match(/\*\*Status:\*\*\s*(\S+)/)?.[1] ?? null;
+
+  // Computa o texto resultante da edição, quando dá para computar.
+  let afterText = null;
+  if (typeof input.content === "string") {
+    afterText = input.content; // Write
+  } else if (Array.isArray(input.edits)) {
+    // MultiEdit: aplica edits[] em sequência sobre o arquivo atual.
+    if (beforeText != null) {
+      let text = beforeText;
+      for (const e of input.edits) {
+        if (typeof e?.old_string !== "string" || typeof e?.new_string !== "string" || !text.includes(e.old_string)) {
+          text = null;
+          break;
+        }
+        text = e.replace_all ? text.split(e.old_string).join(e.new_string) : text.replace(e.old_string, e.new_string);
+      }
+      afterText = text;
+    }
+  } else if (typeof input.old_string === "string" && typeof input.new_string === "string") {
+    // Edit
+    if (beforeText != null && beforeText.includes(input.old_string)) {
+      afterText = input.replace_all
+        ? beforeText.split(input.old_string).join(input.new_string)
+        : beforeText.replace(input.old_string, input.new_string);
+    }
+  }
+
+  let shouldAsk;
+  if (afterText != null) {
+    const afterStatus = afterText.match(/\*\*Status:\*\*\s*(\S+)/)?.[1] ?? null;
+    shouldAsk = afterStatus !== "review" && (beforeStatus === "review" || beforeStatus === null);
+  } else {
+    // Não dá para computar o resultado (old_string não encontrado, arquivo
+    // novo sem content/edits legíveis, etc.) — fallback: checagem literal.
+    const texts = [
+      input.new_string,
+      input.content,
+      ...(Array.isArray(input.edits) ? input.edits.map((e) => e?.new_string) : []),
+    ].filter((t) => typeof t === "string");
+    shouldAsk = texts.some((t) => /\*\*Status:\*\*\s*approved\b/.test(t));
+  }
+
+  if (shouldAsk) {
     process.stdout.write(
       JSON.stringify({
         hookSpecificOutput: {
@@ -99,7 +148,7 @@ const spec = readFileSync(specPath, "utf8");
 if (spec.match(/\*\*Status:\*\*\s*(\S+)/)?.[1] !== "review") ok();
 
 const declared = new Set();
-for (const [, line] of spec.matchAll(/Arquivos:\*{0,2}[ \t]*(.+)/g)) {
+for (const [, line] of spec.matchAll(/^\s*(?:[-*]\s*)?\*{0,2}Arquivos:\*{0,2}[ \t]*(.+)$/gm)) {
   const ticked = [...line.matchAll(/`([^`]+)`/g)].map((m) => m[1]);
   const items = ticked.length ? ticked : line.replace(/←.*$/, "").split(",");
   for (const raw of items) {
