@@ -69,8 +69,6 @@ por `/hands-on`), use um subagente genérico (`Task`/`Agent`) quando:
 
 **Não** use subagente para: 1 arquivo, 1 pergunta direta, ou qualquer tarefa que você resolve mais rápido lendo/editando inline — o overhead de spawn (novo contexto, novo carregamento de skills) não se paga em tarefas pequenas. Na dúvida, prefira inline; suba para subagente só quando o ganho for concreto.
 
-Para trabalho de várias etapas com checkpoints de revisão, avalie também as skills `superpowers:subagent-driven-development` e `superpowers:dispatching-parallel-agents`, se o plugin Superpowers estiver disponível — ver `.claude/workflows/playbook-tokens-qualidade.md`.
-
 ## Carregue sob demanda (não por padrão)
 ```
 docs/context/current-state.md    ← estado atual do projeto (use /retomar)
@@ -78,7 +76,6 @@ docs/context/product.md          ← regras de negócio (se não for PLANNER)
 .claude/workflows/release-process.md
 .claude/workflows/context-resolution.md  ← fallback quando um comando não recebe parâmetro
 .claude/workflows/playbook-tokens-qualidade.md  ← modos econômico / rigor / emergência
-.claude/comparativo-scaffold-vs-superpowers.md  ← scaffold vs Superpowers (tokens × qualidade)
 ```
 
 ---
@@ -101,6 +98,7 @@ app/package. Convenção: `docs/context/conventions.md#documentação-em-monorep
 /retomar                    ← retoma o último histórico salvo (sem parâmetro)
 /checkpoint                 ← grava resumo da sessão no log do projeto (sem parâmetro)
 /spec   [TASKXX | requisito]← gera spec + plano técnico (Status: review)
+/approve [spec]              ← (só humano) valida e aprova a Spec (review → approved)
 /hands-on [caminho-da-spec] ← executa o Plano de Implementação em ondas (agentes em paralelo)
 /back   [tarefa]            ← agente backend
 /front  [tarefa]            ← agente frontend

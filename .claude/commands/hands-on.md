@@ -45,7 +45,7 @@ Durante a execução, proponha sempre que possível em vez de perguntar em abert
 1. Leia o arquivo da Spec informado ou resolvido.
 2. Verifique o cabeçalho `**Status:**`:
    - `approved` → prossiga.
-   - `review` → **pare** e avise: a Spec ainda não foi aprovada pelo humano. Não implemente.
+   - `review` → **pare** e avise: a Spec ainda não foi aprovada pelo humano — peça ao humano para rodar `/approve <caminho>`. Não implemente.
    - `done` → avise que já está concluída; confirme se o usuário quer reexecutar antes de continuar.
 3. Localize a seção **6. Plano de Implementação (Tarefas)**.
 4. Extraia:

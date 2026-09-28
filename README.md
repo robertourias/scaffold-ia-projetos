@@ -31,26 +31,35 @@ npx @robertourias/scaffold-ia
 /init-project sistema de gestão de pedidos para restaurantes
 ```
 
-`npx @robertourias/scaffold-ia` nunca sobrescreve arquivo existente por padrão
-(mostra `skip` e segue); use `--force` para sobrescrever uma instalação
-anterior. Alternativa sem npm: `cp -r` dos diretórios `.claude/` e `docs/` a
-partir deste repositório clonado.
+Por padrão, `npx @robertourias/scaffold-ia` nunca sobrescreve arquivo
+existente (mostra `skip` e segue). `--upgrade`/`-u` atualiza só o harness
+(`.claude/` exceto `settings.json`), sobrescrevendo apenas arquivo cujo
+conteúdo mudou em relação ao instalado, e em `docs/` só cria o que falta.
+`--force`/`-f` sobrescreve tudo, inclusive `docs/`, e pede confirmação se
+algum arquivo de `docs/` já tiver sido preenchido com conteúdo diferente do
+padrão do scaffold (`--yes`/`-y` confirma sem perguntar, para uso
+não-interativo). Alternativa sem npm: `cp -r` dos diretórios `.claude/` e
+`docs/` a partir deste repositório clonado.
 
 O comando detecta o **Modo** do projeto (`single`, `monorepo` ou `microfrontends`) e conduz entrevista em **9 blocos (0–8)** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche o contexto global em `docs/context/`. Também gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez. Em monorepo, crie cada app/package depois com `/init-app <nome>` e `/init-package <nome>`, que geram os docs locais e conduzem o questionário de configuração de cada um.
 
 ### Para um projeto existente
 
-Se o projeto já usa uma versão anterior do scaffold, copie o `.claude/` atual
-por cima e remova manualmente a estrutura obsoleta (`docs/commands/`,
-`docs/skills/`, `AGENTS.md`). Faça o **merge** do seu `.claude/settings.json`
-em vez de sobrescrever, e rode `/init-project` para preencher o que faltar
-(guardrails, constituição). Nenhum arquivo de produto em `docs/context/` precisa
-ser tocado sem necessidade.
-
 ```bash
 cd seu-projeto
-npx @robertourias/scaffold-ia --force
+npx @robertourias/scaffold-ia --upgrade
 ```
+
+`--upgrade` atualiza só o harness (`.claude/agents`, `commands`, `hooks`,
+`skills`, `templates`, `workflows`, `.claude/CLAUDE.md`, `.claude/README.md`),
+sobrescrevendo apenas o que mudou de conteúdo — `.claude/settings.json` e
+`docs/context/` são preservados intactos (em `docs/` só cria o que falta).
+Grava a versão instalada em `.claude/.scaffold-version`. Se
+`.claude/settings.example.json` mudou entre versões, o comando avisa para
+você fazer o merge manual no seu `.claude/settings.json`. Se o projeto ainda
+tem estrutura obsoleta (`docs/commands/`, `docs/skills/`, `AGENTS.md`),
+remova-a manualmente — não faz parte do template atual. Depois, rode
+`/init-project` para preencher o que faltar (guardrails, constituição).
 
 ---
 
@@ -93,8 +102,7 @@ docs/
 ├── skills/                     ← skills de papel (.claude/skills/<nome>/SKILL.md)
 ├── hooks/                       ← verificação automática (Pre/PostToolUse, Stop)
 ├── workflows/                   ← processos de várias fases (sob demanda)
-├── templates/                    ← spec-template.md
-└── comparativo-scaffold-vs-superpowers.md
+└── templates/                    ← spec-template.md
 ```
 
 **Monorepo (apps/packages):** cada `apps/<nome>/` e `packages/<nome>/` pode ter
@@ -130,7 +138,7 @@ isso a inicialização é obrigada a instalar limites antes de liberar o fluxo.
 
 | Hook | Quando | O que roda |
 | --- | --- | --- |
-| `spec-gate.mjs` | antes de cada edição | bloqueia código se a Spec ativa estiver `Status: review` |
+| `spec-gate.mjs` | antes de cada edição | pede confirmação ao aprovar Spec; bloqueia os `Arquivos:` da Spec ativa em review |
 | `verify-file.mjs` | a cada arquivo editado | ESLint no arquivo alterado |
 | `verify-project.mjs` | fim do turno | type-check, se algum `.ts`/`.tsx` mudou |
 
@@ -139,11 +147,17 @@ correção. Todos **falham em aberto**: projeto sem ESLint/TypeScript/git não �
 bloqueado. Desligar com `SCAFFOLD_VERIFY=0`.
 Detalhes em [`.claude/hooks/README.md`](.claude/hooks/README.md).
 
-`spec-gate.mjs` é heurístico: identifica a Spec ativa pelo campo `**Spec
-ativo:**` de `docs/context/current-state.md`, não por análise do código. Não
-impede um agente de editar o próprio campo `Status` para se autoaprovar — isso
-continua dependendo da instrução nos papéis. `/spec` mantém o campo atualizado
-ao gerar a Spec, sem esperar pelo `/checkpoint`.
+`spec-gate.mjs` é heurístico e tem duas regras. **Regra 1 — autoaprovação:**
+qualquer edição feita por ferramenta do Claude que tire uma Spec de `Status:
+review` (ou crie uma Spec já fora de `review`) pede confirmação humana no
+prompt — é o caminho do `/approve`, e uma tentativa de autoaprovação vira um
+prompt que o humano nega. **Regra 2 — implementação antes da aprovação:** com
+a Spec ativa (`**Spec ativo:**` de `docs/context/current-state.md`) em
+`Status: review`, a edição fica bloqueada nos arquivos declarados no campo
+`Arquivos:` de cada tarefa (sem nenhum `Arquivos:` declarado, bloqueia todo
+código); `docs/` e `.claude/` nunca são bloqueados por essa regra. `/spec`
+mantém o campo `Spec ativo:` atualizado ao gerar a Spec, sem esperar pelo
+`/checkpoint`.
 
 `docs/context/guardrails.md` é carregado por **todos** os papéis, em **toda**
 tarefa, e **vence** qualquer outra instrução do scaffold em caso de conflito.
@@ -194,7 +208,7 @@ Ideia/requisito
                                                   ↓
 [3] /spec TASK01 (gera spec + plano de tarefas técnicas)
       ↓
-      ⛔ GATE: você edita spec/plano → Status: approved (mecânico: .claude/hooks/spec-gate.mjs)
+      ⛔ GATE: /approve <spec> — valida e grava Status: approved + Aprovado por (mecânico: .claude/hooks/spec-gate.mjs)
       ↓
 [4] /back tarefa1, tarefa2, tarefa3   ou   /hands-on docs/specs/....md (ondas paralelas)
       ↓
@@ -207,22 +221,21 @@ Ideia/requisito
 [8] Specs concluídas migram para docs/archive/ (feito por /checkpoint)
 ```
 
-**Diagrama do fluxo** (sequência de comandos, ramo single/monorepo, gate humano, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
+**Diagrama do fluxo** (sequência de comandos, ramo single/monorepo, gate `/approve`, paralelismo backend/frontend e o ramo de Pendência Manual → `/recheck`):
 
-![Fluxo de entrega do Scaffold IA](docs/assets/fluxo-workflow.png)
+![Fluxo de entrega do Scaffold IA](meta/assets/fluxo-workflow.png)
 
 **Single vs. monorepo/microfrontends:** em `single`, `/init-project` já cobre a stack inteira e o próximo passo é direto `/backlog`. Em `monorepo`/`microfrontends`, `/init-project` cobre só o que é compartilhado (CI/CD, hospedagem, banco); cada app/package precisa passar por `/init-app <nome>` ou `/init-package <nome>` (que criam a pasta, se ainda não existir, e os docs locais em `docs/apps|packages/<nome>/`) antes de gerar o backlog. Os dois caminhos convergem no mesmo `/spec` em diante — `/back`, `/front`, `/review`, `/checkpoint` e `/retomar` funcionam igual, com o escopo inferido do contexto quando não informado (`.claude/workflows/context-resolution.md`).
 
-**Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código — e agora um hook bloqueia mecanicamente a edição de código enquanto a Spec ativa não estiver aprovada.
+**Por que o gate importa:** Sem a aprovação, o agente assume escopo e você descobre tarde. A spec com as tarefas técnicas obriga alinhamento **antes** de escrever código — e agora um hook bloqueia mecanicamente a edição de código enquanto a Spec ativa não estiver aprovada. A aprovação em si é feita pelo `/approve` (só o humano invoca — o modelo não dispara sozinho); qualquer tentativa de aprovar a Spec por uma ferramenta de edição pede confirmação humana no prompt.
 
-### Playbook e comparativo (tokens × qualidade)
+### Playbook (tokens × qualidade)
 
 | Documento | Uso |
 | --- | --- |
 | [Playbook — modos econômico / rigor / emergência](.claude/workflows/playbook-tokens-qualidade.md) | Decidir **como** trabalhar em cada tarefa (default do dia a dia) |
-| [Comparativo Scaffold vs Superpowers](.claude/comparativo-scaffold-vs-superpowers.md) | Entender trade-offs de tokens, qualidade e modelo híbrido |
 
-**Regra prática:** scaffold como sistema operacional do projeto; Superpowers só sob demanda (ambiguidade, bug hard, feature de alto risco). Detalhes no playbook.
+**Regra prática:** modo econômico no dia a dia; modo rigor (`/spec` com entrevista, `/approve`, `/hands-on --serial`, `/review`) sob demanda — ambiguidade, bug difícil, feature de alto risco. Detalhes no playbook.
 
 ---
 
@@ -235,6 +248,7 @@ Ideia/requisito
 | `/init-package` | `/init-package ui` | (monorepo) Cria `packages/<nome>`, docs locais e questionário de configuração |
 | `/backlog` | `/backlog` | Gera TASK01..TASKNN do product.md |
 | `/spec` | `/spec TASK01` | Levantamento, gera spec + plano técnico (Status: review) |
+| `/approve` | `/approve docs/specs/….md` | (só humano) Valida a Spec e aprova: Status review → approved |
 | `/groom` | `/groom nova funcionalidade` | Refina uma nova feature isolada adicionando-a ao backlog |
 | `/hands-on` | `/hands-on docs/specs/….md` | Executa o plano da Spec em ondas (paralelo), via subagentes |
 | `/back` | `/back implementar auth com JWT` | Agente backend, inline |
@@ -246,7 +260,7 @@ Ideia/requisito
 
 Referência completa: [`.claude/README.md`](.claude/README.md)
 
-Playbook de modos (quando batch vs hands-on vs Superpowers): [`.claude/workflows/playbook-tokens-qualidade.md`](.claude/workflows/playbook-tokens-qualidade.md)
+Playbook de modos (quando batch vs hands-on): [`.claude/workflows/playbook-tokens-qualidade.md`](.claude/workflows/playbook-tokens-qualidade.md)
 
 ---
 
@@ -345,7 +359,6 @@ Tudo mais é descartado ao final de cada feature (specs vão para `docs/archive/
 
 Para não gastar tokens com processo pesado em tarefa simples — nem subinvestir em feature crítica — use o playbook:
 - **[Playbook tokens × qualidade](.claude/workflows/playbook-tokens-qualidade.md)** — modos Econômico (default), Rigor e Emergência
-- **[Comparativo Scaffold vs Superpowers](.claude/comparativo-scaffold-vs-superpowers.md)** — o que cada sistema otimiza e o modelo híbrido recomendado
 
 ---
 
@@ -384,7 +397,9 @@ O `/retomar` funciona mesmo sem checkpoint anterior — ele infere estado do git
 
 # Especificar e planejar uma tarefa (juntos!)
 /spec TASK01
-  → você aprova spec + plano técnico, edita Status: review → Status: approved
+
+/approve docs/specs/YYYY-MM-DD-task01.md
+  → (só humano) valida spec + plano técnico e grava Status: review → approved
 
 # Implementar (batching)
 /back implementar use case 1, 2 e 3
@@ -412,12 +427,15 @@ só produto):
 
 ```bash
 cd seu-projeto
-npx @robertourias/scaffold-ia --force
+npx @robertourias/scaffold-ia --upgrade
 ```
 
-Se seu projeto ainda tem `docs/commands/`, `docs/skills/`, `docs/workflows/`
-ou a antiga pasta de prompts em `docs/` de uma versão anterior, remova-os — o conteúdo equivalente
-já veio com o `.claude/` copiado acima.
+`--upgrade` preserva `docs/context/` e `.claude/settings.json` — atualiza só o
+harness (e sinaliza mudanças em `settings.example.json` para merge manual, em
+vez de sobrescrever seu `settings.json`). Se seu projeto ainda tem
+`docs/commands/`, `docs/skills/`, `docs/workflows/` ou a antiga pasta de
+prompts em `docs/` de uma versão anterior, remova-os — o conteúdo equivalente
+já veio com o `.claude/` atualizado acima.
 
 Se a documentação de produto (`docs/context/`) estiver desatualizada ou
 verbosa demais, rode este prompt no Claude Code:
@@ -463,7 +481,6 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
 | `hooks/` | Verificação automática (gate de Spec, lint, type-check) |
 | `workflows/` | Processos de várias fases (feature-delivery, release, playbook tokens×qualidade) |
 | `templates/` | `spec-template.md` |
-| `comparativo-scaffold-vs-superpowers.md` | Scaffold vs Superpowers (tokens × qualidade) |
 
 ---
 

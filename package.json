@@ -5,6 +5,9 @@
   "bin": {
     "scaffold-ia": "bin/cli.js"
   },
+  "scripts": {
+    "prepublishOnly": "node meta/tests/check-eol.mjs && node --test \"meta/tests/*.test.mjs\" && node meta/tests/lint-docs.mjs"
+  },
   "files": [
     "bin",
     ".claude/agents",

@@ -1,6 +1,6 @@
 # Harness: endurecimento (sub-projeto A)
 
-**Status:** aguardando revisão
+**Status:** implementado
 **Data:** 2026-09-27
 
 Parte A de 4 da evolução do harness (A endurecimento → B fluxo SDD v2 → C
@@ -33,7 +33,7 @@ instalação via `npx`, e refletir o novo fluxo no README.
 | `docs/assets/` | `meta/assets/` |
 
 - Projetos criam o próprio `docs/changelog/` via `/checkpoint` (já é o comportamento; a pasta não é publicada no npm hoje).
-- Novo `CLAUDE.md` na raiz, só para desenvolvimento do scaffold: specs e planos do harness vão para `meta/specs` e `meta/plans`; `meta/` nunca é copiado para projetos; rodar `node --test meta/tests/` e `node meta/tests/lint-docs.mjs` antes de commitar. Não é publicado (fora de `files`) nem copiado pelo CLI (que copia só `.claude/` e `docs/`).
+- Novo `CLAUDE.md` na raiz, só para desenvolvimento do scaffold: specs e planos do harness vão para `meta/specs` e `meta/plans`; `meta/` nunca é copiado para projetos; rodar `node --test "meta/tests/*.test.mjs"` e `node meta/tests/lint-docs.mjs` antes de commitar. Não é publicado (fora de `files`) nem copiado pelo CLI (que copia só `.claude/` e `docs/`).
 - README aponta imagem para `meta/assets/fluxo-workflow.png`.
 
 ### 2. `/approve`
@@ -53,9 +53,9 @@ instalação via `npx`, e refletir o novo fluxo no README.
 
 Duas regras, na ordem:
 
-1. **Autoaprovação** — alvo é Spec (`docs/**/specs/*.md` ou `docs/**/archive/*.md`) e o conteúdo novo (`tool_input.new_string` / `content` / `edits[].new_string`) contém `**Status:** approved` → retorna JSON `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Aprovação de Spec exige confirmação humana (/approve)."}}` e sai 0.
+1. **Autoaprovação** — alvo é Spec (`docs/**/specs/*.md` ou `docs/**/archive/*.md`). O hook decide pelo `Status` resultante da edição, não pelo texto novo isolado: computa o texto final (Edit: aplica `old_string`→`new_string` sobre o arquivo atual — todas as ocorrências se `replace_all`, senão só a primeira; MultiEdit: aplica `edits[]` em sequência; Write: `content`) e extrai `**Status:**\s*(\S+)` de antes (arquivo atual no disco, ou `null` se ele ainda não existe) e de depois. Se `depois !== "review"` **e** (`antes === "review"` **ou** `antes === null`) — ou seja, toda saída de `review` (para `approved`, `Approved`, `done`, `aprovado`, remoção da linha `Status`) ou criação de Spec nova já fora de `review` — retorna o JSON `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Aprovação de Spec exige confirmação humana (/approve)."}}` e sai 0; quando `antes` já é diferente de `review` (ex.: `approved` marcando checkbox, `approved`→`done`), não pede confirmação. Se o `old_string` não for localizado no arquivo (o resultado não dá para computar), cai no fallback: pede confirmação se qualquer texto novo (`new_string`/`content`/`edits[].new_string`) tiver `**Status:**` com um valor diferente de `review`.
 2. **Implementação antes da aprovação** — Spec ativa em `review`:
-   - coleta caminhos dos campos `Arquivos:` de todas as tarefas (backticks ou lista separada por vírgula);
+   - coleta caminhos dos campos `Arquivos:` de todas as tarefas, ancorando a captura à linha de campo (regex `/^\s*(?:[-*]\s*)?\*{0,2}Arquivos:\*{0,2}[ \t]*(.+)$/gm`) para não confundir prosa que apenas menciona a palavra `Arquivos:` (ex.: texto do template citando o campo) com uma declaração real (backticks ou lista separada por vírgula);
    - se a lista não for vazia → bloqueia (exit 2) só se o arquivo editado estiver nela;
    - se vazia → bloqueia qualquer código (comportamento atual).
 - Continua liberando sempre `docs/`, `**/docs/**` e `.claude/` para a regra 2.
@@ -79,7 +79,8 @@ Duas regras, na ordem:
 
 - Manter instalação padrão (não destrutiva, `skip` em arquivo existente).
 - **Novo `--upgrade`**: sobrescreve só o harness — `.claude/{agents,commands,hooks,skills,templates,workflows}/**`, `.claude/CLAUDE.md`, `.claude/README.md`, `.claude/settings.example.json`; em `docs/` apenas cria o que faltar (nunca sobrescreve contexto preenchido); nunca toca `.claude/settings.json`/`settings.local.json`. Ao final, lista arquivos de `.claude/settings.example.json` que mudaram e sugere merge manual no `settings.json`.
-- `--force` passa a avisar que sobrescreve também `docs/` (contexto preenchido) e exige confirmação interativa `y/N` quando `docs/context/product.md` do destino existir sem o marcador `**Status do arquivo:** vazio` (ou seja, já preenchido); com stdin não-TTY, recusa sem `--yes`.
+- `--force` pede confirmação interativa `y/N` quando algum arquivo de `docs/` do destino difere do template do pacote (contexto preenchido); com stdin não-TTY recusa sem `--yes`.
+- `--upgrade` e `--force` só reescrevem arquivos cujo conteúdo difere; a versão em `.claude/.scaffold-version` é gravada em instalação limpa, `--upgrade` e `--force`.
 - Grava `.claude/.scaffold-version` com a versão do pacote em instalação/upgrade; `--upgrade` mostra `de X para Y`.
 - `package.json`: `files` segue excluindo `meta/`, `CLAUDE.md` da raiz e `docs/changelog` (já excluídos pela whitelist); bump de versão para `1.1.0` fica para o release, fora desta spec.
 - README: Quick Start usa `npx` (novo) e `npx ... --upgrade` (existente/migração) — remove recomendação de `--force` para upgrade (hoje apagaria `docs/context/`).
@@ -111,7 +112,7 @@ Branch/commit/PR no fluxo, loop de review no `/hands-on`, emenda de Spec aprovad
 
 ## Verificação
 
-- `node --test meta/tests/` passa.
+- `node --test "meta/tests/*.test.mjs"` passa.
 - `node meta/tests/lint-docs.mjs` sai 0.
 - `grep -rni "superpowers\|comparativo" .claude docs README.md` vazio.
 - `ls docs/superpowers docs/changelog docs/assets` inexistentes; `meta/{specs,plans,changelog,assets,tests}` existem.

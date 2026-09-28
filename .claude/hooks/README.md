@@ -10,7 +10,7 @@ Ligados em `.claude/settings.example.json` → copie para `.claude/settings.json
 
 | Hook | Evento | Quando | O que faz |
 |------|--------|--------|-----------|
-| `spec-gate.mjs` | `PreToolUse` (`Edit`\|`Write`\|`MultiEdit`) | antes de cada edição | bloqueia código enquanto a Spec ativa estiver `Status: review` |
+| `spec-gate.mjs` | `PreToolUse` (`Edit`\|`Write`\|`MultiEdit`) | antes de cada edição | pede confirmação humana ao autoaprovar uma Spec; bloqueia os arquivos declarados em `Arquivos:` da Spec ativa em `review` |
 | `verify-file.mjs` | `PostToolUse` (`Edit`\|`Write`\|`MultiEdit`) | a cada arquivo editado | ESLint **no arquivo alterado** (rápido) |
 | `verify-project.mjs` | `Stop` | fim do turno | type-check do projeto, se algum `.ts`/`.tsx` mudou |
 
@@ -23,29 +23,57 @@ suíte pode levar minutos e nem toda tarefa a exige.
 
 Antes deste hook, `Status: approved` era só uma instrução no prompt: nada
 impedia um agente de implementar contra uma Spec em `review`, ou de editar o
-próprio campo `Status` para se autoaprovar.
+próprio campo `Status` para se autoaprovar. `spec-gate.mjs` fecha as duas
+lacunas com duas regras.
 
-`spec-gate.mjs` fecha a primeira metade: lê `**Spec ativo:**` em
-`docs/context/current-state.md` (escrito por `/spec` ao gerar a Spec, e por
-`/checkpoint`), resolve o `Status` dessa Spec, e bloqueia `Edit`/`Write`/`MultiEdit`
-fora de `docs/` e `.claude/` enquanto o status for `review`.
+**Regra 1 — autoaprovação.** Toda edição feita por ferramenta do Claude passa
+por este hook; edição humana direta no editor, não. Qualquer edição via
+`Edit`/`Write`/`MultiEdit` que tire uma Spec (`docs/**/specs/*.md` ou
+`docs/**/archive/*.md`) do `Status: review` — computado sobre o texto
+**depois** da edição, não sobre o texto novo isolado — ou que crie uma Spec
+nova já fora de `review`, devolve no stdout:
+
+```json
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Aprovação de Spec exige confirmação humana (/approve)."}}
+```
+
+O Claude Code pede confirmação humana no prompt antes de aplicar a edição. É
+o caminho que o `/approve` usa; uma tentativa de autoaprovação pelo agente
+vira um prompt que o humano nega.
+
+**Regra 2 — implementação antes da aprovação.** Com a Spec ativa
+(`**Spec ativo:**` em `docs/context/current-state.md`, escrito por `/spec` e
+por `/checkpoint`) em `Status: review`, o hook bloqueia `Edit`/`Write`/
+`MultiEdit` apenas nos arquivos declarados no campo `Arquivos:` de cada
+tarefa do Plano. Uma Spec que não declara nenhum `Arquivos:` bloqueia
+qualquer arquivo de código. `docs/` e `.claude/` nunca são bloqueados por
+esta regra.
 
 **Limites conhecidos, honestos:**
 
-- Não impede o agente de editar o campo `Status` diretamente — isso continua
-  dependendo da instrução (`.claude/skills/planner/SKILL.md`, `back.md`, `front.md`).
-  Um hook não distingue "humano aprovou" de "agente editou a string".
-- É heurístico: identifica a Spec ativa pelo campo declarado, não por análise
-  de qual código pertence a qual Spec. Se `current-state.md` estiver
-  desatualizado, o gate fica cego.
+- **Limitação:** em modo `bypassPermissions` o `ask` da regra 1 passa sem
+  prompt — a autoaprovação não é barrada nesse modo.
+- O hook só é acionado no matcher `Edit`/`Write`/`MultiEdit`: escrita via
+  `Bash` (`sed`, `mv`, `echo >` e afins) não passa por ele e contorna as duas
+  regras.
+- Editar `**Spec ativo:**` em `current-state.md` para apontar para outra Spec
+  (ou para um caminho inexistente) desliga a Regra 2 sobre a Spec real — o
+  hook confia nesse campo para saber qual Spec está em `review`.
+- É heurístico: identifica a Spec ativa pelo campo declarado em
+  `current-state.md`, e os arquivos bloqueados pelo campo `Arquivos:` de cada
+  tarefa, não por análise semântica do conteúdo. Se `current-state.md` ou o
+  Plano estiverem desatualizados, o gate fica cego ou bloqueia o arquivo
+  errado.
 - Falha em aberto sem `current-state.md`, sem campo `Spec ativo:`, ou sem a
   Spec referenciada existir no disco.
 
 ## Contrato
 
-Saída **exit 2** + mensagem no `stderr` → o Claude Code injeta o `stderr` de
-volta no contexto e o agente corrige antes de seguir. Qualquer outro código
-deixa o fluxo passar.
+Três saídas possíveis. **exit 2** + mensagem no `stderr` (Regra 2, bloqueio) →
+o Claude Code injeta o `stderr` de volta no contexto e o agente corrige antes
+de seguir. **exit 0** com o JSON `permissionDecision: "ask"` no stdout (Regra
+1, autoaprovação) → o Claude Code pede confirmação humana antes de aplicar a
+edição. **exit 0** silencioso → o hook não tem objeção, a edição segue.
 
 ## Fail open — invariante
 

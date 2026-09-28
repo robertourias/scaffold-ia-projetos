@@ -21,7 +21,6 @@ ferramenta nem cópia paralela para outros assistentes.
   hooks/                  ← verificação automática (PreToolUse, PostToolUse, Stop)
   workflows/              ← processos de várias fases (carregados sob demanda)
   templates/              ← spec-template.md
-  comparativo-scaffold-vs-superpowers.md
 ```
 
 ## Comandos (`commands/`)
@@ -95,12 +94,11 @@ Isso existe para separar dois níveis de documentação num monorepo, sem mistur
 /review [cole o diff aqui]
 ```
 
-## Playbook e comparativo
+## Playbook
 
-Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
+Antes de escolher batch vs `/hands-on`, veja:
 
 - [Playbook — tokens × qualidade](workflows/playbook-tokens-qualidade.md) (modos econômico / rigor / emergência)
-- [Comparativo Scaffold vs Superpowers](comparativo-scaffold-vs-superpowers.md)
 
 ## Fluxo completo com backlog (recomendado)
 
@@ -119,7 +117,10 @@ Antes de escolher batch vs `/hands-on` vs Superpowers, veja:
   → planner lê a descrição de TASK01 no backlog
   → conduz levantamento (se necessário), gera spec + quebra de tarefas técnicas
   → atualiza backlog: Status → spec-review, link da spec
-  → você edita: Status: review → Status: approved no documento
+
+/approve docs/specs/YYYY-MM-DD-<topic>.md
+  → (só humano) valida a Spec e grava Status: review → approved
+  → alternativa: editar a linha Status no editor (spec-gate.mjs pede confirmação mesmo assim)
 
 # 4. Implementar
 #    Opção A (orquestrado) — executa o plano de tarefas em ondas, paralelizando:
@@ -142,7 +143,10 @@ git commit -m "feat: ..."
 ```
 /spec apps/metronome metrônomo com BPM, beats e timer
   → planner gera docs/apps/metronome/specs/YYYY-MM-DD-metronome.md (Status: review)
-  → você revisa as tarefas e regras, e edita: Status: review → Status: approved
+
+/approve docs/apps/metronome/specs/YYYY-MM-DD-metronome.md
+  → (só humano) revisa as tarefas e regras, valida e grava Status: review → approved
+  → alternativa: editar a linha Status no editor (spec-gate.mjs pede confirmação mesmo assim)
 
 /front apps/metronome implementar controle de BPM da Spec metronome
 /front apps/metronome implementar Web Audio API da Spec metronome
@@ -159,7 +163,10 @@ git commit -m "feat(metronome): ..."
 ```
 /spec notificações por email
   → planner gera docs/specs/YYYY-MM-DD-email-notifications.md (Status: review)
-  → você edita: Status: review → Status: approved
+
+/approve docs/specs/YYYY-MM-DD-email-notifications.md
+  → (só humano) valida a Spec e grava Status: review → approved
+  → alternativa: editar a linha Status no editor (spec-gate.mjs pede confirmação mesmo assim)
 
 /back implementar use case de envio de email da Spec
 /front criar página de preferências de notificação da Spec
@@ -194,7 +201,20 @@ Detalhes: [`.claude/agents/README.md`](agents/README.md).
 Formato padrão do Claude Code: `.claude/skills/<nome>/SKILL.md` com
 frontmatter `name` + `description`. São o conteúdo de papel compartilhado
 entre comando e subagente (`backend`, `frontend`, `planner`, `quality`) mais
-`verification` — o que significa "pronto", citado por todos os papéis.
+`verification` — o que significa "pronto", citado por todos os papéis — e
+`approve`, o gate humano da Spec (`disable-model-invocation: true`): não tem
+comando nem subagente equivalente, só existe como skill, e só o humano invoca
+com `/approve [caminho-da-spec]`.
+
+```
+skills/
+  backend/SKILL.md       ← papel backend (comando /back e subagente backend)
+  frontend/SKILL.md      ← papel frontend (comando /front e subagente frontend)
+  planner/SKILL.md       ← papel planner (comando /spec e subagente planner)
+  quality/SKILL.md       ← revisão em dois estágios (comando /review e subagente reviewer)
+  verification/SKILL.md  ← o que significa "pronto" (citado por todos os papéis)
+  approve/SKILL.md       ← gate humano da Spec — só humano, sem comando/subagente equivalente
+```
 
 Skills são invocáveis pela ferramenta `Skill` (comandos rodam na thread
 principal, que já a tem; subagentes precisam de `Skill` na própria lista de
