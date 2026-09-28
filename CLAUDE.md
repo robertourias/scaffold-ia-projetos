@@ -13,4 +13,4 @@ projetos estão em `.claude/CLAUDE.md`.
   copiados pelo CLI.
 - `docs/` é template: mantenha os arquivos de contexto vazios (marcador
   `**Status do arquivo:** vazio`).
-- Antes de commitar: `node --test meta/tests/` e `node meta/tests/lint-docs.mjs`.
+- Antes de commitar: `node --test "meta/tests/*.test.mjs"` e `node meta/tests/lint-docs.mjs`.
