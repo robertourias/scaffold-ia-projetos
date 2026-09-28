@@ -37,6 +37,7 @@ Conventional Commits:
 | `/spec` gerou a Spec | `docs(spec): <título> (review)` |
 | `/approve` | `docs(spec): aprova <slug>` |
 | Onda do `/hands-on` | `<tipo>(<escopo>): <slug> — onda N (T1, T2)` |
+| Correções da review final (`/hands-on`) | `fix(<escopo>): <slug> — review final` |
 | Spec concluída (`/hands-on`, `/back`, `/front`, `/recheck`) | `docs(spec): conclui <slug>` |
 | `/back` ou `/front` avulso | `<tipo>(<escopo>): <resumo>` |
 

@@ -42,7 +42,8 @@ Com escopo informado: `git diff HEAD -- <escopo>`.
 Quando o prompt trouxer `Modo:`:
 
 - `Modo: onda N` — revise só o diff indicado (onda ainda não commitada:
-  `git diff HEAD` + arquivos novos listados) contra as tarefas da onda.
+  `git diff HEAD` + arquivos novos listados — declarados ou reportados pelas
+  tarefas da onda) contra as tarefas da onda.
 - `Modo: re-review` — verdict por achado da lista (`RESOLVIDO` /
   `ABERTO` com `arquivo:linha`) + quebra nova no diff da correção. Não
   revise o resto.

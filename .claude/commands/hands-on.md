@@ -56,6 +56,9 @@ Durante a execução, proponha sempre que possível em vez de perguntar em abert
 
 ## Passo 1.5 — Branch e backlog
 
+Com `--dry-run`, **pule este passo inteiro** — nada muda no git nem no
+backlog antes do plano ser confirmado.
+
 Regras de `.claude/workflows/git-flow.md`.
 
 1. `git status --porcelain`: mudança rastreada pendente → pare e peça ao
@@ -65,7 +68,10 @@ Regras de `.claude/workflows/git-flow.md`.
    se existir; se não existir, `git switch -c spec/<slug>` a partir do atual
    e avise.
 3. Guarde `BASE` = `git merge-base <branch padrão> HEAD` (para a review final).
-4. Backlog: TASK de origem da Spec → `in-progress`.
+4. Backlog: TASK de origem da Spec → `in-progress`. Spec avulsa (sem TASK de
+   origem) → pule este item, só a Spec muda. Não commite agora: a mudança
+   fica pendente e entra no stage do commit da onda 1 (Passo 3.6) — única
+   exceção aceita à regra de working tree limpa do Passo 2.6.
 
 ## Passo 2 — Resolver o plano de execução
 
@@ -121,13 +127,22 @@ Ao fim da onda, para cada worktree, na ordem das tarefas:
 git -C <worktree> add <arquivos declarados da tarefa>
 git -C <worktree> commit -m "wip(<task-id>): <título>"
 git switch spec/<spec-slug>
-git merge --no-ff wave/<spec-slug>/<task-id>
+git merge --squash wave/<spec-slug>/<task-id>
 ```
 
+`--squash` traz as mudanças para a working tree principal **sem commitar** —
+o commit `wip` fica só no branch descartável da tarefa. Isso é proposital: a
+onda continua sem commit até o Passo 3.6, que faz o **único** commit real —
+com `--no-ff`, o `wip` entraria no histórico e a review da onda (Passo 3.5,
+que revisa `git diff HEAD`) não veria diff nenhum, porque tudo já estaria
+commitado.
+
 Conflito no merge -> **pare a onda**, reporte os arquivos em conflito e não
-avance. Ao final: `git worktree remove <path>` e `git branch -d` de cada branch.
-Com todas as tarefas da onda mescladas de volta em `spec/<spec-slug>`, siga
-para a review (Passo 3.5) e o commit da onda (Passo 3.6) normalmente.
+avance. Ao final: `git worktree remove <path>` e `git branch -D` de cada
+branch (maiúsculo — o squash nunca "mescla" de verdade, então `-d` recusa
+apagar). Com todas as tarefas da onda trazidas (ainda não commitadas) para
+`spec/<spec-slug>`, siga para a review (Passo 3.5) e o commit da onda
+(Passo 3.6) normalmente.
 
 **Quando compensa:** tarefas longas em apps/packages realmente independentes do
 monorepo, ou quando já houve sobrescrita antes.
@@ -139,7 +154,9 @@ de git, que não é mais barato de resolver. Sem um motivo concreto, **não use 
 flag** — o Passo 2.5 já resolve o problema real.
 
 Avise o usuário antes de criar worktrees, e **nunca** use a flag se a working
-tree tiver mudanças não commitadas.
+tree tiver mudanças não commitadas — exceto a edição pendente do backlog do
+Passo 1.5.4 (`TASK → in-progress`), que é a única mudança admitida em aberto
+até o commit da onda 1.
 
 ## Passo 2.7 — Delegar execução ao subagente
 
@@ -154,17 +171,26 @@ Você é o ORQUESTRADOR de implementação deste projeto.
 
 **Spec:** <caminho-da-spec>
 **BASE (Passo 1.5, para a review final):** <hash resolvido>
+**Flags:** <--no-review / --serial / --worktree / filtro de tarefas — as que
+se aplicarem>
 **Plano de ondas resolvido (já validado quanto a colisão de arquivos):**
 <cole aqui o plano exibido no Passo 2 / 2.5>
 
 Leia `.claude/commands/hands-on.md` e execute **apenas os Passos 3 e 4** desse
 arquivo, aplicados ao plano acima — inclusive a review e o commit por onda
-(Passo 3) e a review final, o fechamento da Spec/backlog e o PR (Passo 4). Os
-Passos 1, 1.5, 2, 2.5 e 2.6 já foram feitos.
-Despache os subagentes `backend` e `frontend` conforme o campo Agente de cada tarefa.
+(Passo 3, com o isolamento por worktree do Passo 2.6 quando `--worktree`
+estiver nas Flags: ele roda **por onda**, dentro do Passo 3, não antes) e a
+review final e o fechamento de Spec/backlog (Passo 4). Os Passos 1, 1.5, 2 e
+2.5 já foram feitos.
+Despache os subagentes `backend` e `frontend` conforme o campo Agente de cada
+tarefa. **Não** rode `git push` nem `gh pr create` — se o Passo 4 fechar a
+Spec, devolva prontos os comandos e o corpo do PR; a confirmação humana e a
+execução são desta thread.
 ```
 
-Ao receber o retorno, exiba o relatório ao usuário e encerre.
+Ao receber o retorno, exiba o relatório ao usuário — se vier PR pronto para
+abrir, peça a confirmação humana antes de rodar `git push`/`gh pr create` —
+e encerre.
 
 ## Passo 3 — Executar onda a onda
 
@@ -213,7 +239,9 @@ Para cada onda, **em ordem**:
    Modo: onda N
    Spec: <caminho>
    Tarefas da onda: <ids e títulos>
-   Diff: `git diff HEAD` + estes arquivos novos: <não rastreados declarados nas tarefas>
+   Diff: `git diff HEAD` + estes arquivos novos: <não rastreados declarados
+   ou reportados pelas tarefas da onda — nunca outros>
+   Verificação: <saída reportada por tarefa>
    Revise contra os critérios de aceite e FRs das tarefas da onda.
    ```
 
@@ -221,17 +249,21 @@ Para cada onda, **em ordem**:
      (campo `Arquivos:`; arquivo sem dono → tarefa da onda no diretório mais
      próximo; se ambíguo, escale). Despache um **novo** implementador
      (`backend`/`frontend`, conforme a tarefa) com a tarefa original + os
-     achados; ele corrige e roda a verificação.
-   - Re-review escopada: `reviewer` com `Modo: re-review` e a lista de
-     achados abertos — verdict por achado + quebra nova no diff.
+     achados; ele corrige e roda a verificação. Achados de tarefas diferentes
+     só corrigem em paralelo se os arquivos envolvidos não colidirem (mesmo
+     critério do Passo 2.5); havendo colisão, corrija em sequência.
+   - Re-review escopada: `reviewer` com `Modo: re-review`, `Spec: <caminho>`
+     e a lista de achados abertos — verdict por achado + quebra nova no diff.
    - Máximo **3 rodadas** por onda. Estourou → **pare** o `/hands-on`, não
      commite a onda, e reporte ao humano os achados abertos (`arquivo:linha`
-     e correção sugerida).
+     e correção sugerida). Para retomar: resolva manualmente, commit ou
+     `git stash`, e rode `/hands-on <spec> <filtro da onda>` de novo.
    - 🟢 SUGGESTION / 💡 NOTE → anote em `## Notas de Review` da Spec:
      `- [onda N] arquivo:linha — texto`. Sem loop.
 
 6. **Commit da onda** (review limpa): stage explícito (arquivos declarados +
-   reportados + Spec) e mensagem
+   reportados + Spec + backlog, quando alterado pelo Passo 1.5.4 e ainda não
+   commitado) e mensagem
    `<tipo>(<escopo>): <slug> — onda N (T1, T2)` com corpo `Spec: <caminho>` e
    `Cobre: <FRs das tarefas>` — ver `.claude/workflows/git-flow.md`.
 
@@ -245,28 +277,43 @@ Os subagentes marcam os próprios critérios; fechar Spec, backlog e branch é
 1. **Verificação final do conjunto.** Rode os comandos de
    `docs/context/guardrails.md` (type-check, lint, testes) sobre o projeto
    inteiro e cole a saída.
-2. **Review final.** `reviewer` com `Modo: final`, `Spec: <caminho>` e
-   `Diff: git diff <BASE>..HEAD` (BASE do Passo 1.5). Uma rodada de correção
-   com a mesma mecânica do Passo 3.5, seguida de commit
-   `fix(<escopo>): <slug> — review final`. Achados 🟡/🟢 restantes →
-   `## Notas de Review`. Restando 🔴 → **não** feche a Spec: pare e reporte.
-3. Confirme que **todos** os checkboxes estão `[x]`. `[x]` de agente que
-   reportou `⚠️ não verificado` não conta — reabra a tarefa.
-4. **Com Pendência Manual** (acumulada no Passo 3.4): Spec continua
+2. **Review final.** `reviewer` com `Modo: final`, `Spec: <caminho>`,
+   `Diff: git diff <BASE>..HEAD` (BASE do Passo 1.5) e
+   `Verificação: <saída do item 1>`.
+   - Sem achados 🔴/🟡: nenhum commit extra — siga para o item 3.
+   - Com achados 🔴/🟡: corrija (mesma atribuição/despacho do Passo 3.5, mas
+     uma **única** rodada de correção), rode `Modo: re-review` para
+     confirmar, repita o item 1 (verificação final) e só então commit
+     `fix(<escopo>): <slug> — review final`. Sem correção aplicada → sem
+     commit.
+   - Achados 🟡/🟢 que restarem → `## Notas de Review`:
+     `- [final] arquivo:linha — texto`.
+   - Restando 🔴 depois da rodada → **não** feche a Spec: pule os itens 4–6,
+     vá direto ao resumo do item 8 listando os achados abertos, e **não**
+     ofereça PR.
+3. **Execução parcial** (filtro do Passo 2, ex. `T2,T3`, deixou tarefas fora
+   desta rodada com critérios ainda `[ ]`): pule os itens 4–6 — Spec e TASK
+   não mudam de Status — e registre "execução parcial" no resumo do item 8.
+4. Confirme que **todos** os checkboxes estão `[x]`, exceto os que carregam
+   Pendência Manual. `[x]` de agente que reportou `⚠️ não verificado` não
+   conta — reabra a tarefa.
+5. **Com Pendência Manual** (acumulada no Passo 3.4): Spec continua
    `approved`, TASK continua `in-progress`. Commit das anotações se houver
    mudança pendente. Não ofereça PR ainda; direcione para `/recheck <spec>`.
-5. **Sem Pendência Manual e sem 🔴:** Spec → `**Status:** done` com
+6. **Sem Pendência Manual e sem 🔴:** Spec → `**Status:** done` com
    `**Concluído em:** YYYY-MM-DD` logo abaixo; TASK → `done`; commit
    `docs(spec): conclui <slug>` (Spec, backlog, `current-state.md`).
-6. **PR.** Ofereça abrir o PR (push e `gh pr create` pedem confirmação):
+7. **PR** (só quando o item 6 fechou a Spec). Ofereça abrir o PR (push e
+   `gh pr create` pedem confirmação):
    `git push -u origin spec/<slug>` e
    `gh pr create --base <branch padrão> --head spec/<slug> --title "<título da Spec>" --body-file <arquivo temporário>`
    com corpo: problema (seção 1), FRs, tabela de verificação com a saída real
    do item 1, Pendências Manuais "(nenhuma)", e o conteúdo de
    `## Notas de Review`. Sem `gh` → imprima os comandos.
-7. Resumo curto: ondas, rodadas de review por onda, commits, tarefas puladas,
-   verificação final, Pendências Manuais (`tarefa — critério — instrução` ou
-   "(nenhuma)"), e link do PR se criado.
+8. Resumo curto: ondas, rodadas de review por onda, commits, tarefas puladas,
+   verificação final, "execução parcial" quando aplicável, achados 🔴
+   abertos da review final quando aplicável, Pendências Manuais
+   (`tarefa — critério — instrução` ou "(nenhuma)"), e link do PR se criado.
 
 ## Regras
 
