@@ -1,0 +1,51 @@
+graph TD
+  Start(("Ideia / requisito"))
+  Init["1  /init-project<br/>Detecta o Modo (single | monorepo | microfrontends) e<br/>conduz entrevista em 9 blocos (0-8): preenche<br/>docs/context/, gera .claude/settings.json"]
+  Modo{"Modo?"}
+  InitUnits["2  /init-app &lt;nome&gt;<br/>/init-package &lt;nome&gt;<br/>Um por app/package: cria a pasta (se faltar)<br/>+ docs/apps|packages/&lt;nome&gt;/"]
+  Backlog["3  /backlog<br/>Gera TASK01..TASKNN a partir de<br/>product.md (root ou por escopo)"]
+  Spec["4  /spec TASK01<br/>Levantamento → gera Spec + plano<br/>técnico  (Status: review)"]
+  Gate{{"⛔ GATE HUMANO — /approve &lt;spec&gt;<br/>valida FR, Arquivos e Verificação,<br/>grava Status: approved + Aprovado por<br/>(spec-gate.mjs bloqueia antes e pede confirmação)"}}
+  Back["5  /back tarefa1, tarefa2...<br/>(ou /hands-on em ondas<br/>via subagente backend)"]
+  Front["/front tela1, tela2...<br/>(ou /hands-on em ondas<br/>via subagente frontend)"]
+  Pend{{"Pendência Manual anotada na Spec<br/>(critério fora do alcance do agente:<br/>device real, credencial, decisão de negócio)"}}
+  Resolve["Você resolve manualmente<br/>e descreve o que ajustou"]
+  Recheck["/recheck &lt;spec&gt; &lt;o que foi ajustado&gt;<br/>Fecha o(s) critério(s) confirmado(s),<br/>relê a Spec inteira"]
+  Review["6  /review [diff]<br/>Revisão em 2 estágios: Funcional → Qualidade<br/>(subagente reviewer — sem Edit/Write)"]
+  Checkpoint["7  /checkpoint (sem parâmetro)<br/>Salva current-state.md, gera changelog,<br/>arquiva Specs concluídas → git commit"]
+  Archive(("8  docs/archive/<br/>Spec concluída"))
+  Retomar["/retomar (sem parâmetro)<br/>Reconstrói contexto após interrupção<br/>(lê current-state.md + changelog + git log)"]
+
+  Start --> Init --> Modo
+  Modo -->|single| Backlog
+  Modo -->|monorepo / microfrontends| InitUnits --> Backlog
+  Backlog --> Spec --> Gate
+  Gate --> Back
+  Gate --> Front
+  Back --> Review
+  Front --> Review
+  Back -.-> Pend
+  Front -.-> Pend
+  Pend --> Resolve --> Recheck
+  Recheck -. ainda falta algo .-> Back
+  Review --> Checkpoint
+  Recheck -->|tudo fechado| Checkpoint
+  Checkpoint --> Archive
+  Checkpoint -. "próxima tarefa (/spec TASK02)" .-> Spec
+  Checkpoint -. após interrupção .-> Retomar
+
+  classDef start fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
+  classDef initStyle fill:#9333ea,stroke:#6b21a8,stroke-width:2px,color:#ffffff;
+  classDef flowStyle fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#ffffff;
+  classDef gateStyle fill:#f97316,stroke:#c2410c,stroke-width:2px,color:#ffffff;
+  classDef workStyle fill:#22c55e,stroke:#15803d,stroke-width:2px,color:#ffffff;
+  classDef reviewStyle fill:#ef4444,stroke:#b91c1c,stroke-width:2px,color:#ffffff;
+  classDef noteStyle fill:#facc15,stroke:#a16207,stroke-width:2px,color:#1f2937;
+
+  class Start,Archive start;
+  class Init,Checkpoint initStyle;
+  class Modo,Gate,Pend gateStyle;
+  class InitUnits,Backlog,Spec flowStyle;
+  class Back,Front,Recheck workStyle;
+  class Review reviewStyle;
+  class Resolve,Retomar noteStyle;
