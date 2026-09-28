@@ -1,6 +1,6 @@
 {
   "name": "@robertourias/scaffold-ia",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Scaffold de harness para projetos com agentes de IA (Claude Code): papeis, specs, guardrails e docs de contexto.",
   "bin": {
     "scaffold-ia": "bin/cli.js"
