@@ -1,5 +1,7 @@
 # Scaffold IA — Next.js & NestJS
 
+[![npm version](https://img.shields.io/npm/v/@robertourias/scaffold-ia.svg)](https://www.npmjs.com/package/@robertourias/scaffold-ia)
+
 Harness de contexto persistente para agentes de IA no **Claude Code**. Define
 papéis, fluxo spec-driven, padrões de código, guardrails de segurança e
 processo de revisão em dois estágios.
@@ -20,14 +22,19 @@ Agentes de IA não sabem sobre seu projeto: stack, convenções, decisões, regr
 
 ### Para um projeto novo
 
-```
-# 1. Copiar scaffold
-cp -r scaffold-ia-projetos/docs    seu-projeto/
-cp -r scaffold-ia-projetos/.claude seu-projeto/
+```bash
+# 1. Instalar o scaffold (copia .claude/ e docs/ para o diretório atual)
+cd seu-projeto
+npx @robertourias/scaffold-ia
 
 # 2. Inicializar no Claude Code (o Bloco 6 gera .claude/settings.json)
 /init-project sistema de gestão de pedidos para restaurantes
 ```
+
+`npx @robertourias/scaffold-ia` nunca sobrescreve arquivo existente por padrão
+(mostra `skip` e segue); use `--force` para sobrescrever uma instalação
+anterior. Alternativa sem npm: `cp -r` dos diretórios `.claude/` e `docs/` a
+partir deste repositório clonado.
 
 O comando detecta o **Modo** do projeto (`single`, `monorepo` ou `microfrontends`) e conduz entrevista em **9 blocos (0–8)** (produto em profundidade, arquitetura, decisões backend, frontend, convenções, **guardrails**, **constituição** e **README do repositório**) e preenche o contexto global em `docs/context/`. Também gera `.claude/settings.json` com os limites de permissão do projeto, e atualiza o `README.md` da raiz para quem chega no projeto pela primeira vez. Em monorepo, crie cada app/package depois com `/init-app <nome>` e `/init-package <nome>`, que geram os docs locais e conduzem o questionário de configuração de cada um.
 
@@ -40,9 +47,9 @@ em vez de sobrescrever, e rode `/init-project` para preencher o que faltar
 (guardrails, constituição). Nenhum arquivo de produto em `docs/context/` precisa
 ser tocado sem necessidade.
 
-```
-cp -r scaffold-ia-projetos/.claude/. seu-projeto/.claude/
-mkdir -p seu-projeto/docs/archive seu-projeto/docs/context/domains
+```bash
+cd seu-projeto
+npx @robertourias/scaffold-ia --force
 ```
 
 ---
@@ -403,9 +410,9 @@ Se você já tem um projeto rodando com uma versão antiga do scaffold e quer
 atualizar para a estrutura atual (harness consolidado em `.claude/`, `docs/`
 só produto):
 
-```
-cp -r scaffold-ia-projetos/.claude/. seu-projeto/.claude/
-mkdir -p seu-projeto/docs/archive seu-projeto/docs/context/domains
+```bash
+cd seu-projeto
+npx @robertourias/scaffold-ia --force
 ```
 
 Se seu projeto ainda tem `docs/commands/`, `docs/skills/`, `docs/workflows/`
