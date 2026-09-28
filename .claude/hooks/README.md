@@ -10,7 +10,7 @@ Ligados em `.claude/settings.example.json` → copie para `.claude/settings.json
 
 | Hook | Evento | Quando | O que faz |
 |------|--------|--------|-----------|
-| `spec-gate.mjs` | `PreToolUse` (`Edit`\|`Write`\|`MultiEdit`) | antes de cada edição | bloqueia código enquanto a Spec ativa estiver `Status: review` |
+| `spec-gate.mjs` | `PreToolUse` (`Edit`\|`Write`\|`MultiEdit`) | antes de cada edição | pede confirmação humana ao autoaprovar uma Spec; bloqueia os arquivos declarados em `Arquivos:` da Spec ativa em `review` |
 | `verify-file.mjs` | `PostToolUse` (`Edit`\|`Write`\|`MultiEdit`) | a cada arquivo editado | ESLint **no arquivo alterado** (rápido) |
 | `verify-project.mjs` | `Stop` | fim do turno | type-check do projeto, se algum `.ts`/`.tsx` mudou |
 
@@ -23,21 +23,34 @@ suíte pode levar minutos e nem toda tarefa a exige.
 
 Antes deste hook, `Status: approved` era só uma instrução no prompt: nada
 impedia um agente de implementar contra uma Spec em `review`, ou de editar o
-próprio campo `Status` para se autoaprovar.
+próprio campo `Status` para se autoaprovar. `spec-gate.mjs` fecha as duas
+lacunas com duas regras.
 
-`spec-gate.mjs` fecha a primeira metade: lê `**Spec ativo:**` em
-`docs/context/current-state.md` (escrito por `/spec` ao gerar a Spec, e por
-`/checkpoint`), resolve o `Status` dessa Spec, e bloqueia `Edit`/`Write`/`MultiEdit`
-fora de `docs/` e `.claude/` enquanto o status for `review`.
+**Regra 1 — autoaprovação.** Toda edição feita por ferramenta do Claude passa
+por este hook; edição humana direta no editor, não. Uma edição via `Edit`/
+`Write`/`MultiEdit` que insere `**Status:** approved` numa Spec
+(`docs/**/specs/*.md` ou `docs/**/archive/*.md`) devolve
+`permissionDecision: "ask"` — o Claude Code pede confirmação humana no prompt
+antes de aplicar a edição. É o caminho que o `/approve` (Task 4) usa; uma
+tentativa de autoaprovação pelo agente vira um prompt que o humano nega.
+
+**Regra 2 — implementação antes da aprovação.** Com a Spec ativa
+(`**Spec ativo:**` em `docs/context/current-state.md`, escrito por `/spec` e
+por `/checkpoint`) em `Status: review`, o hook bloqueia `Edit`/`Write`/
+`MultiEdit` apenas nos arquivos declarados no campo `Arquivos:` de cada
+tarefa do Plano. Uma Spec que não declara nenhum `Arquivos:` bloqueia
+qualquer arquivo de código. `docs/` e `.claude/` nunca são bloqueados por
+esta regra.
 
 **Limites conhecidos, honestos:**
 
-- Não impede o agente de editar o campo `Status` diretamente — isso continua
-  dependendo da instrução (`.claude/skills/planner/SKILL.md`, `back.md`, `front.md`).
-  Um hook não distingue "humano aprovou" de "agente editou a string".
-- É heurístico: identifica a Spec ativa pelo campo declarado, não por análise
-  de qual código pertence a qual Spec. Se `current-state.md` estiver
-  desatualizado, o gate fica cego.
+- **Limitação:** em modo `bypassPermissions` o `ask` da regra 1 passa sem
+  prompt — a autoaprovação não é barrada nesse modo.
+- É heurístico: identifica a Spec ativa pelo campo declarado em
+  `current-state.md`, e os arquivos bloqueados pelo campo `Arquivos:` de cada
+  tarefa, não por análise semântica do conteúdo. Se `current-state.md` ou o
+  Plano estiverem desatualizados, o gate fica cego ou bloqueia o arquivo
+  errado.
 - Falha em aberto sem `current-state.md`, sem campo `Spec ativo:`, ou sem a
   Spec referenciada existir no disco.
 

@@ -1,29 +1,22 @@
 #!/usr/bin/env node
 /**
- * PreToolUse hook — bloqueia edição de código enquanto a Spec ativa não foi
- * aprovada por um humano.
+ * PreToolUse hook — gate de Spec. Matcher esperado: Edit|Write|MultiEdit
  *
- * Matcher esperado: Edit|Write|MultiEdit
+ * Regra 1 — autoaprovação. Toda edição feita por ferramenta do Claude passa
+ * por este hook; edição humana no editor, não. Então: edição via ferramenta
+ * que coloca `**Status:** approved` numa Spec (docs/**\/specs/*.md ou
+ * docs/**\/archive/*.md) devolve permissionDecision "ask" — o humano confirma
+ * no prompt. É o caminho do /approve; tentativa de autoaprovação vira um
+ * prompt que o humano nega.
  *
- * Problema que resolve: o gate "Status: approved" era honra — nada além da
- * instrução no prompt impedia um agente de implementar contra uma Spec em
- * review, ou de editar o próprio campo Status para se autoaprovar. Este hook
- * torna o primeiro caso mecânico. O segundo (editar o campo Status) continua
- * sendo travado apenas pela instrução — um hook não distingue "humano editou
- * a Spec" de "agente editou a Spec" a partir só do path do arquivo.
+ * Regra 2 — implementação antes da aprovação. Com a Spec ativa
+ * (`**Spec ativo:**` em docs/context/current-state.md) em Status review,
+ * bloqueia a edição dos arquivos declarados nos campos `Arquivos:` das
+ * tarefas. Spec sem nenhum `Arquivos:` → bloqueia qualquer código.
+ * docs/ e .claude/ nunca são bloqueados por esta regra. Sem current-state,
+ * sem Spec ativa ou referência quebrada → falha em aberto.
  *
- * Sinal de qual Spec está ativa: `**Spec ativo:**` em
- * docs/context/current-state.md da raiz (o estado da sessão é sempre da raiz;
- * docs/apps/<app>/context/current-state.md e docs/packages/<pkg>/context/
- * current-state.md são apenas fallback legado),
- * escrito por /checkpoint e lido por /retomar. Sem esse sinal (projeto que
- * ainda não rodou /checkpoint, ou tarefa avulsa sem Spec), o hook não tem o
- * que checar — falha em aberto.
- *
- * Escopo do bloqueio: só código-fonte. Edição dentro de docs/ (o planner
- * escrevendo a própria Spec, checkpoint atualizando current-state.md) e
- * dentro de .claude/ (settings, hooks) nunca é bloqueada por este hook.
- *
+ * Limitação: em modo bypassPermissions o "ask" passa sem prompt.
  * Desligar: SCAFFOLD_VERIFY=0
  */
 import { readFileSync, existsSync } from "node:fs";
@@ -40,40 +33,50 @@ try {
   ok();
 }
 
-const file = payload?.tool_input?.file_path;
+const input = payload?.tool_input ?? {};
+const file = input.file_path;
 if (!file) ok();
 
 const root = payload.cwd || process.cwd();
-const rel = path.relative(root, path.resolve(root, file)).split(path.sep).join("/");
+const toRel = (p) =>
+  path.relative(root, path.resolve(root, p)).split(path.sep).join("/");
+const rel = toRel(file);
+if (rel.startsWith("..")) ok(); // fora do projeto
 
-// Só código. Specs, contexto, changelog e config nunca são bloqueados aqui —
-// é exatamente o que o planner/checkpoint/humano precisam poder escrever.
-if (
-  rel.startsWith("..") ||       // fora do projeto
-  rel.startsWith("docs/") ||
-  rel.includes("/docs/") ||
-  rel.startsWith(".claude/") ||
-  rel.includes("/docs/")
-) {
+// --- Regra 1: autoaprovação -------------------------------------------------
+const isSpec = /(^|\/)docs\/(.+\/)?(specs|archive)\/[^/]+\.md$/.test(rel);
+if (isSpec) {
+  const texts = [
+    input.new_string,
+    input.content,
+    ...(Array.isArray(input.edits) ? input.edits.map((e) => e?.new_string) : []),
+  ].filter((t) => typeof t === "string");
+  if (texts.some((t) => /\*\*Status:\*\*\s*approved\b/.test(t))) {
+    process.stdout.write(
+      JSON.stringify({
+        hookSpecificOutput: {
+          hookEventName: "PreToolUse",
+          permissionDecision: "ask",
+          permissionDecisionReason:
+            "Aprovação de Spec exige confirmação humana (/approve).",
+        },
+      }),
+    );
+    ok();
+  }
+}
+
+// --- Regra 2: implementação antes da aprovação ------------------------------
+if (rel.startsWith("docs/") || rel.includes("/docs/") || rel.startsWith(".claude/")) {
   ok();
 }
 
-// Acha o current-state.md mais próximo (fallback legado por escopo; o estado
-// da sessão atual é sempre o da raiz): raiz, ou docs/<apps|packages>/<nome>/
-// context/ se a edição for dentro de um apps/<app> ou packages/<pkg> com
-// contexto próprio. Documentação de escopo mora sob docs/ na raiz, nunca
-// dentro do próprio apps/<app> ou packages/<pkg>.
+// current-state da raiz; por escopo só como fallback legado.
 function findCurrentState(fromRel) {
   const parts = fromRel.split("/");
-  const scopeIdx = parts.findIndex((p) => p === "apps" || p === "packages");
-  if (scopeIdx !== -1 && parts.length > scopeIdx + 1) {
-    const scoped = path.join(
-      root,
-      "docs",
-      parts[scopeIdx],
-      parts[scopeIdx + 1],
-      "context/current-state.md",
-    );
+  const i = parts.findIndex((p) => p === "apps" || p === "packages");
+  if (i !== -1 && parts.length > i + 1) {
+    const scoped = path.join(root, "docs", parts[i], parts[i + 1], "context/current-state.md");
     if (existsSync(scoped)) return scoped;
   }
   const global = path.join(root, "docs/context/current-state.md");
@@ -81,33 +84,39 @@ function findCurrentState(fromRel) {
 }
 
 const statePath = findCurrentState(rel);
-if (!statePath) ok(); // sem checkpoint ainda — nada a checar
+if (!statePath) ok();
 
-const state = readFileSync(statePath, "utf8");
-const specMatch = state.match(/\*\*Spec ativo:\*\*\s*(.+)/);
-const specRef = specMatch?.[1]?.trim();
+const specRef = readFileSync(statePath, "utf8")
+  .match(/\*\*Spec ativo:\*\*\s*(.+)/)?.[1]
+  ?.trim()
+  .replace(/^`|`$/g, "");
+if (!specRef || specRef === "—" || specRef === "-") ok();
 
-if (!specRef || specRef === "—" || specRef === "-") ok(); // nenhuma Spec ativa declarada
+const specPath = path.resolve(root, specRef);
+if (!existsSync(specPath)) ok();
 
-const specPath = path.isAbsolute(specRef)
-  ? specRef
-  : path.join(root, specRef);
+const spec = readFileSync(specPath, "utf8");
+if (spec.match(/\*\*Status:\*\*\s*(\S+)/)?.[1] !== "review") ok();
 
-if (!existsSync(specPath)) ok(); // referência quebrada — não é este hook que resolve isso
+const declared = new Set();
+for (const [, line] of spec.matchAll(/Arquivos:\*{0,2}[ \t]*(.+)/g)) {
+  const ticked = [...line.matchAll(/`([^`]+)`/g)].map((m) => m[1]);
+  const items = ticked.length ? ticked : line.replace(/←.*$/, "").split(",");
+  for (const raw of items) {
+    const p = raw.trim().replace(/\s*\(.*\)$/, "");
+    if (p && !p.startsWith("<") && p !== "—" && p !== "-") declared.add(toRel(p));
+  }
+}
 
-const specBody = readFileSync(specPath, "utf8");
-const statusMatch = specBody.match(/\*\*Status:\*\*\s*(\S+)/);
-const status = statusMatch?.[1];
-
-if (status !== "review") ok(); // approved, done, baseline, ou sem status legível — não bloqueia
+if (declared.size > 0 && !declared.has(rel)) ok(); // arquivo fora da Spec
 
 process.stderr.write(
-  `[guardrail] Spec ativa "${specRef}" está em Status: review — ainda não foi ` +
-    `aprovada por um humano.\n\n` +
-    `Você está tentando editar "${rel}", que parece pertencer a essa Spec. ` +
-    `Implementação não começa antes de "Status: approved".\n\n` +
-    `Se esta edição não tem relação com a Spec ativa, prossiga normalmente — ` +
-    `este bloqueio é heurístico, baseado em qual Spec o current-state.md ` +
-    `declara como ativa, não em análise do conteúdo do arquivo.\n`,
+  `[guardrail] Spec ativa "${specRef}" está em Status: review — ainda não ` +
+    `foi aprovada por um humano.\n\n` +
+    (declared.size > 0
+      ? `"${rel}" está declarado no campo Arquivos: dessa Spec. `
+      : `Essa Spec não declara Arquivos:, então todo código fica bloqueado. `) +
+    `Implementação não começa antes da aprovação: peça ao humano para ` +
+    `revisar e rodar /approve ${specRef}.\n`,
 );
 process.exit(2);
