@@ -3,7 +3,7 @@ name: approve
 description: "Gate humano da Spec: valida e aprova (Status review → approved). Só o humano invoca, com /approve [caminho-da-spec]"
 disable-model-invocation: true
 argument-hint: "[caminho-da-spec]"
-allowed-tools: Read, Edit, Grep, Glob, Bash(git config:*)
+allowed-tools: Read, Edit, Grep, Glob, Bash(git config:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*)
 ---
 
 # Approve — gate humano da Spec
@@ -44,12 +44,19 @@ corrigir. Não corrija a Spec você mesmo.
    `**Aprovado por:** <nome> em <data>`.
 3. Se `**Spec ativo:**` em `docs/context/current-state.md` apontar para outra
    Spec (ou estiver `—`), atualize para esta.
+4. Backlog: se a Spec veio de uma TASK (backlog de origem — root para ID sem
+   prefixo, `docs/$SCOPE/context/backlog.md` para ID prefixado; a coluna
+   "Spec" aponta para esta Spec), mude o Status da TASK para `spec-approved`.
+5. Commit (regras de `.claude/workflows/git-flow.md`, stage explícito: Spec,
+   backlog se mudou, `current-state.md` se mudou):
+   `docs(spec): aprova <slug>`.
 
 ## Passo 4 — Confirmar
 
 ```
 ✅ Spec aprovada: <caminho>
    Aprovado por: <nome> em <data>
+Commit: <hash curto> docs(spec): aprova <slug>
 Próximo: /hands-on <caminho>  (ou /back, /front para tarefas avulsas)
 ```
 
