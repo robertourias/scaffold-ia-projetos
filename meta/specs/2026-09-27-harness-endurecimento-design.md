@@ -1,6 +1,6 @@
 # Harness: endurecimento (sub-projeto A)
 
-**Status:** aguardando revisão
+**Status:** implementado
 **Data:** 2026-09-27
 
 Parte A de 4 da evolução do harness (A endurecimento → B fluxo SDD v2 → C
@@ -33,7 +33,7 @@ instalação via `npx`, e refletir o novo fluxo no README.
 | `docs/assets/` | `meta/assets/` |
 
 - Projetos criam o próprio `docs/changelog/` via `/checkpoint` (já é o comportamento; a pasta não é publicada no npm hoje).
-- Novo `CLAUDE.md` na raiz, só para desenvolvimento do scaffold: specs e planos do harness vão para `meta/specs` e `meta/plans`; `meta/` nunca é copiado para projetos; rodar `node --test meta/tests/` e `node meta/tests/lint-docs.mjs` antes de commitar. Não é publicado (fora de `files`) nem copiado pelo CLI (que copia só `.claude/` e `docs/`).
+- Novo `CLAUDE.md` na raiz, só para desenvolvimento do scaffold: specs e planos do harness vão para `meta/specs` e `meta/plans`; `meta/` nunca é copiado para projetos; rodar `node --test "meta/tests/*.test.mjs"` e `node meta/tests/lint-docs.mjs` antes de commitar. Não é publicado (fora de `files`) nem copiado pelo CLI (que copia só `.claude/` e `docs/`).
 - README aponta imagem para `meta/assets/fluxo-workflow.png`.
 
 ### 2. `/approve`
@@ -79,7 +79,8 @@ Duas regras, na ordem:
 
 - Manter instalação padrão (não destrutiva, `skip` em arquivo existente).
 - **Novo `--upgrade`**: sobrescreve só o harness — `.claude/{agents,commands,hooks,skills,templates,workflows}/**`, `.claude/CLAUDE.md`, `.claude/README.md`, `.claude/settings.example.json`; em `docs/` apenas cria o que faltar (nunca sobrescreve contexto preenchido); nunca toca `.claude/settings.json`/`settings.local.json`. Ao final, lista arquivos de `.claude/settings.example.json` que mudaram e sugere merge manual no `settings.json`.
-- `--force` passa a avisar que sobrescreve também `docs/` (contexto preenchido) e exige confirmação interativa `y/N` quando `docs/context/product.md` do destino existir sem o marcador `**Status do arquivo:** vazio` (ou seja, já preenchido); com stdin não-TTY, recusa sem `--yes`.
+- `--force` pede confirmação interativa `y/N` quando algum arquivo de `docs/` do destino difere do template do pacote (contexto preenchido); com stdin não-TTY recusa sem `--yes`.
+- `--upgrade` e `--force` só reescrevem arquivos cujo conteúdo difere; a versão em `.claude/.scaffold-version` é gravada em instalação limpa, `--upgrade` e `--force`.
 - Grava `.claude/.scaffold-version` com a versão do pacote em instalação/upgrade; `--upgrade` mostra `de X para Y`.
 - `package.json`: `files` segue excluindo `meta/`, `CLAUDE.md` da raiz e `docs/changelog` (já excluídos pela whitelist); bump de versão para `1.1.0` fica para o release, fora desta spec.
 - README: Quick Start usa `npx` (novo) e `npx ... --upgrade` (existente/migração) — remove recomendação de `--force` para upgrade (hoje apagaria `docs/context/`).
@@ -111,7 +112,7 @@ Branch/commit/PR no fluxo, loop de review no `/hands-on`, emenda de Spec aprovad
 
 ## Verificação
 
-- `node --test meta/tests/` passa.
+- `node --test "meta/tests/*.test.mjs"` passa.
 - `node meta/tests/lint-docs.mjs` sai 0.
 - `grep -rni "superpowers\|comparativo" .claude docs README.md` vazio.
 - `ls docs/superpowers docs/changelog docs/assets` inexistentes; `meta/{specs,plans,changelog,assets,tests}` existem.
