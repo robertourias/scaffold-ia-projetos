@@ -5,18 +5,23 @@
  * Regra 1 — autoaprovação. Toda edição feita por ferramenta do Claude passa
  * por este hook; edição humana no editor, não. A decisão é sobre o `Status`
  * RESULTANTE da edição, não sobre o texto novo isolado: computa o texto final
- * (Edit: aplica old_string→new_string no arquivo atual, todas as ocorrências
- * se replace_all, senão só a primeira; MultiEdit: aplica edits[] em sequência;
- * Write: content) numa Spec (docs/**\/specs/*.md ou docs/**\/archive/*.md), e
- * compara o Status de antes (arquivo atual, ou null se ele ainda não existe)
- * com o de depois. Se depois !== "review" e (antes === "review" ou
- * antes === null) — toda saída de review (approved, Approved, done, aprovado,
- * remoção da linha Status) ou Spec nova já fora de review — devolve
- * permissionDecision "ask", o humano confirma no prompt. Se old_string não é
- * encontrado no arquivo (não dá para computar o resultado), cai no fallback:
- * checagem literal de `**Status:** approved` em qualquer texto novo. É o
- * caminho do /approve; tentativa de autoaprovação vira um prompt que o
- * humano nega.
+ * (Edit: aplica old_string→new_string no arquivo atual via indexOf/slice —
+ * NUNCA String#replace(string,string), que interpreta $&/$`/$'/$$ em
+ * new_string —, todas as ocorrências se replace_all, senão só a primeira;
+ * MultiEdit: aplica edits[] em sequência; Write: content) numa Spec
+ * (docs/**\/specs/*.md ou docs/**\/archive/*.md), e compara o Status de antes
+ * com o de depois. Quebras de linha são normalizadas (\r\n → \n) em ambos os
+ * lados antes de comparar, porque o Claude Code pode normalizar new_string
+ * mesmo com arquivo em CRLF. "Antes" é null só quando o ARQUIVO não existe
+ * (Spec nova) — um arquivo existente sem linha `**Status:**` legível conta
+ * como um Status qualquer (não dispara a regra sozinho, não é tratado como
+ * Spec nova). Se depois !== "review" e (antes === "review" ou antes === null)
+ * — toda saída de review (approved, Approved, done, aprovado, remoção da
+ * linha Status) ou Spec nova já fora de review — devolve permissionDecision
+ * "ask", o humano confirma no prompt. Se não dá para computar o resultado
+ * (old_string não encontrado), cai no fallback: qualquer texto novo que
+ * declare `**Status:**` com valor diferente de review. É o caminho do
+ * /approve; tentativa de autoaprovação vira um prompt que o humano nega.
  *
  * Regra 2 — implementação antes da aprovação. Com a Spec ativa
  * (`**Spec ativo:**` em docs/context/current-state.md) em Status review,
@@ -55,33 +60,52 @@ if (rel.startsWith("..")) ok(); // fora do projeto
 // --- Regra 1: autoaprovação -------------------------------------------------
 const isSpec = /(^|\/)docs\/(.+\/)?(specs|archive)\/[^/]+\.md$/.test(rel);
 if (isSpec) {
+  // \r\n → \n antes de qualquer comparação: Claude Code pode normalizar
+  // quebras de linha ao aplicar a edição, então old_string/new_string/content
+  // chegam em LF mesmo quando o arquivo em disco está em CRLF.
+  const normalizeNL = (s) => s.replace(/\r\n/g, "\n");
+
+  // Aplica uma edição sem NUNCA passar new_string como segundo argumento de
+  // String#replace: strings de substituição interpretam padrões especiais
+  // ($&, $`, $', $$, $1...) — um new_string literal "$&" reinsere o texto
+  // casado em vez do literal "$&". indexOf/slice trata new_string como
+  // texto puro. replace_all usa split/join, que já é seguro.
+  const applyEdit = (text, oldStr, newStr, replaceAll) => {
+    if (replaceAll) return text.split(oldStr).join(newStr);
+    const i = text.indexOf(oldStr);
+    if (i === -1) return null;
+    return text.slice(0, i) + newStr + text.slice(i + oldStr.length);
+  };
+
   const fileAbs = path.resolve(root, file);
-  const beforeText = existsSync(fileAbs) ? readFileSync(fileAbs, "utf8") : null;
-  const beforeStatus = beforeText?.match(/\*\*Status:\*\*\s*(\S+)/)?.[1] ?? null;
+  const beforeText = existsSync(fileAbs) ? normalizeNL(readFileSync(fileAbs, "utf8")) : null;
+  // beforeStatus: null só quando o ARQUIVO não existe ainda (Spec nova).
+  // Arquivo existente sem linha `**Status:**` legível vira "" — não é
+  // "review" nem null, então não conta como caso de Spec nova.
+  const beforeStatus = beforeText == null ? null : (beforeText.match(/\*\*Status:\*\*\s*(\S+)/)?.[1] ?? "");
 
   // Computa o texto resultante da edição, quando dá para computar.
   let afterText = null;
   if (typeof input.content === "string") {
-    afterText = input.content; // Write
+    afterText = normalizeNL(input.content); // Write
   } else if (Array.isArray(input.edits)) {
     // MultiEdit: aplica edits[] em sequência sobre o arquivo atual.
     if (beforeText != null) {
       let text = beforeText;
       for (const e of input.edits) {
-        if (typeof e?.old_string !== "string" || typeof e?.new_string !== "string" || !text.includes(e.old_string)) {
+        if (typeof e?.old_string !== "string" || typeof e?.new_string !== "string") {
           text = null;
           break;
         }
-        text = e.replace_all ? text.split(e.old_string).join(e.new_string) : text.replace(e.old_string, e.new_string);
+        text = applyEdit(text, normalizeNL(e.old_string), normalizeNL(e.new_string), e.replace_all);
+        if (text == null) break;
       }
       afterText = text;
     }
   } else if (typeof input.old_string === "string" && typeof input.new_string === "string") {
     // Edit
-    if (beforeText != null && beforeText.includes(input.old_string)) {
-      afterText = input.replace_all
-        ? beforeText.split(input.old_string).join(input.new_string)
-        : beforeText.replace(input.old_string, input.new_string);
+    if (beforeText != null) {
+      afterText = applyEdit(beforeText, normalizeNL(input.old_string), normalizeNL(input.new_string), input.replace_all);
     }
   }
 
@@ -91,13 +115,19 @@ if (isSpec) {
     shouldAsk = afterStatus !== "review" && (beforeStatus === "review" || beforeStatus === null);
   } else {
     // Não dá para computar o resultado (old_string não encontrado, arquivo
-    // novo sem content/edits legíveis, etc.) — fallback: checagem literal.
+    // novo sem content/edits legíveis, etc.) — fallback: qualquer texto novo
+    // que declare **Status:** com um valor diferente de review já pede ask.
     const texts = [
       input.new_string,
       input.content,
       ...(Array.isArray(input.edits) ? input.edits.map((e) => e?.new_string) : []),
-    ].filter((t) => typeof t === "string");
-    shouldAsk = texts.some((t) => /\*\*Status:\*\*\s*approved\b/.test(t));
+    ]
+      .filter((t) => typeof t === "string")
+      .map(normalizeNL);
+    shouldAsk = texts.some((t) => {
+      const m = t.match(/\*\*Status:\*\*\s*(\S+)/);
+      return m != null && m[1] !== "review";
+    });
   }
 
   if (shouldAsk) {

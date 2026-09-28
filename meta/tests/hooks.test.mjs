@@ -181,6 +181,68 @@ test("Spec review com Arquivos: só em prosa (template) → bloqueia qualquer c�
   assert.equal(r.code, 2);
 });
 
+test("Edit new_string com padrão de substituição ($&) → ask, não interpretado como regex replacement", () => {
+  const cwd = project();
+  const r = run(cwd, { file_path: "docs/specs/s.md", old_string: "review", new_string: "$&" });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("MultiEdit new_string com padrão de substituição ($&) → ask", () => {
+  const cwd = project();
+  const r = run(cwd, {
+    file_path: "docs/specs/s.md",
+    edits: [{ old_string: "review", new_string: "$&" }],
+  });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("Spec CRLF + old_string multi-linha com \\n → normaliza e computa → ask", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "spec-gate-"));
+  mkdirSync(path.join(dir, "docs/context"), { recursive: true });
+  mkdirSync(path.join(dir, "docs/specs"), { recursive: true });
+  writeFileSync(
+    path.join(dir, "docs/specs/s.md"),
+    "# Spec\r\n\r\n**Status:** review\r\n\r\n### Tarefa 1: T1\r\n- **Arquivos:** `src/a.ts`\r\n",
+  );
+  writeFileSync(
+    path.join(dir, "docs/context/current-state.md"),
+    "# Status\n\n**Spec ativo:** docs/specs/s.md\n",
+  );
+  const r = run(dir, {
+    file_path: "docs/specs/s.md",
+    old_string: "**Status:** review\n\n### Tarefa 1",
+    new_string: "**Status:** done\n\n### Tarefa 1",
+  });
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+});
+
+test("Spec existente sem linha Status, edição de checkbox → libera sem ask (não é Spec nova)", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "spec-gate-"));
+  mkdirSync(path.join(dir, "docs/context"), { recursive: true });
+  mkdirSync(path.join(dir, "docs/specs"), { recursive: true });
+  writeFileSync(
+    path.join(dir, "docs/specs/s.md"),
+    "# Spec\n\n## 6. Plano\n\n### Tarefa 1: T1\n- **Arquivos:** `src/a.ts`\n",
+  );
+  writeFileSync(
+    path.join(dir, "docs/context/current-state.md"),
+    "# Status\n\n**Spec ativo:** docs/specs/s.md\n",
+  );
+  const r = run(dir, {
+    file_path: "docs/specs/s.md",
+    old_string: "### Tarefa 1: T1",
+    new_string: "### Tarefa 1: T1\n- [x] critério",
+  });
+  assert.equal(r.code, 0);
+  assert.equal(r.out.trim(), "");
+});
+
 test("edição de Spec sem aprovar → libera sem ask", () => {
   const cwd = project();
   const r = run(cwd, { file_path: "docs/specs/s.md", new_string: "- [x] critério" });
