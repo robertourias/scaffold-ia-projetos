@@ -49,6 +49,21 @@ tarefa do Plano. Uma Spec que não declara nenhum `Arquivos:` bloqueia
 qualquer arquivo de código. `docs/` e `.claude/` nunca são bloqueados por
 esta regra.
 
+**Regra 3 — emenda em Spec aprovada.** Com Status antes = `approved`,
+compara o conteúdo normativo antes/depois. Não conta como emenda: marcar
+checkbox, blocos de Pendência Manual, as seções `## Notas de Review` e
+`## Emendas`, e as linhas `Status`/`Aprovado por`/`Concluído em` (transição
+`approved → done` é permitida). Diferença no conteúdo normativo devolve no
+stdout:
+
+```json
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Emenda em Spec aprovada — registre o que mudou e por quê em ## Emendas."}}
+```
+
+Texto não computável (old_string não encontrado, etc.) → não pede. É o
+caminho que registra emendas pós-aprovação em `## Emendas` em vez de editar a
+Spec aprovada em silêncio.
+
 **Limites conhecidos, honestos:**
 
 - **Limitação:** em modo `bypassPermissions` o `ask` da regra 1 passa sem
@@ -72,8 +87,9 @@ esta regra.
 Três saídas possíveis. **exit 2** + mensagem no `stderr` (Regra 2, bloqueio) →
 o Claude Code injeta o `stderr` de volta no contexto e o agente corrige antes
 de seguir. **exit 0** com o JSON `permissionDecision: "ask"` no stdout (Regra
-1, autoaprovação) → o Claude Code pede confirmação humana antes de aplicar a
-edição. **exit 0** silencioso → o hook não tem objeção, a edição segue.
+1 — autoaprovação, ou Regra 3 — emenda em Spec aprovada; dois `reason`
+possíveis) → o Claude Code pede confirmação humana antes de aplicar a edição.
+**exit 0** silencioso → o hook não tem objeção, a edição segue.
 
 ## Fail open — invariante
 

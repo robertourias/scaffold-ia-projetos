@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -153,10 +153,15 @@ test("Write de Spec NOVA já em review → libera sem ask", () => {
 
 test("Edit marcando checkbox em Spec já approved → libera sem ask", () => {
   const cwd = project({ status: "approved" });
+  // Regra 3 compara o conteúdo normativo antes/depois: para exercitar de fato
+  // a marcação de um checkbox (e não a adição de um critério novo), o
+  // checkbox precisa já existir no arquivo antes da edição sob teste.
+  const specPath = path.join(cwd, "docs/specs/s.md");
+  writeFileSync(specPath, readFileSync(specPath, "utf8") + "- [ ] critério\n");
   const r = run(cwd, {
     file_path: "docs/specs/s.md",
-    old_string: "### Tarefa 1: T1",
-    new_string: "### Tarefa 1: T1\n- [x] critério",
+    old_string: "- [ ] critério",
+    new_string: "- [x] critério",
   });
   assert.equal(r.code, 0);
   assert.equal(r.out.trim(), "");
@@ -258,4 +263,136 @@ test("SCAFFOLD_VERIFY=0 → libera", () => {
     env: { ...process.env, SCAFFOLD_VERIFY: "0" },
   });
   assert.equal(r.status, 0);
+});
+
+// --- Regra 3: emendas em Spec aprovada --------------------------------------
+
+const SPEC_APROVADA = [
+  "# Spec",
+  "",
+  "**Status:** approved",
+  "**Aprovado por:** Ana em 2026-10-01",
+  "",
+  "## 3. Requisitos Funcionais",
+  "",
+  "- **FR-001:** O usuário entra com Google.",
+  "",
+  "## 6. Plano",
+  "",
+  "### Tarefa 1: T1",
+  "- **Arquivos:** `src/a.ts`",
+  "- **Critérios de Aceite:**",
+  "  - [ ] Dado X, quando Y, então Z.",
+  "",
+  "## Notas de Review",
+  "",
+  "## Emendas",
+  "",
+].join("\n");
+
+function aprovada(text = SPEC_APROVADA) {
+  const dir = project({ status: "approved" });
+  writeFileSync(path.join(dir, "docs/specs/s.md"), text);
+  return dir;
+}
+
+const EMENDA = /Emenda em Spec aprovada/;
+const noAsk = (r) => {
+  assert.equal(r.code, 0);
+  assert.equal(r.out.trim(), "");
+};
+const askEmenda = (r) => {
+  assert.equal(r.code, 0);
+  const json = JSON.parse(r.out);
+  assert.equal(json.hookSpecificOutput.permissionDecision, "ask");
+  assert.match(json.hookSpecificOutput.permissionDecisionReason, EMENDA);
+};
+
+test("emenda: marcar checkbox → sem ask", () => {
+  const cwd = aprovada();
+  noAsk(run(cwd, { file_path: "docs/specs/s.md", old_string: "  - [ ] Dado X", new_string: "  - [x] Dado X" }));
+});
+
+test("emenda: anotar Pendência Manual → sem ask", () => {
+  const cwd = aprovada();
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "  - [ ] Dado X, quando Y, então Z.",
+      new_string:
+        "  - [ ] Dado X, quando Y, então Z.\n    > 🟡 Pendência Manual: testar em iOS real\n    > Instrução: rodar no device e colar evidência",
+    }),
+  );
+});
+
+test("emenda: escrever em Notas de Review e Emendas → sem ask", () => {
+  const cwd = aprovada();
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "## Notas de Review\n",
+      new_string: "## Notas de Review\n\n- [onda 1] src/a.ts:10 — nome melhor\n",
+    }),
+  );
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "## Emendas\n",
+      new_string: "## Emendas\n\n- 2026-10-02 — texto — motivo — Ana\n",
+    }),
+  );
+});
+
+test("emenda: Spec antiga ganha seções novas no fim → sem ask", () => {
+  const antiga = SPEC_APROVADA.split("## Notas de Review")[0].trimEnd() + "\n";
+  const cwd = aprovada(antiga);
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      content: antiga + "\n## Emendas\n\n- 2026-10-02 — x — y — Ana\n",
+    }),
+  );
+});
+
+test("emenda: approved → done com Concluído em → sem ask", () => {
+  const cwd = aprovada();
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "**Status:** approved\n",
+      new_string: "**Status:** done\n**Concluído em:** 2026-10-05\n",
+    }),
+  );
+});
+
+test("emenda: mudar texto de FR → ask de emenda", () => {
+  const cwd = aprovada();
+  askEmenda(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "entra com Google.",
+      new_string: "entra com Google e Apple.",
+    }),
+  );
+});
+
+test("emenda: adicionar tarefa → ask de emenda", () => {
+  const cwd = aprovada();
+  askEmenda(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "## Notas de Review",
+      new_string: "### Tarefa 2: T2\n- **Arquivos:** `src/b.ts`\n\n## Notas de Review",
+    }),
+  );
+});
+
+test("emenda: Spec aprovada em CRLF, só checkbox → sem ask", () => {
+  const cwd = aprovada(SPEC_APROVADA.replace(/\n/g, "\r\n"));
+  noAsk(run(cwd, { file_path: "docs/specs/s.md", old_string: "  - [ ] Dado X", new_string: "  - [x] Dado X" }));
+});
+
+test("emenda: Spec em review não usa regra 3 (edição de FR → sem ask)", () => {
+  const cwd = aprovada(SPEC_APROVADA.replace("**Status:** approved", "**Status:** review"));
+  noAsk(run(cwd, { file_path: "docs/specs/s.md", old_string: "entra com Google.", new_string: "entra com Apple." }));
 });
