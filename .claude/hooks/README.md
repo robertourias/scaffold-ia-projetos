@@ -81,6 +81,13 @@ Spec aprovada em silêncio.
   errado.
 - Falha em aberto sem `current-state.md`, sem campo `Spec ativo:`, ou sem a
   Spec referenciada existir no disco.
+- Rebaixar uma Spec `approved` de volta para `review` (ou apagar a linha
+  `**Status:**`) passa pela Regra 3 em silêncio: as linhas de Status são
+  ignoradas de propósito na comparação normativa, então essa mudança sozinha
+  não conta como emenda.
+- A normalização de checkbox da Regra 3 só reconhece marcadores `-`/`*`
+  (`- [x]` → `- [ ]`); um checklist com marcador `+` (`+ [x]`) não é
+  normalizado e marcar/desmarcar esse item numa Spec aprovada gera `ask`.
 
 ## Contrato
 

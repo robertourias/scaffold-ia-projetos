@@ -396,3 +396,67 @@ test("emenda: Spec em review não usa regra 3 (edição de FR → sem ask)", () 
   const cwd = aprovada(SPEC_APROVADA.replace("**Status:** approved", "**Status:** review"));
   noAsk(run(cwd, { file_path: "docs/specs/s.md", old_string: "entra com Google.", new_string: "entra com Apple." }));
 });
+
+// --- Regra 3, fix round 1: pendência ✅, linha em branco, seção numerada ----
+
+const SPEC_COM_PENDENCIA = SPEC_APROVADA.replace(
+  "  - [ ] Dado X, quando Y, então Z.\n",
+  "  - [ ] Dado X, quando Y, então Z.\n    > 🟡 Pendência Manual: testar em iOS real\n    > Instrução: rodar no device e colar evidência\n",
+);
+
+test("emenda: /recheck troca 🟡 por ✅ e marca [x] → sem ask", () => {
+  const cwd = aprovada(SPEC_COM_PENDENCIA);
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string:
+        "  - [ ] Dado X, quando Y, então Z.\n    > 🟡 Pendência Manual: testar em iOS real\n    > Instrução: rodar no device e colar evidência",
+      new_string:
+        "  - [x] Dado X, quando Y, então Z.\n    > ✅ Pendência Manual resolvida em 2026-10-10 via /recheck: testado em device real, sem falhas.",
+    }),
+  );
+});
+
+test("emenda: MultiEdit /recheck fecha pendência e conclui approved→done → sem ask", () => {
+  const cwd = aprovada(SPEC_COM_PENDENCIA);
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      edits: [
+        {
+          old_string:
+            "  - [ ] Dado X, quando Y, então Z.\n    > 🟡 Pendência Manual: testar em iOS real\n    > Instrução: rodar no device e colar evidência",
+          new_string:
+            "  - [x] Dado X, quando Y, então Z.\n    > ✅ Pendência Manual resolvida em 2026-10-10 via /recheck: testado em device real, sem falhas.",
+        },
+        {
+          old_string: "**Status:** approved\n",
+          new_string: "**Status:** done\n**Concluído em:** 2026-10-10\n",
+        },
+      ],
+    }),
+  );
+});
+
+test("emenda: linha em branco inserida entre duas linhas → sem ask", () => {
+  const cwd = aprovada();
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "- **Arquivos:** `src/a.ts`\n- **Critérios de Aceite:**",
+      new_string: "- **Arquivos:** `src/a.ts`\n\n- **Critérios de Aceite:**",
+    }),
+  );
+});
+
+test("emenda: seção numerada '## 9. Emendas' recebe entrada → sem ask", () => {
+  const texto = SPEC_APROVADA.replace("## Emendas", "## 9. Emendas");
+  const cwd = aprovada(texto);
+  noAsk(
+    run(cwd, {
+      file_path: "docs/specs/s.md",
+      old_string: "## 9. Emendas\n",
+      new_string: "## 9. Emendas\n\n- 2026-10-02 — texto — motivo — Ana\n",
+    }),
+  );
+});
