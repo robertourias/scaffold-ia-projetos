@@ -1,7 +1,7 @@
 # Template de CI do scaffold — instalado pelo /init-project (Bloco 6d) em
-# .github/workflows/verify.yml. Os passos marcados com "# scaffold:<nome>"
-# recebem os comandos de docs/context/guardrails.md; verificação
-# "(não configurado)" tem o passo removido.
+# .github/workflows/verify.yml. Os passos marcados com `scaffold:<nome>`
+# (no fim da linha `run:`) recebem os comandos de docs/context/guardrails.md;
+# verificação "(não configurado)" tem o passo removido.
 name: verify
 
 on:
