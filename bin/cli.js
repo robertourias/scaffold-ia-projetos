@@ -70,12 +70,28 @@ const VERSION_FILE = ".claude/.scaffold-version";
 
 const stats = { created: 0, overwritten: 0, skipped: 0, harnessSkipped: 0, harnessOverwritten: 0 };
 
+// Binario = .png (por extensao) ou conteudo com byte NUL. Para tudo o mais
+// (texto), compara depois de normalizar CRLF -> LF: um arquivo instalado com
+// line endings diferentes do pacote (git core.autocrlf, edicao no Windows)
+// nao deve contar como alterado de verdade nem ser sobrescrito/bloqueado so
+// por isso.
+function isBinaryPath(p) {
+  return p.toLowerCase().endsWith(".png");
+}
+
 function filesEqual(a, b) {
+  let bufA, bufB;
   try {
-    return fs.readFileSync(a).equals(fs.readFileSync(b));
+    bufA = fs.readFileSync(a);
+    bufB = fs.readFileSync(b);
   } catch {
     return false;
   }
+  if (isBinaryPath(a) || isBinaryPath(b) || bufA.includes(0) || bufB.includes(0)) {
+    return bufA.equals(bufB);
+  }
+  const normalize = (buf) => buf.toString("utf8").replace(/\r\n/g, "\n");
+  return normalize(bufA) === normalize(bufB);
 }
 
 function copyRecursive(src, dest, overwrite, kind) {

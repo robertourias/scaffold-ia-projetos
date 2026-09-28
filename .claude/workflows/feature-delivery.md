@@ -26,7 +26,7 @@ Requirement → [Fase 0: Spec & Plan] → ⛔ GATE: aprovação humana → Backe
 O solicitante deve:
 - Revisar a especificação e o plano técnico gerados.
 - Corrigir ambiguidades, escopos incorretos ou tarefas faltantes.
-- Alterar `Status: review` → `Status: approved` no arquivo.
+- Rodar `/approve <caminho-da-spec>` (ou editar o Status no editor).
 
 **Nenhuma fase subsequente começa antes deste gate ser cumprido.**
 

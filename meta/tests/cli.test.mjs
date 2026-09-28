@@ -124,3 +124,25 @@ test("--upgrade sem mudanças não imprime overwrite; com mudança imprime só o
   assert.equal(overwriteLines.length, 1);
   assert.match(overwriteLines[0], /commands[\\/]spec\.md/);
 });
+
+test("--upgrade não sobrescreve arquivo instalado só com line endings CRLF", () => {
+  const dir = tmp();
+  run(dir);
+  const specPath = path.join(dir, ".claude/commands/spec.md");
+  writeFileSync(specPath, readFileSync(specPath, "utf8").replace(/\n/g, "\r\n"));
+  const r = run(dir, "--upgrade");
+  assert.equal(r.status, 0, r.stderr);
+  const overwriteLines = r.stdout
+    .split("\n")
+    .filter((l) => l.includes("overwrite") && /commands[\\/]spec\.md/.test(l));
+  assert.equal(overwriteLines.length, 0);
+});
+
+test("--force não interativo não recusa quando docs/ diverge só em line endings (CRLF)", () => {
+  const dir = tmp();
+  run(dir);
+  const decisionsPath = path.join(dir, "docs/context/decisions.md");
+  writeFileSync(decisionsPath, readFileSync(decisionsPath, "utf8").replace(/\n/g, "\r\n"));
+  const r = run(dir, "--force");
+  assert.equal(r.status, 0, r.stderr);
+});

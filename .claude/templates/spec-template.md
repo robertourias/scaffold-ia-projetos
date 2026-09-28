@@ -28,7 +28,7 @@
 - **FR-002:** <requisito mensurável e verificável>
 
 > Cada FR deve ser independente e testável. Toda tarefa na seção 6 declara quais
-> FR cobre (campo `Cobre:`); a tabela de rastreabilidade na seção 8 fecha o
+> FR cobre (campo `Cobre:`); a tabela de rastreabilidade na seção 7 fecha o
 > ciclo FR → tarefa → teste.
 
 ---
@@ -129,5 +129,5 @@ Como provar que esta Spec foi entregue. Comandos reais de
 <!-- 
 GATE DE APROVAÇÃO
 Revise as regras de negócio e as tarefas técnicas.
-Se tudo estiver correto, rode `/approve <caminho-desta-spec>` para liberar a implementação (ou altere o Status para approved no editor).
+Se tudo estiver correto, rode `/approve` com o caminho desta Spec para liberar a implementação (ou altere o Status para approved no editor).
 -->

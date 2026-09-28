@@ -138,7 +138,7 @@ isso a inicialização é obrigada a instalar limites antes de liberar o fluxo.
 
 | Hook | Quando | O que roda |
 | --- | --- | --- |
-| `spec-gate.mjs` | antes de cada edição | bloqueia código se a Spec ativa estiver `Status: review` |
+| `spec-gate.mjs` | antes de cada edição | pede confirmação ao aprovar Spec; bloqueia os `Arquivos:` da Spec ativa em review |
 | `verify-file.mjs` | a cada arquivo editado | ESLint no arquivo alterado |
 | `verify-project.mjs` | fim do turno | type-check, se algum `.ts`/`.tsx` mudou |
 

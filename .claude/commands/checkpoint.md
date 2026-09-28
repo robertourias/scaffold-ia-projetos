@@ -97,7 +97,9 @@ Abra `docs/changelog/YYYY-MM-DD.md` (usando a data atual — sempre na raiz, cha
 
 Liste os arquivos em `docs/specs/` (e `docs/$SCOPE/specs/` de cada escopo inferido), exceto `spec-template.md`. Para cada spec com `Status: approved`, verifique se **todos** os Critérios de Aceite das tarefas estão marcados `[x]`.
 
-- Se sim: mova o arquivo para `docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não existir).
+- Se sim: mova com `git mv` (ou `mv`) — não recrie o arquivo com Write — para
+  `docs/archive/` (ou `docs/$SCOPE/archive/` do escopo, criando a pasta se não
+  existir).
 - Se houver tarefa incompleta: mantenha em seu `specs/` de origem — ainda em andamento.
 
 Isso replica o passo de arquivamento da Fase 6 do `.claude/workflows/feature-delivery.md`, garantido mesmo se o merge não passou por lá.

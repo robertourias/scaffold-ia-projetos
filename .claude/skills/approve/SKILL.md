@@ -30,7 +30,7 @@ Leia a Spec e verifique:
 | Rastreabilidade | todo `FR-XXX` da seção 3 aparece na tabela da seção de Rastreabilidade |
 | Arquivos | toda tarefa tem `Arquivos:` preenchido (sem `caminho/a.ts` do template) |
 | Verificação | a seção Verificação não tem `<comando>` |
-| Placeholders | não sobrou `<...>` do template no corpo |
+| Placeholders | não sobrou `<...>` do template no corpo (ignore comentários HTML `<!-- -->`) |
 
 Mostre o resultado como lista ✅/❌. Se houver ❌, pergunte:
 "Aprovar mesmo assim? (s/N)" e **espere** a resposta. N → pare e sugira o que

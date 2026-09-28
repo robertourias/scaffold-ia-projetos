@@ -95,7 +95,8 @@ Pare a execução e pergunte antes de prosseguir quando a tarefa envolver:
 - **Somente humano** aprova: via `/approve <spec>` (valida e grava
   `Status: approved` + `Aprovado por`) ou editando o Status no editor. Agente
   que tentar aprovar via ferramenta cai em confirmação obrigatória do
-  `spec-gate.mjs`.
+  `spec-gate.mjs`. Se a Spec parece pronta, avise o humano para rodar
+  `/approve` e pare — nunca edite o Status.
 - Agente marca `[x]` num Critério de Aceite **apenas** com evidência de verificação
   (seção 1) na mesma resposta.
 - **Mecânico, não só honra:** `.claude/hooks/spec-gate.mjs` aplica duas regras.

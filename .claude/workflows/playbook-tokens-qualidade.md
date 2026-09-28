@@ -37,7 +37,7 @@ Na dúvida entre Econômico e Rigor: comece Econômico no `/spec`; se a entrevis
 ```text
 /retomar
 /spec TASK0N | requisito
-# humano: Status → approved
+/approve docs/specs/YYYY-MM-DD-<topic>.md   # só humano
 /back  … (batch 2–3 tarefas pequenas)   e/ou
 /front … (batch)
 # se a Spec tiver ondas com 2+ tarefas independentes:
