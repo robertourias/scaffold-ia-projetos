@@ -196,9 +196,18 @@ Leia `.claude/templates/ci/verify.yml` e monte o workflow do projeto:
   comando real da seção 1 de `docs/context/guardrails.md`; verificação
   `(não configurado)` → remova o passo inteiro;
 - gerenciador de pacotes pelo lockfile: `pnpm-lock.yaml` → descomente
-  `pnpm/action-setup`, `cache: pnpm`, `pnpm install --frozen-lockfile`;
-  `yarn.lock` → `cache: yarn`, `yarn install --frozen-lockfile`; senão npm;
-- versão do Node: `.nvmrc` ou `engines.node` do `package.json` quando houver;
+  `pnpm/action-setup`, `cache: pnpm`, `pnpm install --frozen-lockfile`. Se o
+  `package.json` tiver `packageManager: "pnpm@X"`, apenas descomente
+  `pnpm/action-setup`; senão, descomente com `with:` / `version: <versão do
+  pnpm do projeto, ou "9">`. `yarn.lock` → `cache: yarn`, `yarn install
+  --frozen-lockfile`; senão npm;
+- **sem nenhum lockfile** (`package-lock.json`, `pnpm-lock.yaml`,
+  `yarn.lock`): remova a linha `cache:` do `actions/setup-node` (falha sem
+  lockfile) e troque o passo de instalação para `npm install`; avise o
+  usuário que é recomendável commitar um lockfile;
+- versão do Node: `.nvmrc` presente → troque `node-version: lts/*` por
+  `node-version-file: .nvmrc`; senão, `engines.node` do `package.json` quando
+  houver → `node-version: <valor>`; senão, mantenha `lts/*`;
 - branch em `push.branches`: o branch padrão do repositório.
 
 Pergunte: "Instalo em `.github/workflows/verify.yml`?" Se o arquivo já

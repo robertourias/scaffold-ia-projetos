@@ -15,13 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Descomente se o projeto usa pnpm (pnpm-lock.yaml):
+      # Descomente se o projeto usa pnpm (pnpm-lock.yaml). Sem
+      # packageManager no package.json, acrescente with: / version: <versão>:
       # - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
-          cache: npm # troque para pnpm ou yarn conforme o lockfile
+          node-version: lts/* # ou node-version-file: .nvmrc
+          cache: npm # troque para pnpm/yarn; remova esta linha se não houver lockfile
 
       - name: Instalar dependências
         run: npm ci # pnpm install --frozen-lockfile | yarn install --frozen-lockfile
