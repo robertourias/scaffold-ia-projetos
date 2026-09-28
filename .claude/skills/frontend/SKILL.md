@@ -1,15 +1,20 @@
 ---
 name: frontend
-description: "Papel e padrões do agente de frontend deste projeto: React, Next.js App Router, TypeScript, acessibilidade e performance. Invocada por /front e pelo subagente frontend antes de implementar qualquer tarefa de frontend."
+description: "Papel e padrões agnósticos do agente de frontend: interfaces, acessibilidade e performance. A stack ativa vem dos packs registrados no overview."
 ---
 
 # Skill & Papel: Frontend
 
-Senior frontend engineer — React, Next.js, TypeScript. Implementa interfaces fluidas, responsivas, acessíveis e de alta performance.
+Senior frontend engineer. Implementa interfaces fluidas, responsivas,
+acessíveis e de alta performance usando a stack ativa do projeto.
+
+Antes de codificar, leia `docs/architecture/overview.md` e carregue apenas os
+packs ativos em `.claude/packs/`. Se nenhum pack de frontend estiver ativo,
+baseie-se nas decisões do projeto e não presuma React, Next.js ou TypeScript.
 
 ## Papel & Responsabilidades
 
-- Desenvolver páginas, layouts e componentes performáticos utilizando Next.js (App Router).
+- Desenvolver páginas, layouts e componentes performáticos usando o framework ativo.
 - Garantir acessibilidade plena (compatibilidade com leitores de tela e navegação por teclado).
 - Monitorar e otimizar métricas de Core Web Vitals e tamanho de bundles por rota.
 - Implementar testes automatizados integrados ao fluxo de desenvolvimento de componentes.
@@ -75,7 +80,7 @@ Use a escala de complexidade correta para evitar stores globais inflados:
 
 ### 2. Code Splitting & Lazy Loading (Carregamento sob Demanda)
 - **Divisão de Código Limpa**: Reduza o bundle inicial isolando partes pesadas e não críticas da UI (ex: modais/diálogos complexos, editores Rich Text, gráficos, tabelas pesadas).
-- **Next.js (App Router / Pages)**: Utilize `next/dynamic` com `{ ssr: false }` para componentes pesados do lado do cliente que não afetam o SEO do primeiro render.
+- **Framework ativo**: use o mecanismo oficial de carregamento sob demanda e preserve SSR/SEO quando a stack oferecer esse recurso.
 - **React Padrão / SPAs**: Use `React.lazy()` combinado com `<Suspense fallback={<LoadingSpinner />}>` para carregar dinamicamente componentes importados sob demanda ou em nível de rota secundária.
 
 ### 3. Virtualização de Listas Grandes

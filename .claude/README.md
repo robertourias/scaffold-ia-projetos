@@ -227,6 +227,23 @@ principal, que já a tem; subagentes precisam de `Skill` na própria lista de
 `tools`). Edite a skill, não o comando nem o agente, para mudar um papel —
 evita os dois ficarem dessincronizados.
 
+Para evitar contexto desnecessário, consulte [`context-index.md`](context-index.md):
+ele define os tiers mínimos por papel e comando.
+
+Manutenção do pacote: `npm run check` valida packs, docs, EOL e testes. Em um
+projeto consumidor, `npx @robertourias/scaffold-ia --check` diagnostica a
+versão instalada e alterações locais; use `--upgrade` somente após revisar o
+drift reportado.
+
+## Packs de stack (`packs/`)
+
+O harness separa processo de tecnologia. O núcleo é composto por comandos,
+workflows, hooks e skills de papel; regras de framework ficam em packs opt-in.
+Veja [`packs/README.md`](packs/README.md). `/init-project` inspeciona os packs
+distribuídos, propõe os compatíveis e registra a escolha em
+`docs/architecture/overview.md`. Packs não instalam dependências nem
+sobrescrevem decisões do projeto.
+
 ## Verificação automática (`hooks/`)
 
 `.claude/hooks/` roda **fora do controle do agente**:

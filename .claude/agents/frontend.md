@@ -1,6 +1,6 @@
 ---
 name: frontend
-description: "Implementa tarefas de frontend (Next.js App Router, componentes, hooks, telas, design tokens) a partir de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite. Use para toda tarefa cujo campo Agente da Spec seja frontend."
+description: "Implementa tarefas de frontend usando os packs de stack ativos, componentes, hooks, telas e design tokens a partir de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite."
 tools: Read, Write, Edit, Grep, Glob, Bash, Skill
 model: inherit
 ---

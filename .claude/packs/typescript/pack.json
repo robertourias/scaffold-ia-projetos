@@ -1,0 +1,7 @@
+{
+  "id": "typescript",
+  "name": "TypeScript",
+  "version": "1.0.0",
+  "description": "Base para projetos TypeScript estrito, sem framework obrigatório.",
+  "appliesTo": ["single", "monorepo", "microfrontends"]
+}

@@ -29,3 +29,10 @@ Nenhuma → ambiguidade.
 Nunca pergunte em aberto. Proponha o melhor palpite e peça confirmação:
 "Sem parâmetro. Pelo contexto (`<fonte>`), assumo `<escopo/spec>`. Confirma?"
 Sem palpite possível, liste as opções encontradas (máx. 5) e peça escolha.
+
+## Tiers de contexto
+
+Depois de resolver Modo, Escopo e Tarefa, carregue `.claude/context-index.md`.
+Comece pelo Tier 1. Leia o Tier 2 apenas quando a tarefa envolver decisões,
+arquitetura ou uma stack ativa; consulte o Tier 3 somente se houver referência
+histórica explícita. Nunca carregue o contexto de outro app/package.

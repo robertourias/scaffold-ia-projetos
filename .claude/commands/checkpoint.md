@@ -9,6 +9,10 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git log:*), Bash(git status:*
 
 Este comando **não recebe argumento**. Ele registra o que foi feito na sessão.
 
+Antes de carregar histórico, leia `.claude/context-index.md`. Para este comando
+use o Tier 1 (`current-state.md`) e apenas o Tier 3 necessário (changelog do
+dia e Specs candidatas a archive).
+
 Escopo é inferido: leia `**Modo:**` em `docs/architecture/overview.md`. Em `single`, não há escopo. Em `monorepo`/`microfrontends`, descubra os apps/packages tocados pela sessão via `git status --short` e `git log --name-only -15` (regra: `.claude/workflows/context-resolution.md`, seção Escopo). A sessão pode ter tocado **vários** — registre cada um separadamente; nada a perguntar. Sem commits nem mudanças → registre o que foi discutido, sem escopo.
 
 Estado e log ficam **sempre na raiz**: `docs/context/current-state.md` e `docs/changelog/YYYY-MM-DD.md`. Cada linha de progresso/changelog é prefixada com o escopo (`**apps/api:** ...`). Specs concluídas de um escopo são arquivadas em `docs/$SCOPE/archive/` (raiz → `docs/archive/`). Documentação com escopo vive sob `docs/$SCOPE/`, nunca dentro de `apps/`/`packages/`.
@@ -29,7 +33,7 @@ Identifique também:
 
 ## Passo 2 — Atualizar current-state.md
 
-Reescreva `docs/context/current-state.md` (sempre o da raiz) com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog).
+Reescreva `docs/context/current-state.md` (sempre o da raiz) com o seguinte conteúdo preenchido. **Importante para economia de tokens**: Resuma agressivamente o estado. Remova detalhes granulares e listas longas de tarefas antigas já concluídas (elas já estão no changelog). Mantenha no máximo 3 próximos passos, 5 decisões e 3 bloqueadores; detalhes devem apontar para Spec, changelog ou arquivo de decisão.
 
 ```markdown
 # Status do Projeto

@@ -1,6 +1,6 @@
 ---
 name: backend
-description: "Implementa tarefas de backend (NestJS, domínio, use cases, migrations, controllers) a partir de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite. Use para toda tarefa cujo campo Agente da Spec seja backend."
+description: "Implementa tarefas de backend usando os packs de stack ativos, domínio, casos de uso e persistência a partir de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite."
 tools: Read, Write, Edit, Grep, Glob, Bash, Skill
 model: inherit
 ---

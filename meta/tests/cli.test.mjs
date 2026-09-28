@@ -23,6 +23,9 @@ test("instalação limpa copia harness e docs e grava versão", () => {
   assert.equal(r.status, 0, r.stderr);
   assert.ok(existsSync(path.join(dir, ".claude/commands/spec.md")));
   assert.ok(existsSync(path.join(dir, ".claude/skills/approve/SKILL.md")));
+  assert.ok(existsSync(path.join(dir, ".claude/packs/typescript/pack.json")));
+  assert.ok(existsSync(path.join(dir, ".claude/packs/nextjs/README.md")));
+  assert.ok(existsSync(path.join(dir, ".claude/context-index.md")));
   assert.ok(existsSync(path.join(dir, "docs/context/product.md")));
   assert.equal(read(dir, ".claude/.scaffold-version").trim(), VERSION);
   assert.ok(!existsSync(path.join(dir, ".claude/settings.local.json")));
@@ -36,6 +39,18 @@ test("reinstalação sem flag não sobrescreve", () => {
   writeFileSync(path.join(dir, ".claude/commands/spec.md"), "LOCAL");
   assert.equal(run(dir).status, 0);
   assert.equal(read(dir, ".claude/commands/spec.md"), "LOCAL");
+});
+
+test("--check diagnostica instalação atualizada e drift local", () => {
+  const dir = tmp();
+  run(dir);
+  let r = run(dir, "--check");
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /sem drift local/);
+  writeFileSync(path.join(dir, ".claude/commands/spec.md"), "LOCAL");
+  r = run(dir, "--check");
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /Drift no harness: 1 arquivo/);
 });
 
 test("--upgrade atualiza harness e preserva contexto e settings", () => {

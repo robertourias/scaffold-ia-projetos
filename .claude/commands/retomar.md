@@ -16,10 +16,11 @@ Este comando **não recebe argumento**. Ele retoma o último histórico salvo, s
 
 Leia os seguintes arquivos em ordem:
 
-1. `docs/context/current-state.md` — estado salvo da última sessão
-2. `docs/changelog/` — arquivo mais recente por nome
-3. `git log --oneline -15` — commits recentes
-4. O spec ativo referenciado em `current-state.md`
+1. `.claude/context-index.md` — tiers e regras de carregamento
+2. `docs/context/current-state.md` — estado salvo da última sessão
+3. `docs/changelog/` — arquivo mais recente por nome
+4. `git log --oneline -15` — commits recentes
+5. O spec ativo referenciado em `current-state.md`
 
 Se o current-state.md estiver vazio ou sem dados (última atualização: `—`), reconstrua a partir do git log e de specs aprovados encontrados em `docs/specs/` **e** em `docs/apps/*/specs/` e `docs/packages/*/specs/`.
 
@@ -72,4 +73,5 @@ Após exibir o resumo, pergunte:
 - Não comece a implementar antes de o usuário confirmar.
 - Apresente apenas o que foi encontrado nos arquivos — sem inferências não fundamentadas.
 - Se o próximo passo não estiver claro, diga explicitamente e proponha como descobrir (ex: "leia a seção de tarefas técnicas no spec/plano").
-
+- Não carregue `docs/archive/`, `docs/features/` ou contexto de outro escopo
+  salvo apenas por completude; eles são Tier 3 sob demanda.

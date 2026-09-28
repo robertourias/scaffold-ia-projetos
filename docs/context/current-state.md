@@ -4,6 +4,7 @@
 > Não edite manualmente durante uma sessão ativa — use `/checkpoint` antes de fechar.
 
 **Última atualização:** —
+**Resumo de progresso global:** —
 **Resumo da última sessão:** —
 
 ---
@@ -25,6 +26,10 @@
 
 ### ⏭ Próximos passos
 1. Use `/init-project` para inicializar o projeto, depois `/spec` para começar a primeira feature.
+
+> Limite de manutenção: mantenha no máximo 3 próximos passos, 5 decisões e 3
+> bloqueadores. Histórico detalhado fica no changelog; decisões ficam em
+> `docs/context/decisions.md`.
 
 ---
 

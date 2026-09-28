@@ -14,6 +14,9 @@ docs/context/constitution.md  ← princípios arquiteturais não-negociáveis, C
 ```
 Invoque também a skill **`verification`** — o que significa "pronto" (evidência antes de `[x]`).
 
+Índice de carregamento por tiers: `.claude/context-index.md`. Comece no Tier 1
+e suba apenas quando a tarefa exigir decisões ou referência histórica.
+
 ## Subagentes (`.claude/agents/`)
 ```
 backend | frontend | reviewer | planner
@@ -35,6 +38,14 @@ docs/context/product.md
 docs/architecture/overview.md
 .claude/workflows/feature-delivery.md
 ```
+
+## Packs de stack (`.claude/packs/`)
+
+O núcleo de processo não presume framework. Packs como `typescript`, `nextjs`,
+`nestjs` e `turborepo` fornecem regras de tecnologia opt-in. Leia o campo
+`**Packs de stack:**` em `docs/architecture/overview.md` e carregue apenas os
+`README.md` dos packs ativos; em monorepos, acrescente os packs declarados no
+contexto do app/package. Se não houver pack ativo, não invente uma stack.
 
 ## Papel: FRONTEND
 Invoque a skill `frontend`. Leia também:

@@ -502,6 +502,10 @@ Você é o PLANNER. Atualize a arquitetura de contexto para economizar tokens:
 
 `docs/` e `.claude/` são documentos vivos. Trate como código de produção: versionado, revisado em PR.
 
+Antes de publicar, rode `npm run check`. Para diagnosticar um projeto que já
+recebeu o scaffold, use `npx @robertourias/scaffold-ia --check`; o comando é
+somente leitura e informa versão instalada e drift local.
+
 Atualize `docs/` quando:
 - Decisão arquitetural → `architecture/`
 - Regra de negócio → `context/product.md` ou `context/domains/`
@@ -521,15 +525,23 @@ normal de specs.
 
 ---
 
-## Stack padrão
+## Stack
 
-| Camada | Tech |
+O núcleo do harness é agnóstico de framework. Durante `/init-project`, escolha
+os packs compatíveis em `.claude/packs/`; a seleção fica registrada em
+`docs/architecture/overview.md` e pode ser complementada por app/package.
+
+Packs distribuídos atualmente:
+
+| ID | Escopo |
 | --- | --- |
-| Monorepo | Turborepo |
-| Frontend | Next.js 14+ (App Router) |
-| Backend | NestJS |
-| Linguagem | TypeScript strict |
-| Arquitetura | Clean Architecture |
+| `typescript` | TypeScript estrito e práticas de base |
+| `nextjs` | Next.js App Router e React |
+| `nestjs` | NestJS para APIs e serviços |
+| `turborepo` | Monorepo e tarefas incrementais |
+
+Não há stack padrão implícita: se nenhum pack for escolhido, o scaffold segue
+as decisões documentadas pelo projeto sem inventar framework.
 
 ---
 

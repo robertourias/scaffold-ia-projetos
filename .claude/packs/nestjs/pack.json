@@ -1,0 +1,7 @@
+{
+  "id": "nestjs",
+  "name": "NestJS",
+  "version": "1.0.0",
+  "description": "NestJS para APIs e serviços backend.",
+  "appliesTo": ["single", "monorepo"]
+}

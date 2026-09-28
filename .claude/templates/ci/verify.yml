@@ -38,3 +38,9 @@ jobs:
 
       - name: Build
         run: echo "defina o comando" # scaffold:build
+
+      # Opcional para repositórios que distribuem este scaffold. O
+      # /init-project não instala este passo automaticamente em projetos de
+      # produto, pois o script de manutenção não faz parte do código deles.
+      # - name: Manutenção do harness
+      #   run: npm run check # scaffold:maintenance

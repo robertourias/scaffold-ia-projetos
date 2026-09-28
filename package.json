@@ -6,7 +6,12 @@
     "scaffold-ia": "bin/cli.js"
   },
   "scripts": {
-    "prepublishOnly": "node meta/tests/check-eol.mjs && node --test \"meta/tests/*.test.mjs\" && node meta/tests/lint-docs.mjs"
+    "test": "node --test \"meta/tests/*.test.mjs\"",
+    "check:docs": "node meta/tests/lint-docs.mjs",
+    "check:eol": "node meta/tests/check-eol.mjs",
+    "check:package": "node meta/tests/check-maintenance.mjs",
+    "check": "npm run check:package && npm run check:eol && npm run check:docs && npm test",
+    "prepublishOnly": "npm run check"
   },
   "files": [
     "bin",
@@ -15,7 +20,9 @@
     ".claude/hooks",
     ".claude/skills",
     ".claude/templates",
+    ".claude/packs",
     ".claude/workflows",
+    ".claude/context-index.md",
     ".claude/CLAUDE.md",
     ".claude/README.md",
     ".claude/settings.example.json",

@@ -36,6 +36,27 @@ Grave o valor no campo `**Modo:**` do overview. O modo define o resto da entrevi
 - `monorepo`/`microfrontends` → Blocos 2–4 cobrem só o que é **compartilhado** (CI/CD, hospedagem, banco/infra comuns, estilo de código). Stack **por app/package** é coletada depois por `/init-app` e `/init-package`. Este comando **não** cria apps nem packages.
 - `microfrontends` acrescenta ao Bloco 2: qual app é o **host**, quais são os **remotes**, libs compartilhadas (singletons: react, react-dom) e como o contrato entre host e remotes é versionado. Essas respostas vão para a subseção `### Microfrontends` de `docs/architecture/overview.md`.
 
+### Bloco 0.1 — Packs de stack (grava `**Packs de stack:**` no overview)
+
+O núcleo deste harness é agnóstico. Leia `.claude/packs/README.md` e os
+`pack.json` disponíveis antes de sugerir uma stack. Um pack distribuído não é
+ativo automaticamente.
+
+Depois de confirmar o Modo, inspecione `package.json`, lockfile, `apps/`,
+`packages/` e arquivos de configuração. Sugira apenas packs compatíveis com
+os sinais encontrados, como `typescript`, `nextjs`, `nestjs` e `turborepo`.
+
+Pergunte uma confirmação: "Encontrei os sinais X; ativo os packs `<ids>`?"
+Aceite zero ou mais IDs distribuídos. Se nenhum for escolhido, grave
+`(nenhum — stack não catalogada)` e continue sem inventar um framework. Em
+monorepo, a seleção global fica no overview; um app/package pode declarar
+packs adicionais em `docs/$SCOPE/context/decisions.md`.
+
+Grave os IDs confirmados em `**Packs de stack:**`. Para cada pack ativo, leia
+seu `README.md` durante os blocos de arquitetura correspondentes e cite-o no
+resumo final. Packs orientam o agente, mas não instalam dependências nem
+geram código.
+
 ---
 
 ### Bloco 1 — Produto (preenche `docs/context/product.md`)
@@ -329,4 +350,3 @@ tree para o humano revisar e commitar manualmente.
 ---
 
 Argumento recebido (`$ARGUMENTS`): $ARGUMENTS
-

@@ -10,15 +10,17 @@ const has = (...f) => f.some((x) => args.includes(x));
 const upgrade = has("--upgrade", "-u");
 const force = has("--force", "-f");
 const yes = has("--yes", "-y");
+const check = has("--check");
 
 const HARNESS_WARNING =
-  "--upgrade substitui edicoes locais no harness: .claude/{agents,commands,hooks,skills,templates,workflows}, .claude/CLAUDE.md e .claude/README.md.";
+  "--upgrade substitui edicoes locais no harness: .claude/{agents,commands,hooks,skills,templates,packs,workflows}, .claude/CLAUDE.md e .claude/README.md.";
 
 if (has("--help", "-h")) {
   console.log(`
 @robertourias/scaffold-ia
 
-Instala o harness (.claude/) e os docs de contexto (docs/) do scaffold
+Instala o núcleo do harness (.claude/), os packs de stack (.claude/packs/)
+e os docs de contexto (docs/) do scaffold
 no diretorio atual.
 
 Uso:
@@ -26,6 +28,7 @@ Uso:
   npx @robertourias/scaffold-ia --upgrade    atualiza o harness (.claude/);
                                              em docs/ so cria o que faltar
   npx @robertourias/scaffold-ia --force      sobrescreve tudo, inclusive docs/
+  npx @robertourias/scaffold-ia --check      diagnostica versao e drift local
 
 ${HARNESS_WARNING}
 
@@ -33,12 +36,13 @@ Opcoes:
   --upgrade, -u  Atualiza o harness preservando docs/ e settings.json
   --force,   -f  Sobrescreve tudo (pede confirmacao se docs/ ja foi preenchido)
   --yes,     -y  Confirma o --force sem perguntar
+  --check        Mostra se o harness instalado esta atualizado (somente leitura)
   --help,    -h  Mostra esta ajuda
 `);
   process.exit(0);
 }
 
-if (upgrade && force) {
+if ((upgrade && force) || (check && (upgrade || force))) {
   console.error("Use --upgrade ou --force, nao os dois.");
   process.exit(1);
 }
@@ -54,7 +58,9 @@ const HARNESS = [
   ".claude/hooks",
   ".claude/skills",
   ".claude/templates",
+  ".claude/packs",
   ".claude/workflows",
+  ".claude/context-index.md",
   ".claude/CLAUDE.md",
   ".claude/README.md",
   ".claude/settings.example.json",
@@ -126,6 +132,7 @@ function copyRecursive(src, dest, overwrite, kind) {
 }
 
 function listFiles(dir) {
+  if (!fs.statSync(dir).isDirectory()) return [dir];
   const out = [];
   for (const name of fs.readdirSync(dir)) {
     const p = path.join(dir, name);
@@ -167,7 +174,43 @@ function readFileOrNull(p) {
   return fs.existsSync(p) ? fs.readFileSync(p, "utf8") : null;
 }
 
+function harnessDrift() {
+  let drift = 0;
+  for (const rel of HARNESS) {
+    const src = path.join(pkgRoot, rel);
+    if (!fs.existsSync(src)) continue;
+    for (const srcFile of listFiles(src)) {
+      const destFile = path.join(cwd, path.relative(pkgRoot, srcFile));
+      if (!fs.existsSync(destFile) || !filesEqual(srcFile, destFile)) drift++;
+    }
+  }
+  return drift;
+}
+
+function checkInstallation() {
+  const installed = readFileOrNull(path.join(cwd, VERSION_FILE));
+  if (!installed) {
+    console.error("Nenhuma instalacao registrada: .claude/.scaffold-version nao existe.");
+    process.exit(1);
+  }
+  const installedVersion = installed.trim();
+  const drift = harnessDrift();
+  console.log(`Scaffold instalado: ${installedVersion}`);
+  console.log(`Scaffold disponivel: ${version}`);
+  console.log(`Drift no harness: ${drift} arquivo(s)`);
+  if (installedVersion !== version || drift > 0) {
+    console.log("Atualizacao recomendada: npx @robertourias/scaffold-ia --upgrade");
+    process.exitCode = 1;
+  } else {
+    console.log("Harness atualizado e sem drift local.");
+  }
+}
+
 async function main() {
+  if (check) {
+    checkInstallation();
+    return;
+  }
   if (force && !yes) {
     const filledCount = countFilledDocs();
     if (filledCount > 0) {

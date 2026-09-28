@@ -1,0 +1,7 @@
+{
+  "id": "turborepo",
+  "name": "Turborepo",
+  "version": "1.0.0",
+  "description": "Monorepo com apps, packages e tarefas incrementais.",
+  "appliesTo": ["monorepo", "microfrontends"]
+}

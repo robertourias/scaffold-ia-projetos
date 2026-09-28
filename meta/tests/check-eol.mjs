@@ -15,6 +15,7 @@ const DIRS = [
   ".claude/hooks",
   ".claude/skills",
   ".claude/templates",
+  ".claude/packs",
   ".claude/workflows",
   "docs/architecture",
   "docs/context",

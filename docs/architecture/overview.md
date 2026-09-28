@@ -8,6 +8,8 @@
 **Status**: [Desenvolvimento inicial / Ativo / Maduro]
 **Modo:** <!-- a definir: single | monorepo | microfrontends — preenchido por /init-project; lido por todos os comandos -->
 
+**Packs de stack:** <!-- a definir: ids separados por vírgula; preenchido por /init-project -->
+
 ## Stack
 
 | Camada | Tecnologia | Notas |
