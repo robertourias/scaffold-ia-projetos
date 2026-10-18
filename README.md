@@ -269,6 +269,8 @@ completas: [`.claude/workflows/git-flow.md`](.claude/workflows/git-flow.md) e
 | `/front` | `/front criar modal de login` | Agente frontend, inline |
 | `/review` | `/review [cole diff aqui]` | Revisão 2 estágios: Funcional → Qualidade |
 | `/recheck` | `/recheck docs/specs/2026-06-13-onboarding.md testei no dispositivo iOS` | Fecha Pendências Manuais de uma Spec após ajuste feito por você |
+| `/pr-open` | `/pr-open` | Abre PR da branch atual, gerando título e descrição dos commits/diff (sem parâmetro) |
+| `/pr-merged` | `/pr-merged` | Pós-merge: volta à branch padrão, `pull` e remove a branch do PR (sem parâmetro) |
 | `/checkpoint` | `/checkpoint` | Grava resumo da sessão, gera changelog, arquiva specs concluídas (sem parâmetro) |
 | `/retomar` | `/retomar` | Retoma o último histórico salvo após interrupção (sem parâmetro) |
 

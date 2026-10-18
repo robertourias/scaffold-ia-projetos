@@ -41,6 +41,8 @@ spec.md          ← planner em Modo de Planejamento Unificado (gera regras + ta
 hands-on.md      ← orquestrador: executa o Plano de Implementação da Spec em ondas (paralelo)
 review.md        ← reviewer em dois estágios (suporta escopo)
 recheck.md       ← rechecagem pós-ajuste manual: fecha Pendências Manuais de uma Spec ou lista o que falta
+pr-open.md       ← abre PR da branch atual gerando título e descrição (sem parâmetro)
+pr-merged.md     ← pós-merge: volta à branch padrão, pull e remove a branch do PR (sem parâmetro)
 ```
 
 Cada arquivo **é** o slash command — sem wrapper, sem `@` apontando para outro

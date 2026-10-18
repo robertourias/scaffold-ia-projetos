@@ -58,6 +58,10 @@ Conventional Commits:
 permissões). PR: base = branch padrão, head = `spec/<slug>`. Sem `gh`
 instalado/autenticado, imprima o comando para o humano rodar.
 
+`/pr-open` abre PR de qualquer branch de trabalho (título e descrição gerados
+dos commits/diff); `/pr-merged` fecha o ciclo após o merge (branch padrão,
+`pull --ff-only`, remoção da branch local/remota só se o PR estiver mergeado).
+
 ## Working tree
 
 Antes de começar um fluxo que commita, rode `git status --porcelain`:

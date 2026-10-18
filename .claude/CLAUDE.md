@@ -117,6 +117,8 @@ app/package. Convenção: `docs/context/conventions.md#documentação-em-monorep
 /review [diff ou contexto]  ← revisão em dois estágios
 /groom  [funcionalidade]    ← adiciona feature nova ao backlog (append, sem reprocessar)
 /recheck [spec] [ajustes]   ← rechecagem pós-ajuste manual: fecha Pendências Manuais ou lista o que falta
+/pr-open                    ← abre PR da branch atual gerando título e descrição (sem parâmetro)
+/pr-merged                  ← pós-merge: volta à branch padrão, pull e remove a branch do PR (sem parâmetro)
 ```
 Referência completa: `.claude/README.md`
 Playbook tokens × qualidade: `.claude/workflows/playbook-tokens-qualidade.md`
