@@ -229,6 +229,11 @@ e confirme antes de sobrescrever. Sem CI, registre em "requer revisão manual".
 
 ## 6. Modo emenda (leia só ao chegar aqui)
 
+Memória gerada pelo `/specnico-onboard` é emenda normal (já tem `**Versão:**`).
+Campo marcado `<!-- a revisar: specnico-onboard -->` que o usuário confirma ou
+altera perde o marcador, e a linha correspondente sai de "A revisar" em
+`.specify/memory/overview.md`.
+
 1. Entenda o ajuste (`$ARGUMENTS` ou pergunte, uma pergunta por vez).
 2. **Mostre o diff proposto** da constituição e do que mais mudar, e espere confirmação.
 3. Incremente a **Versão** (semver) e atualize **Última emenda**:

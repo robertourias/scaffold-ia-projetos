@@ -53,7 +53,7 @@ o Spec Kit (arquivo `init-options.json` em `.specify`), o CLI avisa: os dois usa
 
 ```
 .claude/                    ← o que o Claude Code carrega
-  skills/                   ← 10 comandos specnico-* + 5 papéis (backend, frontend, planner, quality, verification)
+  skills/                   ← 11 comandos specnico-* + 5 papéis (backend, frontend, planner, quality, verification)
   agents/                   ← subagentes backend, frontend, reviewer, planner
   hooks/                    ← spec-gate, verify-file, verify-project
   CLAUDE.md  README.md  settings.example.json
@@ -160,11 +160,12 @@ continua aceito como alias.
 
 ![Fluxo de entrega do Specnico](https://raw.githubusercontent.com/robertourias/scaffold-ia-projetos/main/meta/assets/fluxo-workflow.png)
 
-### Os 10 comandos
+### Os 11 comandos
 
 | Comando | Quando usar | O que produz |
 |---|---|---|
 | `/specnico-constitution` | uma vez por projeto; de novo para emendar | memória do projeto (`.specify/memory/*`), `product-backlog.md`, `settings.json`, CI `verify.yml` |
+| `/specnico-onboard [área]` | projeto que já existe, no lugar da entrevista; de novo para sincronizar | memória inferida do código, backlog com as features entregues (`done`), resumo `.specify/memory/overview.md` |
 | `/specnico-spec [Bnn \| texto]` | especificar um item do backlog (ou um requisito novo) | branch `spec/NNN-slug`, `specs/NNN-slug/spec.md` (Status `review`), checklist |
 | `/specnico-clarify` | a Spec tem `[NEEDS CLARIFICATION]` ou ambiguidades | até 5 perguntas, uma por vez; respostas em `## Clarificações` |
 | `/specnico-plan` | Spec pronta para virar plano técnico | `plan.md` (com Constitution Check) e `tasks.md` em ondas |
@@ -191,6 +192,13 @@ Todo comando termina com uma linha `Próximo:` indicando o passo seguinte.
 /specnico-spec B02                # próximo item do backlog
 ```
 
+- **Projeto que já existe:** comece por `/specnico-onboard` em vez da
+  entrevista. Ele lê o repositório, preenche a memória e o backlog (features
+  já entregues como `done`) e grava `.specify/memory/overview.md`: arquitetura,
+  stack, como rodar, onde ficam as regras de negócio, features e pontos de
+  atenção. O que não dá para inferir fica marcado "a revisar"; ajuste com
+  `/specnico-constitution` (emenda). Rodar de novo sincroniza só o que mudou
+  no código.
 - **Bug:** `/specnico-fix "login quebra com e-mail em maiúsculas"`.
 - **Retomar trabalho:** nenhum comando especial. Todo `/specnico-*` lê
   `.specify/state.json` e mostra a fase atual.

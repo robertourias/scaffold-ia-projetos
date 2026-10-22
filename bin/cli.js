@@ -66,6 +66,31 @@ const DATA = [
 const VERSION_FILE = ".specify/.specnico-version";
 const LEGACY_VERSION_FILE = ".claude/.scaffold-version";
 
+// Projeto com codigo (manifesto de linguagem ou src/ / app/): o proximo passo
+// e o /specnico-onboard, que le o que existe; vazio, o /specnico-constitution.
+const CODE_MARKERS = [
+  "package.json",
+  "pyproject.toml",
+  "requirements.txt",
+  "go.mod",
+  "Cargo.toml",
+  "pom.xml",
+  "build.gradle",
+  "composer.json",
+  "Gemfile",
+  "deno.json",
+  "src",
+  "app",
+];
+function hasExistingCode(dir) {
+  if (CODE_MARKERS.some((m) => fs.existsSync(path.join(dir, m)))) return true;
+  try {
+    return fs.readdirSync(dir).some((f) => f.endsWith(".csproj"));
+  } catch {
+    return false;
+  }
+}
+
 // Instalacao 1.x: marcador legado presente e nenhum .specify/.
 function isLegacyInstall(dir) {
   return (
@@ -384,6 +409,15 @@ async function main() {
   console.log(
     `\n${stats.created} criado(s), ${stats.overwritten} sobrescrito(s), ${stats.skipped} ignorado(s).`,
   );
+  // So na primeira instalacao: reinstalar sobre um harness existente ja
+  // orienta --upgrade logo abaixo.
+  if (!upgrade && !force && stats.skipped === 0) {
+    console.log(
+      hasExistingCode(cwd)
+        ? "Próximo: /specnico-onboard (projeto existente: lê o código e preenche a memória)"
+        : "Próximo: /specnico-constitution (projeto novo: entrevista e memória)",
+    );
+  }
 
   if (upgrade) {
     console.log(`Harness atualizado de ${previous ? previous.trim() : "(versao desconhecida)"} para ${version}.`);
@@ -700,6 +734,7 @@ function applyMigration(dir, ops, useGit) {
 
 module.exports = {
   isLegacyInstall,
+  hasExistingCode,
   VERSION_FILE,
   LEGACY_VERSION_FILE,
   HARNESS,

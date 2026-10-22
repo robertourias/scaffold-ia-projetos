@@ -555,3 +555,45 @@ test("reinstalação sem Spec Kit continua sugerindo --upgrade", () => {
   const r = run(dir);
   assert.match(r.stdout, /use --upgrade/);
 });
+
+test("hasExistingCode: manifesto ou src/ → true; diretório vazio ou só .claude/.specify → false", () => {
+  const { hasExistingCode } = createRequire(import.meta.url)(CLI);
+  const a = tmp();
+  assert.equal(hasExistingCode(a), false);
+  mkdirSync(path.join(a, ".claude"));
+  mkdirSync(path.join(a, ".specify"));
+  assert.equal(hasExistingCode(a), false);
+  for (const f of ["package.json", "pyproject.toml", "go.mod", "Cargo.toml", "pom.xml", "composer.json", "Gemfile"]) {
+    const d = tmp();
+    writeFileSync(path.join(d, f), "{}");
+    assert.equal(hasExistingCode(d), true, f);
+  }
+  const s = tmp();
+  mkdirSync(path.join(s, "src"));
+  assert.equal(hasExistingCode(s), true);
+});
+
+test("instalação sugere /specnico-onboard em projeto existente e /specnico-constitution em vazio", () => {
+  const novo = tmp();
+  const r1 = run(novo);
+  assert.equal(r1.status, 0, r1.stderr);
+  assert.match(r1.stdout, /Próximo: \/specnico-constitution/);
+  assert.doesNotMatch(r1.stdout, /Próximo: \/specnico-onboard/);
+  const existente = tmp();
+  writeFileSync(path.join(existente, "package.json"), "{}");
+  const r2 = run(existente);
+  assert.equal(r2.status, 0, r2.stderr);
+  assert.match(r2.stdout, /Próximo: \/specnico-onboard/);
+  const up = run(existente, "--upgrade");
+  assert.equal(up.status, 0, up.stderr);
+  assert.doesNotMatch(up.stdout, /Próximo:/);
+});
+
+test("reinstalação sobre harness existente não sugere próximo passo", () => {
+  const dir = tmp();
+  writeFileSync(path.join(dir, "package.json"), "{}");
+  assert.equal(run(dir).status, 0);
+  const again = run(dir);
+  assert.equal(again.status, 0, again.stderr);
+  assert.doesNotMatch(again.stdout, /Próximo:/);
+});

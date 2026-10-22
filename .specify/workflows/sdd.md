@@ -7,7 +7,8 @@
 ## Visão geral
 
 ```
-/specnico-constitution          (1× por projeto; re-executar = emenda)
+/specnico-constitution          (1× por projeto novo; re-executar = emenda)
+  ou /specnico-onboard           (projeto existente: lê o código; re-executar = sincroniza)
   └─ por item do backlog:
      /specnico-spec Bnn → [/specnico-clarify] → /specnico-plan → [/specnico-analyze]
        → ⛔ /specnico-approve (humano) → /specnico-implement → /specnico-converge
@@ -25,6 +26,12 @@ mensagens de commit: `.specify/workflows/git-flow.md`.
 `.specify/memory/` (constituição com CN, GR e comandos de verificação;
 produto; arquitetura; convenções; decisões), o product backlog em fases,
 `.claude/settings.json` e o CI. Re-executar = emenda versionada.
+
+Projeto que já existe: `/specnico-onboard` faz o mesmo papel lendo o
+repositório em vez de entrevistar — grava a memória inferida, o backlog com as
+features entregues (`done`) e o resumo `.specify/memory/overview.md`. O que não
+dá para inferir fica marcado "a revisar" para o humano ajustar com
+`/specnico-constitution` (emenda).
 
 ## 1. Especificação — o quê e por quê
 

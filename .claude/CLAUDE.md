@@ -42,6 +42,7 @@ histórica. Parâmetro ou escopo explícito sempre vence a inferência.
 - `.specify/memory/decisions.md`
 - `.specify/memory/conventions.md` (inclui a seção `## UI`)
 - `.specify/memory/architecture.md`
+- `.specify/memory/overview.md` (resumo de onboarding gerado pelo `/specnico-onboard`, quando existir)
 - `.specify/packs/<id>/README.md` para cada ID em `**Packs ativos:**` da constituição
 
 **Tier 3 — referência sob demanda** (não carregue por padrão):
@@ -149,6 +150,7 @@ escopo de uma Spec é o campo `**Escopo:**` do `spec.md`. Convenção:
 ## Comandos (`/specnico-*`)
 ```
 /specnico-constitution [ajuste]   ← cria ou emenda a constituição: memória do projeto, product backlog, settings.json e CI
+/specnico-onboard [área]          ← projeto existente: lê o código, preenche a memória e o backlog (done) e grava .specify/memory/overview.md
 /specnico-spec [Bnn | requisito]  ← especifica um item do backlog (ou texto livre): branch + specs/NNN-slug/spec.md (Status: review)
 /specnico-clarify [spec]          ← até 5 perguntas, uma por vez; grava em ## Clarificações
 /specnico-plan [spec]             ← plan.md (como, com Constitution Check) + tasks.md em ondas
@@ -159,7 +161,8 @@ escopo de uma Spec é o campo `**Escopo:**` do `spec.md`. Convenção:
 /specnico-review [alvo]           ← revisão em dois estágios (Funcional → Qualidade), somente leitura
 /specnico-fix "<sintoma>"         ← bugfix leve: reprodução → correção mínima → verificação → specs/bugs/NNN-slug.md
 ```
-Fluxo: `/specnico-constitution` → por item: `/specnico-spec` → [`/specnico-clarify`]
+Fluxo: `/specnico-constitution` (projeto novo) ou `/specnico-onboard` (projeto existente)
+→ por item: `/specnico-spec` → [`/specnico-clarify`]
 → `/specnico-plan` → [`/specnico-analyze`] → `/specnico-approve` →
 `/specnico-implement` → `/specnico-converge` (repita implement → converge até `done`).
 

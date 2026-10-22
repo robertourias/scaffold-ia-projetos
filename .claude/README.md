@@ -17,7 +17,7 @@ Este é o harness do Claude Code apenas, sem camada agnóstica de ferramenta.
   README.md                 ← este arquivo
   settings.example.json     ← permissões + hooks (copie para settings.json)
   skills/
-    specnico-*/SKILL.md     ← os 10 comandos de fluxo
+    specnico-*/SKILL.md     ← os 11 comandos de fluxo
     backend/ frontend/ planner/ quality/ verification/   ← papéis (sem prefixo)
   agents/                   ← backend, frontend, reviewer, planner (contexto isolado)
   hooks/                    ← spec-gate.mjs, verify-file.mjs, verify-project.mjs
@@ -47,6 +47,7 @@ comportamento; a skill de papel que ela invoca é a fonte única do papel.
 | Skill | Entrada | Saída | Muda |
 |---|---|---|---|
 | `specnico-constitution` | ajuste opcional (re-executar = emenda; projeto migrado da 1.x = migração) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `product-backlog.md`, `settings.json`, CI | `state.json` |
+| `specnico-onboard` | área ou caminho opcional (re-executar = sincroniza o que mudou no código) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `projects/*.md`, `product-backlog.md` (features `done`), `overview.md`, `settings.json` se ausente — inferidos do código, sem commit | `state.json` (`atualizado`); não toca em Spec |
 | `specnico-spec` | `Bnn` ou texto livre | branch `spec/NNN-slug`, `spec.md`, `checklists/requirements.md` | spec `review`, backlog `spec`, fase `spec` |
 | `specnico-clarify` | Spec ativa ou indicada | até 5 perguntas, uma por vez; `## Clarificações` | fase `clarify` |
 | `specnico-plan` | Spec ativa ou indicada | `plan.md` (Constitution Check), `tasks.md` em ondas, `contracts/`, ADRs em `decisions.md` | fase `plan` |
@@ -57,7 +58,8 @@ comportamento; a skill de papel que ela invoca é a fonte única do papel.
 | `specnico-review` | alvo opcional | parecer em dois estágios (Funcional → Qualidade), somente leitura | nada |
 | `specnico-fix` | sintoma entre aspas | teste que falha, correção mínima, `specs/bugs/NNN-slug.md` | nada (sem Spec) |
 
-Fluxo: `/specnico-constitution` → por item: `/specnico-spec` →
+Fluxo: `/specnico-constitution` (projeto novo) ou `/specnico-onboard` (projeto
+existente) → por item: `/specnico-spec` →
 [`/specnico-clarify`] → `/specnico-plan` → [`/specnico-analyze`] →
 `/specnico-approve` → `/specnico-implement` → `/specnico-converge` (repita
 implement → converge até `done`).

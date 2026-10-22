@@ -12,6 +12,7 @@ const IGNORE_PREFIXES = [
   ".specify/state.json",
   ".specify/.specnico-version",
   ".specify/memory/projects/",
+  ".specify/memory/overview.md",
   "specs/bugs/",
   "specs/legacy/",
   ".claude/settings.json",

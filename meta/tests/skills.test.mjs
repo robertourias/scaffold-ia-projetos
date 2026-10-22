@@ -26,9 +26,10 @@ const ESPERADAS = [
   "specnico-converge",
   "specnico-review",
   "specnico-fix",
+  "specnico-onboard",
 ];
 
-test("existem exatamente as 10 skills specnico-*", () => {
+test("existem exatamente as 11 skills specnico-*", () => {
   assert.deepEqual([...SKILLS].sort(), [...ESPERADAS].sort());
 });
 
@@ -119,4 +120,54 @@ test("nenhuma skill specnico-* concede Bash sem prefixo nem symbolic-ref com cur
     }
   }
   assert.ok(allowed("specnico-implement").includes("Bash(gh pr create:*)"));
+});
+
+test("specnico-onboard: contrato do design", async () => {
+  const { createRequire } = await import("node:module");
+  const { MIGRATION_MARKER, LEGACY_BACKLOG_SECTION } = createRequire(import.meta.url)(
+    path.join(root, "bin/cli.js"),
+  );
+  const skill = skillText("specnico-onboard");
+  for (const s of [
+    MIGRATION_MARKER,
+    LEGACY_BACKLOG_SECTION,
+    "<!-- a revisar: specnico-onboard -->",
+    "**Última leitura:**",
+    "overview-template.md",
+    ".specify/memory/overview.md",
+    "**Gerado por:** /specnico-onboard",
+    "**Status do arquivo:** vazio",
+    ".env.example",
+  ]) {
+    assert.ok(skill.includes(s), `specnico-onboard não cita ${s}`);
+  }
+  const tools = allowed("specnico-onboard");
+  assert.ok(tools.includes("Agent"), "specnico-onboard: falta Agent");
+  const LEITURA = ["ls", "git log", "git diff", "git rev-parse", "git status", "git ls-files"];
+  for (const t of tools.filter((t) => t.startsWith("Bash("))) {
+    const cmd = t.slice(5, -1).replace(/:\*$/, "");
+    assert.ok(
+      LEITURA.some((p) => cmd === p || cmd.startsWith(`${p} `)),
+      `specnico-onboard: ${t} não é somente leitura`,
+    );
+  }
+});
+
+test("specnico-constitution reconhece o marcador a revisar do onboard", () => {
+  assert.ok(skillText("specnico-constitution").includes("<!-- a revisar: specnico-onboard -->"));
+});
+
+test("specnico-onboard: sincronização edita campos da Fonte, preserva seções de referência e tem fallback", () => {
+  const skill = skillText("specnico-onboard");
+  // Regra de não sobrescrever vale para gravar o arquivo inteiro na primeira leitura.
+  assert.match(skill, /primeira leitura/);
+  assert.match(skill, /só os campos listados em "Fonte"/);
+  // architecture/conventions/decisions não são stubs vazios: seções de referência ficam.
+  assert.ok(skill.includes("## UI"), "não preserva ## UI");
+  assert.match(skill, /preserve a estrutura/i);
+  // Constituição sem stub nem **Versão:** (Spec Kit, escrita à mão) tem caso próprio.
+  assert.match(skill, /5\. Nenhum dos anteriores/);
+  // Sync ignora o harness e lista arquivos não rastreados um a um.
+  assert.ok(skill.includes("git status --porcelain -uall"), "git status sem -uall");
+  assert.match(skill, /ignorando `\.specify\/`, `specs\/` e `\.claude\/`/);
 });

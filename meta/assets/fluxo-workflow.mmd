@@ -1,6 +1,7 @@
 graph TD
   Start(("Ideia / requisito"))
   Const["1  /specnico-constitution<br/>Entrevista em 5 blocos (1× por projeto; re-executar = emenda):<br/>constituição, memória, product-backlog em fases,<br/>settings.json e CI"]
+  Onboard["1  /specnico-onboard (projeto existente)<br/>Lê o código, sem entrevista (re-executar = sincroniza):<br/>memória inferida, backlog com features done,<br/>overview.md (itens a revisar)"]
   Spec["2  /specnico-spec Bnn | texto livre<br/>Branch spec/NNN-slug + spec.md (Status: review)<br/>state.json: fase spec"]
   Clarify["/specnico-clarify (opcional)<br/>Até 5 perguntas, uma por vez<br/>respostas em ## Clarificações"]
   Plan["3  /specnico-plan<br/>plan.md (Constitution Check) +<br/>tasks.md em ondas"]
@@ -16,7 +17,8 @@ graph TD
   Review["/specnico-review [alvo]<br/>Funcional → Qualidade, somente leitura<br/>(avulso, a qualquer momento)"]
   Next["Próximo item do backlog<br/>/specnico-spec Bnn"]
 
-  Start --> Const --> Spec
+  Start -->|"projeto novo"| Const --> Spec
+  Start -->|"projeto existente"| Onboard --> Spec
   Spec -->|"[NEEDS CLARIFICATION]"| Clarify --> Plan
   Spec --> Plan
   Plan --> Analyze --> Gate
@@ -40,7 +42,7 @@ graph TD
   classDef noteStyle fill:#facc15,stroke:#a16207,stroke-width:2px,color:#1f2937;
 
   class Start,Done start;
-  class Const initStyle;
+  class Const,Onboard initStyle;
   class Gate,Pend gateStyle;
   class Spec,Clarify,Plan,Analyze,Next flowStyle;
   class Impl,Conv,Fix workStyle;

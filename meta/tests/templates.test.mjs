@@ -107,3 +107,20 @@ test("conventions e decisions têm marcador de vazio", () => {
     assert.ok(rd(`.specify/memory/${n}.md`).includes("**Status do arquivo:** vazio"), n);
   }
 });
+
+test("overview-template: 8 seções na ordem do design e âncora de leitura", () => {
+  assert.deepEqual(H2("overview-template.md"), [
+    "## 1. Arquitetura",
+    "## 2. Stack",
+    "## 3. Como rodar",
+    "## 4. Onde ficam as regras de negócio",
+    "## 5. Features",
+    "## 6. Pontos de atenção",
+    "## 7. A revisar",
+    "## 8. Fonte",
+  ]);
+  const t = read("overview-template.md");
+  assert.ok(t.includes("**Última leitura:**"));
+  assert.ok(t.includes("Atualizados nesta leitura"));
+  assert.ok(t.includes("<!-- a revisar: specnico-onboard -->"));
+});
