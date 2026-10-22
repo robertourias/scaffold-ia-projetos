@@ -20,7 +20,8 @@ com evidência e execução em ondas.
   **bloqueia** a edição dos arquivos da Spec ativa enquanto ela está em `review`,
   e a aprovação (`/specnico-approve`) é um gate humano.
 - Trabalho grande vira ondas pequenas, cada uma com subagente, review e commit
-  próprios, sempre num branch por Spec.
+  próprios, sempre num branch por Spec. Nenhum commit acontece sem você
+  confirmar.
 
 Inspirado no [Spec Kit](https://github.com/github/spec-kit); o Specnico é
 Claude-native, com aprovação humana e hooks que bloqueiam em vez de só orientar.
@@ -42,8 +43,19 @@ npx specnico
 /specnico-constitution
 ```
 
-**Projeto existente (sem Specnico):** o mesmo comando. A constituição detecta o
-código existente e a stack antes de perguntar.
+**Projeto existente (sem Specnico):**
+
+```bash
+cd seu-projeto
+npx specnico
+# abra o Claude Code e rode:
+/specnico-onboard
+```
+
+O `/specnico-onboard` lê o código em vez de entrevistar: preenche a memória e o
+backlog (features entregues como `done`) e grava o resumo
+`.specify/memory/overview.md`. Ao fim da instalação, o próprio CLI indica qual
+dos dois comandos usar (`Próximo:`), conforme o diretório já tenha código ou não.
 
 O `npx specnico` nunca sobrescreve arquivos que já existem. Se o projeto já tem
 o Spec Kit (arquivo `init-options.json` em `.specify`), o CLI avisa: os dois usam
@@ -58,7 +70,7 @@ o Spec Kit (arquivo `init-options.json` em `.specify`), o CLI avisa: os dois usa
   hooks/                    ← spec-gate, verify-file, verify-project
   CLAUDE.md  README.md  settings.example.json
 .specify/
-  memory/                   ← dado do projeto: constituição, produto, backlog, arquitetura, convenções, decisões
+  memory/                   ← dado do projeto: constituição, produto, backlog, arquitetura, convenções, decisões (+ overview.md do onboard)
   templates/  packs/  workflows/   ← processo (atualizado pelo --upgrade)
 specs/
   README.md                 ← uma pasta por Spec: specs/NNN-slug/
@@ -79,6 +91,11 @@ O `--upgrade` **sobrescreve** o harness (`.claude/{agents,hooks,skills}`,
 arquivos. **Preserva** `.specify/memory/`, `specs/` e `.claude/settings.json`:
 nessas áreas só cria o que faltar. `--force` sobrescreve tudo e pede
 confirmação quando o contexto já foi preenchido.
+
+Quando o `settings.example.json` muda, o `--upgrade` avisa, mas não toca no seu
+`.claude/settings.json`: faça o merge à mão. Vindo de uma versão anterior à
+2.1.1, mova `Bash(git commit:*)` de `allow` para `ask` (ver
+[Commit só com confirmação](#hooks-e-segurança)).
 
 ## Vindo do `@robertourias/scaffold-ia` 1.x
 
@@ -171,23 +188,27 @@ continua aceito como alias.
 | `/specnico-plan` | Spec pronta para virar plano técnico | `plan.md` (com Constitution Check) e `tasks.md` em ondas |
 | `/specnico-analyze` | antes de aprovar, para checar consistência | relatório somente leitura: spec ↔ plan ↔ tasks ↔ constituição |
 | `/specnico-approve` | gate humano (só você pode acionar) | Status `approved`, backlog e `state.json` atualizados |
-| `/specnico-implement [Tnnn,…]` | executar o `tasks.md` | código, commits por onda, `review.md`, PR oferecido |
+| `/specnico-implement [Tnnn,…]` | executar o `tasks.md` | código, commit por onda (cada um com sua confirmação), `review.md`, PR oferecido |
 | `/specnico-converge` | depois do implement | fecha Pendências Manuais, acrescenta tarefas faltantes ou conclui a Spec (`done`) |
 | `/specnico-review [alvo]` | revisar o diff do branch ou um alvo | relatório em dois estágios (Funcional → Qualidade), somente leitura |
 | `/specnico-fix "<sintoma>"` | bug, sem Spec completa | reprodução, correção mínima, `specs/bugs/NNN-slug.md` |
 
-Todo comando termina com uma linha `Próximo:` indicando o passo seguinte.
+Todo comando termina com uma linha `Próximo:` indicando o passo seguinte. Os
+que commitam (`constitution`, `spec`, `clarify`, `plan`, `approve`,
+`implement`, `converge`, `fix`) mostram a mensagem e os arquivos e perguntam
+"Posso commitar?" antes; sem confirmação, as mudanças ficam no working tree.
 
 ### Exemplo completo
 
 ```text
 /specnico-constitution            # entrevista em 5 blocos; gera a memória e o backlog em fases
+                                  #   (projeto existente: /specnico-onboard no lugar)
 /specnico-spec B01                # specs/001-monorepo-base/spec.md (Status: review)
 /specnico-clarify                 # só se houver ambiguidades
 /specnico-plan                    # plan.md + tasks.md em ondas
 /specnico-analyze                 # opcional: consistência antes do gate
 /specnico-approve                 # você aprova o pacote spec + plan + tasks
-/specnico-implement               # ondas: subagentes, review e commit por onda; oferece o PR
+/specnico-implement               # ondas: subagentes, review e commit por onda (você confirma cada um); oferece o PR
 /specnico-converge                # fecha pendências; sem lacunas, a Spec vai a done
 /specnico-spec B02                # próximo item do backlog
 ```

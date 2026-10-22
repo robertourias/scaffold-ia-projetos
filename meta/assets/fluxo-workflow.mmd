@@ -7,15 +7,16 @@ graph TD
   Plan["3  /specnico-plan<br/>plan.md (Constitution Check) +<br/>tasks.md em ondas"]
   Analyze["/specnico-analyze (opcional)<br/>Consistência spec ↔ plan ↔ tasks ↔ constituição<br/>somente leitura"]
   Gate{{"⛔ GATE HUMANO — /specnico-approve<br/>roda o analyze + checagens do pacote<br/>review → approved<br/>(spec-gate.mjs bloqueia o código antes)"}}
-  Impl["4  /specnico-implement [Tnnn,…]<br/>Ondas do tasks.md: subagentes backend/frontend<br/>review por onda (até 3 rodadas) e commit por onda"]
+  Impl["4  /specnico-implement [Tnnn,…]<br/>Ondas do tasks.md: subagentes backend/frontend<br/>review por onda (até 3 rodadas)<br/>commit por onda: pergunta antes"]
   Pend{{"Pendência Manual<br/>(device real, credencial,<br/>decisão de negócio)"}}
   Resolve["Você resolve manualmente<br/>e relata o que ajustou"]
   FinalReview["Review final do branch (reviewer)<br/>PR spec/NNN-slug → main (com confirmação)<br/>CI verify.yml roda"]
   Conv["5  /specnico-converge [ajuste]<br/>Código × artefatos: fecha Pendências,<br/>acrescenta tarefas em ## Convergência"]
   Done(("Spec done<br/>backlog done · state.json: ativo null<br/>feature live quando todos os itens fecham"))
-  Fix["/specnico-fix &quot;sintoma&quot;<br/>Bug: reprodução → correção mínima → verificação<br/>specs/bugs/NNN-slug.md"]
+  Fix["/specnico-fix &quot;sintoma&quot;<br/>Bug: reprodução → correção mínima → verificação<br/>specs/bugs/NNN-slug.md · commit com confirmação"]
   Review["/specnico-review [alvo]<br/>Funcional → Qualidade, somente leitura<br/>(avulso, a qualquer momento)"]
   Next["Próximo item do backlog<br/>/specnico-spec Bnn"]
+  CommitRule["Commit só com confirmação<br/>todo comando pergunta &quot;Posso commitar?&quot;<br/>e o settings.json pede permissão (ask)"]
 
   Start -->|"projeto novo"| Const --> Spec
   Start -->|"projeto existente"| Onboard --> Spec
@@ -47,4 +48,4 @@ graph TD
   class Spec,Clarify,Plan,Analyze,Next flowStyle;
   class Impl,Conv,Fix workStyle;
   class Review,FinalReview reviewStyle;
-  class Resolve noteStyle;
+  class Resolve,CommitRule noteStyle;
