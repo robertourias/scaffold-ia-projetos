@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const packsRoot = path.join(root, ".claude", "packs");
+const packsRoot = path.join(root, ".specify", "packs");
 
 test("todos os packs distribuídos respeitam o contrato", () => {
   const dirs = readdirSync(packsRoot).filter((name) => statSync(path.join(packsRoot, name)).isDirectory());

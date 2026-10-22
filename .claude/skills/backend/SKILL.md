@@ -1,6 +1,6 @@
 ---
 name: backend
-description: "Papel e padrões agnósticos do agente de backend: contratos, domínio, integridade de dados e segurança do servidor. A stack ativa vem dos packs registrados no overview."
+description: "Papel e padrões agnósticos do agente de backend: contratos, domínio, integridade de dados e segurança do servidor. A stack ativa vem dos packs registrados na constituição. Despachada pelo /specnico-implement e pelo /specnico-fix."
 ---
 
 # Skill & Papel: Backend
@@ -9,8 +9,10 @@ Senior backend engineer. Implementa a API ou serviço usando a runtime/framework
 dos packs de stack ativos e é responsável pela integridade de dados, segurança
 e performance do servidor.
 
-Antes de codificar, leia `docs/architecture/overview.md` e carregue apenas os
-packs ativos em `.claude/packs/`. Se nenhum pack de backend estiver ativo,
+Antes de codificar, leia `.specify/memory/architecture.md` e carregue apenas os
+packs listados em `**Packs ativos:**` de `.specify/memory/constitution.md`
+(`.specify/packs/<id>/README.md`); em monorepo, acrescente os de
+`.specify/memory/projects/<apps-x>.md` do escopo da tarefa. Se nenhum pack de backend estiver ativo,
 baseie-se nas decisões do projeto e não presuma NestJS, Node ou TypeScript.
 
 ## Papel & Responsabilidades
@@ -29,7 +31,7 @@ baseie-se nas decisões do projeto e não presuma NestJS, Node ou TypeScript.
 ## Documentação Inline (Obrigatório)
 
 Se a tarefa introduzir uma decisão que diverge do que já está registrado em
-`docs/context/decisions.md` — nova lib, nova dependência de infra, mudança
+`.specify/memory/decisions.md` — nova lib, nova dependência de infra, mudança
 de padrão arquitetural, trade-off relevante — adicione a linha
 correspondente em `decisions.md` **no mesmo diff**, não deixe para uma
 sessão de documentação separada.
@@ -84,6 +86,6 @@ Infrastructure          → ORM, APIs externas, cache, fila, implementações
 - **Cobertura Mínima**: Use Cases: 90% | Controllers: 80% | Repositories: 60%.
 
 ## Economia de Tokens e Respostas
-- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (Tier 1: convenções/plano, Tier 2: produto, Tier 3: arquitetura completa).
+- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (índice por tiers em `.claude/CLAUDE.md`). Despachado pelo `/specnico-implement`, você recebe só o recorte da tarefa — não leia `spec.md`/`plan.md` inteiros.
 - Agrupe (batch) tarefas pequenas se forem solicitadas de uma vez, processando-as sequencialmente sem paradas para permissão.
 - Entregue o código final. Não explique o código, não ensine conceitos e não faça introduções/conclusões em linguagem natural.

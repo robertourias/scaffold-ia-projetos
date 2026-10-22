@@ -1,6 +1,6 @@
 ---
 name: quality
-description: "Checklist de revisão em dois estágios (Funcional -> Qualidade) e escala de severidade para revisão de código. Invocada por /review e pelo subagente reviewer antes de emitir qualquer parecer."
+description: "Checklist de revisão em dois estágios (Funcional -> Qualidade) e escala de severidade para revisão de código. Invocada pelo subagente reviewer (despachado por /specnico-implement, /specnico-review e /specnico-converge) antes de emitir qualquer parecer."
 ---
 
 # Skill & Papel: Reviewer (Qualidade de Código)
@@ -30,12 +30,14 @@ Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
 ### Estágio 1 — Funcional (GATES)
 
-- [ ] **Verificação executada**: type-check, lint e testes de `docs/context/guardrails.md` rodaram e a **saída real** está na conversa, conforme `.claude/skills/verification/SKILL.md`. Critério de aceite marcado `[x]` sem evidência é 🔴 BLOCKER — o checkbox é autodeclaração até prova em contrário.
-- [ ] **Guardrails respeitados**: nenhuma regra `GR-XXX` de `docs/context/guardrails.md` foi violada; nenhum caminho protegido foi editado sem pedido explícito.
-- [ ] **Constituição respeitada**: nenhum princípio `CN-XXX` de `docs/context/constitution.md` foi violado. Violação é 🔴 BLOCKER mesmo com testes verdes — teste passando não prova que a estrutura está certa.
-- [ ] **Gate de Spec**: a Spec estava `Status: approved` **antes** da implementação, e o campo não foi alterado por agente.
-- [ ] **Requisitos**: Atende a todos os critérios de aceite descritos no spec aprovado ou na tarefa delegada.
-- [ ] **Rastreabilidade**: cada critério marcado `[x]` corresponde a um `FR-XXX` real da Spec (campo `Cobre:` da tarefa, seção 7 — Rastreabilidade). Critério satisfeito que não cobre nenhum FR é escopo não declarado — sinalize.
+- [ ] **Verificação executada**: type-check, lint e testes de `.specify/memory/constitution.md` rodaram e a **saída real** está na conversa, conforme `.claude/skills/verification/SKILL.md`. Critério de aceite marcado `[x]` sem evidência é 🔴 BLOCKER — o checkbox é autodeclaração até prova em contrário.
+- [ ] **Guardrails respeitados**: nenhuma regra `GR-XXX` de `.specify/memory/constitution.md` foi violada; nenhum caminho protegido foi editado sem pedido explícito.
+- [ ] **Constituição respeitada**: nenhum princípio `CN-XXX` de `.specify/memory/constitution.md` foi violado. Violação é 🔴 BLOCKER mesmo com testes verdes — teste passando não prova que a estrutura está certa.
+- [ ] **Gate de Spec**: o `spec.md` estava `Status: approved` **antes** da implementação, e o campo não foi alterado por agente.
+- [ ] **Emendas**: mudança normativa em `spec.md`/`plan.md` de Spec aprovada tem entrada correspondente em `## Emendas`.
+- [ ] **Escopo de arquivos**: o diff de cada tarefa fica dentro do seu `Arquivos:` no `tasks.md` (ou o desvio foi reportado pelo implementador).
+- [ ] **Requisitos**: Atende a todos os critérios de aceite das tarefas no `tasks.md` (ou da tarefa delegada) e aos FR do `spec.md`.
+- [ ] **Rastreabilidade**: cada critério marcado `[x]` corresponde a um `FR-XXX` real da Spec (campo `Cobre:` da tarefa e tabela `## Rastreabilidade` do `tasks.md`). Critério satisfeito que não cobre nenhum FR é escopo não declarado — sinalize.
 - [ ] **Lógica**: Corretude de algoritmos, condicionais e ausência de efeitos colaterais indesejados.
 - [ ] **Segurança**: Sem segredos/chaves no código, queries parametrizadas obrigatórias, validação de posse (ownership) feita na camada de service.
 - [ ] **Testes**: Cobertura de caminhos felizes e ao menos um cenário de falha/exceção.
@@ -47,10 +49,10 @@ Você deve executar a revisão em **dois estágios estritamente sequenciais**:
 
 #### Documentação
 - [ ] Se o diff introduziu decisão técnica nova (lib, padrão, trade-off),
-      ela está em `docs/context/decisions.md` — não só implementada no
+      ela está em `.specify/memory/decisions.md` — não só implementada no
       código sem registro.
 - [ ] Se o diff introduziu token/padrão de design novo, ele está em
-      `docs/context/ui-guidelines.md`.
+      `.specify/memory/conventions.md`.
 
 Trate itens não marcados aqui como 🟡 WARNING, não 🔴 BLOCKER — não deve
 travar o merge, mas deve aparecer na revisão.
@@ -58,7 +60,7 @@ travar o merge, mas deve aparecer na revisão.
 #### Geral & Tipagem
 - [ ] Sem uso desnecessário de `any`, type assertions cegas (`as`) ou exclusões de lint (`eslint-disable`) sem comentários robustos explicando a causa.
 - [ ] Tratamento explícito de estados vazios (empty states), nulos e erros de conexão.
-- [ ] Nomenclatura e estrutura de pastas seguem estritamente `docs/context/conventions.md`.
+- [ ] Nomenclatura e estrutura de pastas seguem estritamente `.specify/memory/conventions.md`.
 
 #### Frontend (Next.js & UI)
 - [ ] Renderizações otimizadas (evitar renderizações redundantes e loops de efeitos).

@@ -11,17 +11,13 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const DIRS = [
   "bin",
   ".claude/agents",
-  ".claude/commands",
   ".claude/hooks",
   ".claude/skills",
-  ".claude/templates",
-  ".claude/packs",
-  ".claude/workflows",
-  "docs/architecture",
-  "docs/context",
-  "docs/features",
-  "docs/specs",
-  "docs/archive",
+  ".specify/memory",
+  ".specify/templates",
+  ".specify/packs",
+  ".specify/workflows",
+  "specs",
 ];
 const FILES = [
   "package.json",

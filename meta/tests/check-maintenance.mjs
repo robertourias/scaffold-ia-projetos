@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const pkg = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
 const cli = readFileSync(path.join(root, "bin/cli.js"), "utf8");
-const packsRoot = path.join(root, ".claude", "packs");
+const packsRoot = path.join(root, ".specify", "packs");
 const packsReadme = readFileSync(path.join(packsRoot, "README.md"), "utf8");
 const failures = [];
 const fail = (message) => failures.push(message);
@@ -17,14 +17,20 @@ for (const entry of pkg.files) {
   if (!existsSync(path.join(root, entry))) fail(`package.json.files ausente: ${entry}`);
 }
 
-const harnessMatch = cli.match(/const HARNESS = \[([\s\S]*?)\];/);
-if (!harnessMatch) fail("CLI não declara a lista HARNESS");
+const listOf = (name) => {
+  const match = cli.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\];`));
+  return match ? [...match[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : null;
+};
+const harnessList = listOf("HARNESS");
+const dataList = listOf("DATA");
+if (!harnessList) fail("CLI não declara a lista HARNESS");
+else if (!dataList) fail("CLI não declara a lista DATA");
 else {
-  const cliHarness = [...harnessMatch[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  const cliHarness = [...harnessList, ...dataList];
   for (const entry of cliHarness) {
     if (!pkg.files.includes(entry)) fail(`HARNESS não está em package.json.files: ${entry}`);
   }
-  for (const entry of pkg.files.filter((x) => x.startsWith(".claude/"))) {
+  for (const entry of pkg.files.filter((x) => x.startsWith(".claude/") || x.startsWith(".specify/") || x.startsWith("specs/"))) {
     if (!cliHarness.includes(entry) && entry !== ".claude/settings.example.json") {
       fail(`entrada .claude não copiada pela CLI: ${entry}`);
     }

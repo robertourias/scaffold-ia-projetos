@@ -1,0 +1,3 @@
+# Convenções
+
+TEXTO-CONVENCOES: camelCase.

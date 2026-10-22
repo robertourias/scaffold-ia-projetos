@@ -1,6 +1,6 @@
 ---
 name: frontend
-description: "Papel e padrões agnósticos do agente de frontend: interfaces, acessibilidade e performance. A stack ativa vem dos packs registrados no overview."
+description: "Papel e padrões agnósticos do agente de frontend: interfaces, acessibilidade e performance. A stack ativa vem dos packs registrados na constituição. Despachada pelo /specnico-implement e pelo /specnico-fix."
 ---
 
 # Skill & Papel: Frontend
@@ -8,8 +8,10 @@ description: "Papel e padrões agnósticos do agente de frontend: interfaces, ac
 Senior frontend engineer. Implementa interfaces fluidas, responsivas,
 acessíveis e de alta performance usando a stack ativa do projeto.
 
-Antes de codificar, leia `docs/architecture/overview.md` e carregue apenas os
-packs ativos em `.claude/packs/`. Se nenhum pack de frontend estiver ativo,
+Antes de codificar, leia `.specify/memory/architecture.md` e carregue apenas os
+packs listados em `**Packs ativos:**` de `.specify/memory/constitution.md`
+(`.specify/packs/<id>/README.md`); em monorepo, acrescente os de
+`.specify/memory/projects/<apps-x>.md` do escopo da tarefa. Se nenhum pack de frontend estiver ativo,
 baseie-se nas decisões do projeto e não presuma React, Next.js ou TypeScript.
 
 ## Papel & Responsabilidades
@@ -28,7 +30,7 @@ baseie-se nas decisões do projeto e não presuma React, Next.js ou TypeScript.
 
 Se a tarefa introduzir um token de design novo (cor, radius, tipografia) ou
 um padrão de componente reutilizável ainda não documentado, adicione a
-entrada correspondente em `docs/context/ui-guidelines.md` **no mesmo diff**,
+entrada correspondente em `.specify/memory/conventions.md` **no mesmo diff**,
 seguindo o padrão de entrada datada já usado no arquivo (ex: "Identidade
 visual (2026-07-03)").
 
@@ -158,6 +160,6 @@ Use sempre o elemento que descreve o **significado** do conteúdo, não apenas s
 - **Cobertura Mínima**: Componentes: 70% | Hooks e Utils: 90% | Fluxos P0 (E2E via Playwright): 100%.
 
 ## Economia de Tokens e Respostas
-- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (Tier 1: convenções/plano, Tier 2: produto, Tier 3: arquitetura completa).
+- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (índice por tiers em `.claude/CLAUDE.md`). Despachado pelo `/specnico-implement`, você recebe só o recorte da tarefa — não leia `spec.md`/`plan.md` inteiros.
 - Agrupe (batch) tarefas pequenas se forem solicitadas de uma vez, processando-as sequencialmente sem paradas para permissão.
 - Entregue o código final. Não explique o código, não ensine conceitos e não faça introduções/conclusões em linguagem natural.

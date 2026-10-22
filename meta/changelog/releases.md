@@ -2,7 +2,17 @@
 
 ## [Unreleased]
 
-Ver [2026-05-22](2026-05-22.md) para mudanças desta versão.
+---
+
+## [2.0.0] - 2026-10-20
+
+Pacote renomeado para `specnico`. Ver [2026-10-20](2026-10-20.md) para mudanças e guia de migração.
+
+---
+
+## [1.2.0]
+
+Ver [2026-05-22](2026-05-22.md).
 
 ---
 

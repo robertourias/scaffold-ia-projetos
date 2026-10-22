@@ -12,7 +12,7 @@
  * Proteção contra loop: se `stop_hook_active` vier true, o agente já foi
  * bloqueado uma vez neste turno — sai 0 para não prender a sessão em ciclo.
  *
- * Desligar: SCAFFOLD_VERIFY=0
+ * Desligar: SPECNICO_VERIFY=0 (alias: SCAFFOLD_VERIFY=0)
  */
 import { readFileSync, existsSync } from "node:fs";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -22,7 +22,7 @@ import path from "node:path";
 const TIMEOUT_MS = 180_000;
 const ok = () => process.exit(0);
 
-if (process.env.SCAFFOLD_VERIFY === "0") ok();
+if (process.env.SPECNICO_VERIFY === "0" || process.env.SCAFFOLD_VERIFY === "0") ok();
 
 let payload;
 try {

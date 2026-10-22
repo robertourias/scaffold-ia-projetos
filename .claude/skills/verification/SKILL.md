@@ -1,16 +1,18 @@
 ---
 name: verification
-description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação, e todo critério que exige ação humana vira Pendência Manual rastreável. Invocada por /back, /front, /hands-on, /recheck, a skill quality e todos os subagentes de implementação."
+description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação, e todo critério que exige ação humana vira Pendência Manual rastreável. Invocada por /specnico-implement, /specnico-converge, /specnico-fix, a skill quality e todos os subagentes de implementação."
 ---
 
 # Skill: Verificação
 
 Fonte canônica do que significa "pronto" neste projeto. Referenciada por
-`.claude/commands/back.md`, `.claude/commands/front.md`, `.claude/commands/hands-on.md`,
-`.claude/commands/recheck.md`, `.claude/skills/quality/SKILL.md` e pelos subagentes em `.claude/agents/`.
+`/specnico-implement`, `/specnico-converge`, `/specnico-fix`,
+`.claude/skills/quality/SKILL.md` e pelos subagentes em `.claude/agents/`.
 
-> Os comandos concretos vivem em `docs/context/guardrails.md`, seção 1. Este
-> arquivo define **como usá-los**; aquele define **quais são**.
+> Os comandos concretos vivem em `.specify/memory/constitution.md`, seção 4
+> (Comandos de verificação) — em monorepo, também em
+> `.specify/memory/projects/<apps-x>.md` do escopo. Este arquivo define **como
+> usá-los**; aqueles definem **quais são**.
 
 ---
 
@@ -53,7 +55,7 @@ Pendências Manuais: (nenhuma) | <critério> — <instrução resumida>
 
 **2. Reprovou.** Corrija e rode de novo. Não avance, não marque nada.
 
-**3. `(não configurado)` no guardrails.** Escreva literalmente:
+**3. `(não configurado)` na constituição.** Escreva literalmente:
 
 > ⚠️ `<verificação>` não configurada neste projeto — critério não verificado.
 
@@ -68,15 +70,16 @@ passagem" — correção fora de escopo entra no diff sem revisão.
 nem verificar sozinho — teste manual em navegador/dispositivo real, credencial
 ou ambiente externo que você não acessa, decisão de negócio, aprovação humana.
 Não deixe isso em aberto silenciosamente e não marque `[x]` por suposição.
-Anote na Spec (formato abaixo), reporte ao usuário com instrução concreta do
-que fazer, e siga sem bloquear o restante da tarefa. Quando o humano resolver,
-ele roda `/recheck` para fechar o critério — não é seu trabalho como agente de
-implementação ficar esperando.
+Anote no `tasks.md` (formato abaixo), reporte ao usuário com instrução
+concreta do que fazer, e siga sem bloquear o restante da tarefa. Quando o
+humano resolver, ele roda `/specnico-converge` para fechar o critério — não é
+seu trabalho como agente de implementação ficar esperando.
 
-## Como anotar uma Pendência Manual na Spec
+## Como anotar uma Pendência Manual no `tasks.md`
 
-Logo abaixo do critério de aceite afetado, insira (mantendo o checkbox
-`- [ ]`):
+Logo abaixo do critério de aceite afetado — na própria tarefa, ou em
+`## Pendências Manuais` quando o `/specnico-plan` já a previu —, insira
+(mantendo o checkbox `- [ ]`):
 
 ```markdown
 - [ ] <critério de aceite original>
@@ -86,21 +89,25 @@ Logo abaixo do critério de aceite afetado, insira (mantendo o checkbox
   > se X é aceitável", "gerar a credencial Y em produção e configurar .env">
 ```
 
-`/recheck` procura por esse bloco (linha `> 🟡 Pendência Manual:`) para saber
-o que rechecar. Não use esse formato para falhas normais (caso 2) — só para o
+`/specnico-converge` procura por esse bloco (linha `> 🟡 Pendência Manual:`)
+em todo o `tasks.md` para saber o que rechecar, e o troca por
+`> ✅ Pendência Manual resolvida em <data> via /specnico-converge: <resumo>`. Não use esse formato para falhas normais (caso 2) — só para o
 que está genuinamente fora do seu alcance como agente.
 
 ## Emenda em Spec aprovada
 
-Mudança normativa numa Spec `approved` (texto de FR, tarefa, contrato,
-critério) exige, **na mesma edição**, uma entrada em `## Emendas`:
+Mudança normativa numa Spec `approved` — texto de FR, user story, critério de
+sucesso no `spec.md`; contrato, modelo de dados ou decisão no `plan.md` —
+exige, **na mesma edição**, uma entrada em `## Emendas` do próprio arquivo:
 `- YYYY-MM-DD — <o que mudou> — <por quê> — <quem>`. O hook `spec-gate.mjs`
-pede confirmação humana para essas edições. FR novo ou removido **não** é
-emenda — é mudança de escopo: pare e escale ao humano.
+pede confirmação humana para edições normativas em `spec.md` e `plan.md`
+aprovados. FR novo ou removido **não** é emenda — é mudança de escopo: pare e
+escale ao humano.
 
-Não são emendas (não precisam de registro): marcar checkbox, anotar
-Pendência Manual (aberta ou resolvida por `/recheck`), escrever em `## Notas
-de Review`, fechar a Spec (`approved → done` + `**Concluído em:**`).
+O `tasks.md` é livre (não é emenda): marcar checkbox, anotar Pendência Manual
+(aberta ou resolvida pelo `/specnico-converge`), tarefas novas em
+`## Convergência`. Também não é emenda escrever o `review.md` nem fechar a
+Spec (`approved → done`, pelo `/specnico-converge`).
 
 ## Proibido
 

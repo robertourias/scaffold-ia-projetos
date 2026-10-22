@@ -12,7 +12,7 @@
  * Claude Code injeta esse stderr de volta no contexto do agente, que corrige
  * antes de seguir.
  *
- * Desligar: SCAFFOLD_VERIFY=0
+ * Desligar: SPECNICO_VERIFY=0 (alias: SCAFFOLD_VERIFY=0)
  */
 import { readFileSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -24,7 +24,7 @@ const TIMEOUT_MS = 30_000;
 
 const ok = () => process.exit(0);
 
-if (process.env.SCAFFOLD_VERIFY === "0") ok();
+if (process.env.SPECNICO_VERIFY === "0" || process.env.SCAFFOLD_VERIFY === "0") ok();
 
 let payload;
 try {

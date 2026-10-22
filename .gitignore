@@ -63,3 +63,6 @@ next-env.d.ts
 
 # Claude Code session lock (runtime state, never commit)
 .claude/scheduled_tasks.lock
+
+# scratch local do superpowers (planos SDD, reviews)
+.superpowers/

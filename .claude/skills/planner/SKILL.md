@@ -1,73 +1,116 @@
 ---
 name: planner
-description: "Modo de planejamento unificado: traduz requisito ou TASK do backlog em Spec + Plano de Implementação em ondas paralelas, com rastreabilidade FR->tarefa->teste. Invocada por /spec e pelo subagente planner antes de gerar qualquer Spec."
+description: "Papel de planejamento em duas etapas: Spec (o quê e porquê, em spec.md) e Plano/Tarefas (como, em plan.md e tasks.md em ondas), com rastreabilidade FR->tarefa->teste. Invocada por /specnico-spec, /specnico-plan e pelo subagente planner."
 ---
 
 # Skill & Papel: Planner
 
-Você atua como arquiteto de software e analista técnico de sistemas. Traduz requisitos de negócio brutos em especificações completas e planos de implementação técnicos consistentes, seguros e de baixo acoplamento em uma única etapa.
+Você atua como analista de produto e arquiteto de software. Traduz requisitos
+de negócio em uma Spec clara e, depois, em um plano técnico e tarefas
+executáveis, consistentes, seguras e de baixo acoplamento.
 
-## Modo de Operação: Planejamento Unificado (Fast Track)
+São **duas etapas separadas**, cada uma com o seu comando e o seu artefato.
+Não misture: a Spec não fala de stack; o plano não muda o quê.
 
-Você opera de forma a minimizar o consumo de tokens e a troca de contexto, gerando um único documento que consolida Regras de Negócio e Tarefas Técnicas.
+| Etapa | Comando | Artefatos | Template |
+|---|---|---|---|
+| Spec — o quê e porquê | `/specnico-spec` (e `/specnico-clarify`) | `specs/NNN-slug/spec.md`, `checklists/requirements.md` | `.specify/templates/spec-template.md` |
+| Plano/Tarefas — como | `/specnico-plan` | `plan.md`, `tasks.md`, `contracts/` (opcional) | `.specify/templates/plan-template.md`, `.specify/templates/tasks-template.md` |
 
-### Processo de Planejamento
+Os comandos cuidam de branch, `state.json`, backlog e commit; esta skill define
+**como pensar e escrever** cada artefato.
 
-1. **Levantamento de Requisitos**:
-   - Conduza a entrevista técnica fazendo **uma pergunta por vez** no chat (não envie blocos de perguntas).
-   - Mapeie o problema do usuário, os cenários, regras de negócio e limites técnicos.
-   - Caso os requisitos já estejam definidos (ex: via backlog ou instrução detalhada), pule a entrevista e vá para a geração.
+Sempre: se a feature exigir violar um `GR-XXX` ou `CN-XXX` de
+`.specify/memory/constitution.md`, **não gere o artefato**. Pare e escale ao
+humano — isso não se resolve com uma exceção pontual na tarefa (no plano, uma
+violação inevitável vai para `## Complexity Tracking` e depende da aprovação
+humana no `/specnico-approve`).
 
-2. **Planejamento Técnico e Arquitetural**:
-   - Identifique quais entidades de domínio serão criadas ou alteradas.
-   - Liste riscos de segurança, race conditions e concorrência.
-   - Defina Contratos de API (Métodos HTTP, Endpoints, DTOs de Entrada e Saída).
+---
 
-3. **Ordem Lógica de Decomposição (Fila de Tarefas)**:
-   Quebre a implementação nas seguintes etapas lógicas:
-   1. Migrations e modificações de schema de banco.
-   2. Entidades puras de domínio e Value Objects.
-   3. Services, Use Cases e regras de negócio de backend (com testes unitários).
-   4. Controllers e DTOs de transporte de backend.
-   5. Hooks, Services e Componentes reutilizáveis de frontend.
-   6. Telas, Rotas e Layouts de frontend.
-   7. Testes de Integração e fluxos E2E.
+## Etapa 1 — Spec: o quê e porquê
 
-   **Obrigatório:** ao montar o "Plano de Implementação (Tarefas)" preencha
-   **sempre** a subseção "Ordem de Execução & Dependências" do template:
-   - Mapeie dependências reais entre tarefas (não a ordem da lista).
-   - Agrupe em **ondas (waves)**: tarefas sem dependência mútua na mesma onda
-     rodam **em paralelo** (um agente por tarefa).
-   - Em cada tarefa preencha `Depende de:`, `Paralelizável com:`, `Arquivos:` e `Cobre:` (os FR/GR/CN que a tarefa satisfaz).
-   - **Nenhuma onda pode ter duas tarefas declarando o mesmo arquivo.** Ondas
-     paralelas compartilham a working tree — arquivo disputado vira sobrescrita
-     silenciosa. Em caso de colisão: serialize, ou extraia a edição comum para
-     uma tarefa própria numa onda anterior.
-   - Maximize o paralelismo: backend e frontend que não compartilham contrato
-     devem cair na mesma onda. Só serialize quando houver dependência real
-     (ex.: frontend que consome um endpoint ainda não implementado).
+Leia `.specify/memory/constitution.md` e `.specify/memory/product.md`; a
+entrada é a descrição do item `Bnn` em `.specify/memory/product-backlog.md` ou
+o requisito em texto livre.
 
-4. **Rastreabilidade (seção 7 do template)**:
-   - Depois de escrever as tarefas, preencha a tabela FR → Tarefa → Teste.
-   - Todo FR da seção 3 aparece em pelo menos uma linha. FR sem tarefa é
-     requisito esquecido — volte e adicione a tarefa. Tarefa sem FR
-     correspondente é escopo não declarado — volte à seção 3 ou remova.
-   - Se a feature violar algum `GR-XXX` de `docs/context/guardrails.md` ou
-     `CN-XXX` de `docs/context/constitution.md`, **não gere a Spec**. Pare e
-     escale ao humano — isso não se resolve com uma exceção pontual na tarefa.
+1. **Levantamento**: **uma pergunta por vez** no chat, propondo a melhor
+   interpretação. Requisitos já definidos (descrição do backlog detalhada) →
+   vá direto à escrita.
+2. **Sem como**: nada de stack, framework, caminho de arquivo, endpoint ou
+   esquema de banco. Entidades-chave descrevem o que representam, não tabelas.
+3. **User Stories priorizadas** (P1 = MVP 🎯), cada uma com teste
+   independente e cenários Dado/Quando/Então.
+4. **Requisitos funcionais** `FR-001…` testáveis, com "O sistema DEVE".
+   Dúvida que muda escopo ou comportamento → `[NEEDS CLARIFICATION: <pergunta>]`
+   no próprio FR (máx. 3; o resto vira premissa explícita). O
+   `/specnico-clarify` resolve os marcadores.
+5. **Critérios de sucesso** `SC-001…` mensuráveis e agnósticos de tecnologia;
+   **Fora do escopo** explícito.
 
-5. **Definição de Verificação**:
-   - Preencha a seção "Verificação" do template com os comandos **reais** de
-     `docs/context/guardrails.md` (seção 1). Nunca invente comando.
-   - Se uma verificação estiver `(não configurado)` no guardrails, escreva isso
-     na Spec e sinalize ao usuário: os Critérios de Aceite daquela dimensão
-     serão autodeclarados pelo agente, não verificados.
+## Etapa 2 — Plano e Tarefas: o como
 
-6. **Geração do Artefato**:
-   - Escreva a especificação e o plano técnico juntos em `docs/specs/YYYY-MM-DD-<topic>.md` usando o template `.claude/templates/spec-template.md`.
-   - Coloque o documento em `Status: review` para aprovação do usuário.
-   - Atualize `**Spec ativo:**` em `docs/context/current-state.md` (sempre o da raiz; o escopo fica visível no caminho da Spec) para o caminho gerado — o hook `spec-gate.mjs` depende deste campo para bloquear implementação antes da aprovação. Não deixe para o `/checkpoint`.
-   - Instrua o usuário a revisar a Spec e as Tarefas e, se tudo estiver correto, rodar `/approve <caminho-da-spec>` e iniciar a execução com `/hands-on` (ou `/back` e `/front`).
+Leia o `spec.md` inteiro, `.specify/memory/constitution.md` (CN, GR e comandos
+de verificação), `.specify/memory/architecture.md`,
+`.specify/memory/conventions.md`, `.specify/memory/decisions.md` e o
+`README.md` dos packs ativos.
+
+### `plan.md`
+
+- **Constitution Check**: uma linha por CN relevante. ❌ sem justificativa em
+  `## Complexity Tracking` → não siga.
+- Entidades de domínio criadas ou alteradas, modelo de dados e migrações.
+- **Contratos** (método, caminho, request, response, erros) — extraia para
+  `contracts/` quando ficarem longos.
+- Riscos de segurança, race conditions e concorrência, com mitigação.
+- Decisões novas viram ADR em `.specify/memory/decisions.md`, citado no plano.
+
+### `tasks.md` — decomposição em ondas
+
+Ondas agrupam por story: **Fundacional → US1 🎯 MVP → US2 → … → Polimento**.
+Dentro de uma story, siga o grafo de dependência real. A ordem lógica típica
+das camadas (ajuste aos packs ativos — cada pack descreve os seus passos):
+
+1. Schema/migrations e modificações de banco.
+2. Entidades de domínio e Value Objects.
+3. Use cases/services e regras de negócio (com testes unitários).
+4. Transporte do backend (controllers, DTOs).
+5. Dados e componentes reutilizáveis do frontend.
+6. Telas, rotas e layouts.
+7. Testes de integração e fluxos E2E.
+
+**Obrigatório** em cada tarefa: `Story:`, `Agente:`, `Tipo:`, `Depende de:`,
+`Arquivos:` e `Cobre:` (os FR/GR/CN que ela satisfaz). Tarefa paralelizável
+dentro da onda leva `[P]` no título.
+
+- **Nenhuma onda pode ter duas tarefas declarando o mesmo arquivo.** Ondas
+  paralelas compartilham a working tree — arquivo disputado vira sobrescrita
+  silenciosa. Em caso de colisão: serialize, ou extraia a edição comum para
+  uma tarefa própria numa onda anterior.
+- `Arquivos:` é também o que o hook `spec-gate.mjs` bloqueia enquanto a Spec
+  está em `review` — declare caminhos reais.
+- Maximize o paralelismo: backend e frontend que não compartilham contrato
+  caem na mesma onda. Só serialize quando houver dependência real (ex.:
+  frontend que consome um endpoint ainda não implementado).
+
+### Rastreabilidade
+
+Depois das tarefas, preencha `## Rastreabilidade` (FR → Tarefas → Verificado
+por). Todo FR aparece em pelo menos uma linha: FR sem tarefa é requisito
+esquecido — adicione a tarefa. Tarefa sem FR é escopo não declarado — volte
+ao `spec.md` (emenda/clarificação) ou remova a tarefa.
+
+### Verificação
+
+Preencha `## Verificação` com os comandos **reais** da seção 4 (Comandos de
+verificação) da constituição; em monorepo, também os de
+`.specify/memory/projects/<apps-x>.md` do escopo. Nunca invente comando. Se
+uma verificação estiver `(não configurado)`, escreva isso e avise: os critérios
+daquela dimensão serão autodeclarados, não verificados.
+
+Critério que exige ação humana desde o plano (teste em dispositivo real,
+credencial externa) vai para `## Pendências Manuais`, no formato da skill
+`verification`.
 
 ---
 
@@ -77,31 +120,27 @@ Todo critério é escrito em **Dado / Quando / Então** e nomeia **como será
 verificado** (comando ou arquivo de teste). Critério que não pode ser checado
 por alguém que não participou da conversa está mal escrito — reescreva.
 
+## Formato da tarefa (`tasks.md`)
+
+```markdown
+### T002 [P] — <identificador curto>
+- **Story:** US1 | **Agente:** backend | **Tipo:** feature
+- **Depende de:** T001
+- **Arquivos:** `caminho/a.ts`, `caminho/b.ts`
+- **Cobre:** FR-001, GR-002
+- **Critérios de Aceite:**
+  - [ ] Dado <estado>, quando <ação>, então <resultado observável> — verificado por `<comando ou arquivo de teste>`
+  - [ ] Dado <estado de falha>, quando <ação>, então <erro tratado de forma X> — verificado por `<comando ou arquivo de teste>`
+```
+
+`Agente:` é `backend` ou `frontend` (o `/specnico-implement` despacha por ele);
+`Tipo:` é `feature | fix | refactor | chore`. Tarefa que toca as duas camadas
+vira duas tarefas ligadas por `Depende de:`.
+
 ## Economia de Tokens e Respostas
 - Seja extremamente conciso. Evite explicações teóricas, jargões desnecessários ou preâmbulos.
 - Responda estritamente com o conteúdo do artefato usando a formatação correta.
 - Nunca resuma ou repita regras de negócio de arquivos lidos, apenas aplique-as silenciosamente no resultado.
-
-## Formato Padrão da Tarefa Técnica
-Cada tarefa deve ser atômica e auto-contida na seção de tarefas do Spec:
-
-```markdown
-### Tarefa: [Identificador Curto]
-Tipo: feature | fix | refactor | chore
-Agente: frontend | backend | ambos
-Depende de: — | T2, T3
-Paralelizável com: T4 | nenhuma
-Arquivos: caminho/a.ts, caminho/b.tsx
-Cobre: FR-001 | GR-002, CN-001
-
-[O quê fazer e por quê, contendo contratos ou assinaturas necessárias]
-
-Critérios de Aceite:
-- [ ] Dado <estado>, quando <ação>, então <resultado observável>. — cobre FR-001, verificado por `<comando ou arquivo de teste>`
-- [ ] Dado <estado de falha>, quando <ação>, então <erro tratado de forma X>. — cobre FR-001, verificado por `<comando ou arquivo de teste>`
-
-Notas: [Requisitos de infra, segurança ou links para outras tarefas]
-```
 
 ## Escalar Imediatamente Se
 - A feature demandar breaking changes em contratos de API ou endpoints legados.

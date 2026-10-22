@@ -1,6 +1,6 @@
 # Agents
 
-Subagentes dos quatro papéis do scaffold. Cada um roda com **contexto próprio e
+Subagentes dos quatro papéis do harness. Cada um roda com **contexto próprio e
 zerado** e devolve só um relatório à thread principal.
 
 | Agente | Ferramentas | Papel |
@@ -8,10 +8,10 @@ zerado** e devolve só um relatório à thread principal.
 | `backend` | Read, Write, Edit, Grep, Glob, Bash, Skill | implementa tarefas de backend |
 | `frontend` | Read, Write, Edit, Grep, Glob, Bash, Skill | implementa tarefas de frontend |
 | `reviewer` | Read, Grep, Glob, Bash, Skill | revisa em dois estágios — **sem Edit/Write** |
-| `planner` | Read, Write, Edit, Grep, Glob, Bash, Skill | gera Spec + plano em ondas |
+| `planner` | Read, Write, Edit, Grep, Glob, Bash, Skill | escreve a Spec (o quê) ou o plano e as tarefas em ondas (como) |
 
-Todos têm `Skill` para invocar o papel compartilhado com o comando equivalente
-(ver "Relação com `.claude/commands/`" abaixo).
+Todos têm `Skill` para invocar o papel compartilhado com os comandos
+`specnico-*` (ver "Relação com as skills" abaixo).
 
 ## Por que subagente e não prompt inline
 
@@ -23,8 +23,7 @@ Todos têm `Skill` para invocar o papel compartilhado com o comando equivalente
 
 Os 4 agentes acima são fixos (papel definido, sempre os mesmos). Fora deles,
 a thread principal também pode despachar um subagente genérico (`general-purpose`
-ou equivalente) — não só para `/back`/`/front`/`/review`/`/spec`. Vale a pena
-quando:
+ou equivalente) — não só dentro dos comandos `specnico-*`. Vale a pena quando:
 
 | Situação | Por quê vale o overhead |
 |----------|--------------------------|
@@ -39,33 +38,35 @@ subagente errado desperdiça tokens em vez de economizar.
 
 ## Quem despacha
 
-`/hands-on` (Passo 3) despacha `backend` e `frontend` por tarefa, conforme o
-campo `Agente` da Spec. `/spec` e `/review` podem rodar inline ou delegar a
-`planner` / `reviewer`, conforme o tamanho do trabalho.
+| Agente | Despachado por |
+|--------|----------------|
+| `planner` | `/specnico-spec` (Spec) e `/specnico-plan` (plano e tarefas), quando o trabalho é grande o bastante para valer o contexto isolado; senão o comando roda inline com a skill `planner` |
+| `backend` / `frontend` | `/specnico-implement`, um por tarefa, conforme o campo `Agente:` do `tasks.md` |
+| `reviewer` | `/specnico-implement` (por onda e final), `/specnico-review` e `/specnico-converge` |
 
-Para tarefa pequena e avulsa, `/back` e `/front` inline continuam mais baratos —
-não há ganho em pagar o overhead de um subagente para uma edição de 2 arquivos.
+Não há comando para implementar uma tarefa avulsa inline: use
+`/specnico-implement Tnnn`. Bugs vão pelo `/specnico-fix`, que roda inline
+com a skill `backend` ou `frontend`.
 
-## Relação com `.claude/commands/`
+## Relação com as skills
 
-`.claude/commands/back.md` e `.claude/agents/backend.md` descrevem o mesmo
-papel em dois modos de execução: comando roda **inline** na thread atual
-(barato, para tarefa pequena e avulsa); agente roda em **subagente**
-(contexto isolado, para tarefas paralelas em `/hands-on`). O mesmo par existe
-para `front` / `frontend`.
+Comandos (`.claude/skills/specnico-*`) e agentes descrevem o mesmo papel em
+dois modos de execução: o comando roda **inline** na thread atual e orquestra;
+o agente roda em **subagente** (contexto isolado, para tarefas paralelas e
+pareceres independentes).
 
 Para evitar drift entre os dois modos, o conteúdo que precisa ser idêntico foi
-extraído para skills próprias, que ambos invocam:
+extraído para skills de papel, que ambos invocam:
 
 - skill `backend` / `frontend` / `planner` / `quality` — papel e padrões (`.claude/skills/<papel>/SKILL.md`)
 - skill `verification` — o que significa "pronto" (`.claude/skills/verification/SKILL.md`)
-- `docs/context/guardrails.md` — limites invioláveis (dado do projeto, não skill — cada projeto preenche o seu)
+- `.specify/memory/constitution.md` — limites invioláveis e comandos de verificação (dado do projeto, não skill — cada projeto preenche o seu)
 
 Ao mudar o **papel** (o que um backend deve fazer, como revisar), edite a
 skill correspondente — comando e agente puxam dela e ficam sincronizados sem
 duplicação. Só edite o comando e o agente separadamente quando a mudança for
-de **fluxo de execução** (como o comando resolve escopo, como o agente reporta
-de volta ao orquestrador) — aí sim são coisas diferentes por natureza.
+de **fluxo de execução** (como o comando resolve a Spec alvo, como o agente
+reporta de volta ao orquestrador) — aí sim são coisas diferentes por natureza.
 
 ## Convenções ao escrever um agente novo
 

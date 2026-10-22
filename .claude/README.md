@@ -1,285 +1,159 @@
 # `.claude/` — o harness
 
-Este diretório é o harness inteiro: comandos, subagentes, skills de papel,
-hooks de verificação, templates e workflows. `docs/` guarda só o conteúdo do
-**produto** (regras de negócio, arquitetura, especificações). Ver a árvore
-completa e a divisão de responsabilidade no [`README.md`](../README.md) da raiz.
+Este diretório guarda só o que o Claude Code carrega: skills (comandos e
+papéis), subagentes, hooks e `CLAUDE.md`. O resto do processo vive em
+`.specify/` (templates, packs, workflows) e o dado do projeto em
+`.specify/memory/` e `specs/`. Instalação, atualização e uso estão no
+[`README.md`](../README.md) da raiz; as instruções que o Claude lê a cada
+sessão estão em [`CLAUDE.md`](CLAUDE.md).
 
-Este é o **scaffold Claude Code apenas** — não há camada agnóstica de
-ferramenta nem cópia paralela para outros assistentes.
+Este é o harness do Claude Code apenas, sem camada agnóstica de ferramenta.
 
-## Estrutura
+## Layout
 
 ```
 .claude/
-  CLAUDE.md              ← carregado automaticamente em toda sessão
-  README.md               ← este arquivo
-  settings.example.json  ← guardrails de permissão + hooks (copie para settings.json)
-  commands/               ← slash commands (fonte única, sem indireção)
-  agents/                 ← subagentes por papel (contexto isolado)
-  skills/                 ← skills de papel, formato padrão .claude/skills/<nome>/SKILL.md
-  hooks/                  ← verificação automática (PreToolUse, PostToolUse, Stop)
-  workflows/              ← processos de várias fases (carregados sob demanda)
-    git-flow.md            ← branch, stage e commit do fluxo (spec/<slug>, ondas, PR)
-  templates/              ← spec-template.md
-    ci/verify.yml          ← template de CI instalado pelo /init-project (Bloco 6d)
+  CLAUDE.md                 ← carregado em toda sessão: tiers de contexto, papéis, comandos
+  README.md                 ← este arquivo
+  settings.example.json     ← permissões + hooks (copie para settings.json)
+  skills/
+    specnico-*/SKILL.md     ← os 10 comandos de fluxo
+    backend/ frontend/ planner/ quality/ verification/   ← papéis (sem prefixo)
+  agents/                   ← backend, frontend, reviewer, planner (contexto isolado)
+  hooks/                    ← spec-gate.mjs, verify-file.mjs, verify-project.mjs
+
+.specify/
+  memory/                   ← dado do projeto: constitution, product, product-backlog,
+                              architecture, conventions, decisions, domains/, projects/
+  templates/                ← spec, plan, tasks, checklist, bug, constitution, backlog, ci/verify.yml
+  packs/                    ← typescript, nextjs, nestjs, turborepo
+  workflows/                ← sdd, git-flow, context-resolution, release-process, playbook
+  state.json                ← Spec ativa e fase (dado do projeto)
+
+specs/
+  NNN-slug/                 ← spec.md, plan.md, tasks.md, review.md, checklists/, contracts/
+  bugs/  legacy/            ← registros do /specnico-fix; Specs migradas da 1.x
 ```
 
-## Comandos (`commands/`)
+`.specify/memory/`, `specs/` e `state.json` são **dado do projeto**: o CLI só cria,
+nunca sobrescreve. O restante é harness e o `--upgrade` o atualiza.
 
-```
-init-project.md  ← inicializa o projeto: detecta o modo (single | monorepo | microfrontends) e preenche o contexto global
-init-app.md      ← (monorepo) cria apps/<nome>, docs locais e conduz o questionário de configuração
-init-package.md  ← (monorepo) cria packages/<nome>, docs locais e conduz o questionário de configuração
-backlog.md       ← gera product backlog com tarefas numeradas (TASK01, TASK02...)
-retomar.md       ← retoma o último histórico salvo (sem parâmetro)
-checkpoint.md    ← grava resumo da sessão no log do projeto (sem parâmetro)
-groom.md         ← refina uma nova feature isolada adicionando-a ao backlog sem reprocessá-lo inteiro
-back.md          ← agente backend (suporta escopo e agrupamento/batching de tarefas)
-front.md         ← agente frontend (suporta escopo e agrupamento/batching de tarefas)
-spec.md          ← planner em Modo de Planejamento Unificado (gera regras + tarefas técnicas)
-hands-on.md      ← orquestrador: executa o Plano de Implementação da Spec em ondas (paralelo)
-review.md        ← reviewer em dois estágios (suporta escopo)
-recheck.md       ← rechecagem pós-ajuste manual: fecha Pendências Manuais de uma Spec ou lista o que falta
-pr-open.md       ← abre PR da branch atual gerando título e descrição (sem parâmetro)
-pr-merged.md     ← pós-merge: volta à branch padrão, pull e remove a branch do PR (sem parâmetro)
-```
+## Comandos (`skills/specnico-*`)
 
-Cada arquivo **é** o slash command — sem wrapper, sem `@` apontando para outro
-diretório. O conteúdo compartilhado entre um comando e o subagente equivalente
-(`back.md` / `agents/backend.md`) vive numa skill própria em `skills/`, não
-duplicado nos dois.
+Cada comando é uma skill. Todos leem `.specify/state.json` primeiro, mostram a
+fase atual em uma linha e terminam com `Próximo:`. Edite a skill para mudar o
+comportamento; a skill de papel que ela invoca é a fonte única do papel.
 
-### Anatomia de um comando
+| Skill | Entrada | Saída | Muda |
+|---|---|---|---|
+| `specnico-constitution` | ajuste opcional (re-executar = emenda; projeto migrado da 1.x = migração) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `product-backlog.md`, `settings.json`, CI | `state.json` |
+| `specnico-spec` | `Bnn` ou texto livre | branch `spec/NNN-slug`, `spec.md`, `checklists/requirements.md` | spec `review`, backlog `spec`, fase `spec` |
+| `specnico-clarify` | Spec ativa ou indicada | até 5 perguntas, uma por vez; `## Clarificações` | fase `clarify` |
+| `specnico-plan` | Spec ativa ou indicada | `plan.md` (Constitution Check), `tasks.md` em ondas, `contracts/`, ADRs em `decisions.md` | fase `plan` |
+| `specnico-analyze` | Spec ativa ou indicada | relatório de consistência com severidade (somente leitura) | nada |
+| `specnico-approve` | Spec ativa ou indicada | aprovação do pacote spec + plan + tasks (só humano, `disable-model-invocation`) | spec `approved`, backlog `approved`, fase `approved` |
+| `specnico-implement` | vazio (todas as ondas), `Tnnn[,Tnnn]`, `NNN`/`NNN-slug`/`specs/NNN-slug`, `--dry-run`, `--serial`, `--worktree`, `--no-review` | código, commit por onda, `review.md`, PR oferecido | backlog `in-progress`, fase `implement` |
+| `specnico-converge` | Spec e ajuste opcional | fecha Pendências Manuais; tarefas novas em `## Convergência`; ou conclusão | com lacunas: fase `converge`; sem lacunas: spec `done`, backlog `done`, `ativo: null` |
+| `specnico-review` | alvo opcional | parecer em dois estágios (Funcional → Qualidade), somente leitura | nada |
+| `specnico-fix` | sintoma entre aspas | teste que falha, correção mínima, `specs/bugs/NNN-slug.md` | nada (sem Spec) |
 
-```markdown
----
-description: "Uma linha. Aspas obrigatórias se contiver `:`, senão o YAML quebra
-              e a descrição vira o corpo do arquivo."
-argument-hint: "[apps/<app>] <tarefa>"
-allowed-tools: Read, Grep, Glob, Bash(git diff:*)
-model: claude-haiku-4-5-20251001
----
+Fluxo: `/specnico-constitution` → por item: `/specnico-spec` →
+[`/specnico-clarify`] → `/specnico-plan` → [`/specnico-analyze`] →
+`/specnico-approve` → `/specnico-implement` → `/specnico-converge` (repita
+implement → converge até `done`).
 
-<prompt completo aqui, sem indireção>
-```
+### Ciclo de vida do Status
 
-| Campo | Por quê |
-|-------|---------|
-| `description` | aparece na lista de comandos e orienta a invocação |
-| `argument-hint` | autocomplete do argumento |
-| `allowed-tools` | **guardrail executável** — `/review` e `/retomar` são somente leitura por construção, não por promessa no prompt |
-| `model` | comandos de leitura/resumo rodam em modelo barato |
+| Momento | `spec.md` | Backlog | `state.json` (`ativo.fase`) |
+|---|---|---|---|
+| `/specnico-spec` | `review` | `spec` | `spec` |
+| `/specnico-clarify` | `review` | `spec` | `clarify` |
+| `/specnico-plan` | `review` | `spec` | `plan` |
+| `/specnico-approve` | `approved` | `approved` | `approved` |
+| `/specnico-implement` | `approved` | `in-progress` | `implement` |
+| `/specnico-converge` com lacunas | `approved` | `in-progress` | `converge` |
+| `/specnico-converge` sem lacunas | `done` | `done` | `ativo: null` |
 
-## Sintaxe de escopo
+O `Status` da Spec existe só no `spec.md`. O `state.json` é conferido contra ele
+no início de cada comando; divergência é avisada e só corrigida com sua
+confirmação.
 
-Os comandos `back`, `front`, `spec` e `review` suportam um **escopo opcional** como primeiro argumento. Quando informado, o agente carrega o contexto específico do app ou package além do contexto global — e salva o que gerar em `docs/$SCOPE/`, um subdiretório de `docs/` na raiz (nunca dentro de `apps/<app>/` ou `packages/<pkg>/`). Sem escopo, os comandos inferem do contexto atual (`.claude/workflows/context-resolution.md`).
+## Papéis e subagentes
 
-Isso existe para separar dois níveis de documentação num monorepo, sem misturar documentação com código-fonte: `docs/` na raiz, sem subpasta de escopo, guarda o que é do **monorepo inteiro** (produto, decisões cross-cutting, infra, lista de apps/packages em `docs/architecture/overview.md`); `docs/$SCOPE/` (ex: `docs/apps/api/`) guarda o que é local a **um** app/package (suas próprias decisões e specs) — mas sempre dentro de `docs/` na raiz. Convenção completa: [`docs/context/conventions.md`](../docs/context/conventions.md#documentação-em-monorepo-appspackages).
+As skills de papel (`backend`, `frontend`, `planner`, `quality`, `verification`)
+definem padrões agnósticos de stack; a stack vem dos packs ativos na
+constituição. Os subagentes dão contexto isolado por papel:
 
-```
-/comando [apps/<app> | packages/<pkg>] tarefa
-```
+| Subagente | Despachado por | Observação |
+|---|---|---|
+| `planner` | `/specnico-spec`, `/specnico-plan` | nunca aprova: a Spec fica em `review` |
+| `backend`, `frontend` | `/specnico-implement` | uma tarefa por subagente; roda a verificação antes de marcar `[x]` |
+| `reviewer` | `/specnico-implement` (por onda e final), `/specnico-review`, `/specnico-converge` | sem `Edit`/`Write`, por construção |
 
-**Com escopo** — lê `docs/$SCOPE/context/` além do global, salva artefatos em `docs/$SCOPE/`:
-```
-/front apps/metronome implementar o metrônomo com Web Audio API
-/front apps/web-nico.dev.br criar página de projetos
-/back apps/api implementar endpoint de criação de pedido
-/spec apps/tools nova ferramenta: conversor de unidades
-/review apps/challenges [cole o diff aqui]
-```
+Use um subagente genérico só para tarefas independentes em paralelo, buscas
+amplas no código ou quando o isolamento por ferramenta é o guardrail. Detalhes
+em [`agents/README.md`](agents/README.md).
 
-**Sem escopo** — o escopo é inferido do contexto atual (em `single`, sempre `docs/`):
-```
-/back implementar módulo de autenticação
-/front criar componente Button no design system
-/spec fluxo de onboarding
-/review [cole o diff aqui]
-```
+## Contexto por tiers
 
-## Playbook
+O índice vive em [`CLAUDE.md`](CLAUDE.md): **Tier 1** (constituição, `state.json`
+e artefatos da Spec ativa) antes de alterar código; **Tier 2** (produto,
+backlog, decisões, convenções, arquitetura, packs) quando a tarefa exige
+decisão; **Tier 3** (Specs concluídas, `bugs/`, `legacy/`, `git log`) sob
+demanda. O implementador recebe só o recorte da sua tarefa.
 
-Antes de escolher batch vs `/hands-on`, veja:
+## Hooks
 
-- [Playbook — tokens × qualidade](workflows/playbook-tokens-qualidade.md) (modos econômico / rigor / emergência)
+Ligados por `settings.json` (copiado de `settings.example.json` pelo
+`/specnico-constitution`):
 
-## Fluxo completo com backlog (recomendado)
+| Hook | Evento | Efeito |
+|---|---|---|
+| `spec-gate.mjs` | `PreToolUse` | `ask` ao autoaprovar uma Spec ou emendar `spec.md`/`plan.md` aprovados; bloqueia os `Arquivos:` do `tasks.md` da Spec ativa em `review` |
+| `verify-file.mjs` | `PostToolUse` | ESLint no arquivo editado |
+| `verify-project.mjs` | `Stop` | type-check se algum `.ts`/`.tsx` mudou |
 
-```
-# 1. Inicializar o projeto
-/init-project sistema de gestão de pedidos
+Falham em aberto. Desligar: `SPECNICO_VERIFY=0` (alias legado
+`SCAFFOLD_VERIFY=0`). Regras, contrato e limites conhecidos em
+[`hooks/README.md`](hooks/README.md).
 
-# 2. Gerar o backlog do produto
-/backlog
-  → planner analisa product.md e propõe tarefas TASK01..TASKNN
-  → gera docs/context/product-backlog.md
-  → em monorepo com $SCOPE (ex: /backlog apps/api), gera docs/apps/api/context/backlog.md
+## Packs de stack
 
-# 3. Especificar Requisitos e Plano (Tudo junto!)
-/spec TASK01
-  → planner lê a descrição de TASK01 no backlog
-  → conduz levantamento (se necessário), gera spec + quebra de tarefas técnicas
-  → atualiza backlog: Status → spec-review, link da spec
+`.specify/packs/<id>/` traz regras opt-in de tecnologia (`typescript`, `nextjs`,
+`nestjs`, `turborepo`). Os packs ativos ficam no campo `**Packs ativos:**` da
+constituição; os comandos carregam apenas o `README.md` dos ativos. Sem pack, o
+harness não presume framework. Contrato em
+[`.specify/packs/README.md`](../.specify/packs/README.md).
 
-/approve docs/specs/YYYY-MM-DD-<topic>.md
-  → (só humano) valida a Spec e grava Status: review → approved
-  → alternativa: editar a linha Status no editor (spec-gate.mjs pede confirmação mesmo assim)
+## Monorepo
 
-# 4. Implementar
-#    Opção A (orquestrado) — executa o plano de tarefas em ondas, paralelizando:
-/hands-on docs/specs/YYYY-MM-DD-<topic>.md
-#    Opção B (manual) — use batching p/ economizar tokens em tarefas pequenas:
-/back implementar use case X, tarefa 1 e 2 da Spec
-/front criar página Y, tarefa 3 e 4 da Spec
+O **Modo** (`single | monorepo | microfrontends`) e os projetos estão em
+`## 1. Identidade` da constituição. `specs/` é plano: o escopo de uma Spec é o
+campo `**Escopo:**` do `spec.md` (`raiz`, `apps/api` ou lista). O contexto
+local de cada app/package fica em `.specify/memory/projects/<apps-x>.md`, criado
+pelo `/specnico-plan` do item de arquitetura daquele projeto. Nunca há
+documentação dentro de `apps/<app>/` ou `packages/<pkg>/`.
 
-# 5. Revisar e commitar (git commit é manual — nenhum comando faz isso por você)
-/review [diff]
-/checkpoint
-git commit -m "feat: ..."
+## Modelo de persistência
 
-# 6. Próxima tarefa do backlog
-/spec TASK02
-```
-
-## Fluxo típico de uma feature em app específico
-
-```
-/spec apps/metronome metrônomo com BPM, beats e timer
-  → planner gera docs/apps/metronome/specs/YYYY-MM-DD-metronome.md (Status: review)
-
-/approve docs/apps/metronome/specs/YYYY-MM-DD-metronome.md
-  → (só humano) revisa as tarefas e regras, valida e grava Status: review → approved
-  → alternativa: editar a linha Status no editor (spec-gate.mjs pede confirmação mesmo assim)
-
-/front apps/metronome implementar controle de BPM da Spec metronome
-/front apps/metronome implementar Web Audio API da Spec metronome
-
-/review apps/metronome [cole o diff aqui]
-
-# Ao final, salve o checkpoint e comite
-/checkpoint
-git commit -m "feat(metronome): ..."
-```
-
-## Fluxo típico de uma feature global (monorepo)
-
-```
-/spec notificações por email
-  → planner gera docs/specs/YYYY-MM-DD-email-notifications.md (Status: review)
-
-/approve docs/specs/YYYY-MM-DD-email-notifications.md
-  → (só humano) valida a Spec e grava Status: review → approved
-  → alternativa: editar a linha Status no editor (spec-gate.mjs pede confirmação mesmo assim)
-
-/back implementar use case de envio de email da Spec
-/front criar página de preferências de notificação da Spec
-
-/review [diff do backend]
-/review [diff do frontend]
-
-# Ao final, salve o checkpoint e comite
-/checkpoint
-git commit -m "feat: ..."
-```
+- **Specs são flow-forward.** Uma Spec `done` não é reescrita nem arquivada: a
+  pasta `specs/NNN-slug/` é o histórico. Como o `state.json` diz o que está
+  ativo, agentes nunca varrem `specs/`.
+- **Features como documentação viva.** O índice de features do
+  `product-backlog.md` (`F-<SIGLA>`, `planejada` → `live`) é reescrito pelo
+  `/specnico-converge` quando todos os itens da feature ficam `done`.
+- **Decisões** ficam em `decisions.md`; o histórico do trabalho, no `git log`.
+- **Nada de estado duplicado:** fase em `state.json`, Status em `spec.md`,
+  progresso nos checkboxes do `tasks.md`.
 
 ## Adicionar um comando novo
 
-1. Crie `.claude/commands/<nome>.md` com frontmatter + prompt completo (sem indireção).
-2. Se o comando compartilha papel com um subagente existente, extraia o conteúdo comum para uma skill em `skills/<papel>/SKILL.md` e referencie-a dos dois lados — não duplique.
-3. Documente o comando neste arquivo e adicione-o à lista de `.claude/CLAUDE.md`.
-
-## Subagentes (`agents/`)
-
-Os papéis existem também como subagentes: `backend`, `frontend`, `reviewer`,
-`planner`. Contexto isolado por papel, e ferramentas como guardrail — o
-`reviewer` não tem `Edit`/`Write`.
-
-`/hands-on` despacha `backend` e `frontend` por tarefa (Passo 3). Para tarefa
-pequena e avulsa, `/back` e `/front` inline continuam mais baratos.
-
-Cada onda do `/hands-on` passa pelo `reviewer` antes do commit (até 3 rodadas
-de correção); a Spec fecha com uma review final sobre o branch inteiro e a
-oferta de abrir o PR `spec/<slug>` → branch padrão.
-
-Detalhes: [`.claude/agents/README.md`](agents/README.md).
-
-## Skills (`skills/`)
-
-Formato padrão do Claude Code: `.claude/skills/<nome>/SKILL.md` com
-frontmatter `name` + `description`. São o conteúdo de papel compartilhado
-entre comando e subagente (`backend`, `frontend`, `planner`, `quality`) mais
-`verification` — o que significa "pronto", citado por todos os papéis — e
-`approve`, o gate humano da Spec (`disable-model-invocation: true`): não tem
-comando nem subagente equivalente, só existe como skill, e só o humano invoca
-com `/approve [caminho-da-spec]`.
-
-```
-skills/
-  backend/SKILL.md       ← papel backend (comando /back e subagente backend)
-  frontend/SKILL.md      ← papel frontend (comando /front e subagente frontend)
-  planner/SKILL.md       ← papel planner (comando /spec e subagente planner)
-  quality/SKILL.md       ← revisão em dois estágios (comando /review e subagente reviewer)
-  verification/SKILL.md  ← o que significa "pronto" (citado por todos os papéis)
-  approve/SKILL.md       ← gate humano da Spec — só humano, sem comando/subagente equivalente
-```
-
-Skills são invocáveis pela ferramenta `Skill` (comandos rodam na thread
-principal, que já a tem; subagentes precisam de `Skill` na própria lista de
-`tools`). Edite a skill, não o comando nem o agente, para mudar um papel —
-evita os dois ficarem dessincronizados.
-
-Para evitar contexto desnecessário, consulte [`context-index.md`](context-index.md):
-ele define os tiers mínimos por papel e comando.
-
-Manutenção do pacote: `npm run check` valida packs, docs, EOL e testes. Em um
-projeto consumidor, `npx @robertourias/scaffold-ia --check` diagnostica a
-versão instalada e alterações locais; use `--upgrade` somente após revisar o
-drift reportado.
-
-Para atualizar um projeto em andamento sem perder a documentação mapeada:
-
-```bash
-npx --yes @robertourias/scaffold-ia@latest --upgrade
-```
-
-Esse comando atualiza `.claude/`, preserva `docs/` e `.claude/settings.json`,
-e atualiza `.claude/.scaffold-version`. Não use `--force` para esse caso, pois
-ele pode sobrescrever `docs/`. Customizações locais dentro de `.claude/` podem
-ser substituídas; confira `git diff -- .claude` antes e depois.
-
-## Packs de stack (`packs/`)
-
-O harness separa processo de tecnologia. O núcleo é composto por comandos,
-workflows, hooks e skills de papel; regras de framework ficam em packs opt-in.
-Veja [`packs/README.md`](packs/README.md). `/init-project` inspeciona os packs
-distribuídos, propõe os compatíveis e registra a escolha em
-`docs/architecture/overview.md`. Packs não instalam dependências nem
-sobrescrevem decisões do projeto.
-
-## Verificação automática (`hooks/`)
-
-`.claude/hooks/` roda **fora do controle do agente**:
-
-| Hook | Evento | O que roda |
-|------|--------|------------|
-| `spec-gate.mjs` | `PreToolUse` (antes de editar) | bloqueia código se a Spec ativa estiver `Status: review` |
-| `verify-file.mjs` | `PostToolUse` (a cada `Edit`/`Write`) | ESLint no arquivo alterado |
-| `verify-project.mjs` | `Stop` (fim do turno) | type-check, se algum `.ts`/`.tsx` mudou |
-
-Falha devolve `exit 2` + `stderr` ao agente, que corrige antes de seguir.
-Testes **não** rodam em hook — são o Passo 1 da Finalização de `/back` e
-`/front`. Detalhes e invariante de fail-open:
-[`.claude/hooks/README.md`](hooks/README.md).
-
-## Guardrails e constituição (dado do projeto, não do harness)
-
-`docs/context/guardrails.md` e `docs/context/constitution.md` são carregados
-por **todos** os papéis em **toda** tarefa, mas o conteúdo é específico deste
-produto — por isso vivem em `docs/`, não aqui. Guardrails define comandos de
-verificação obrigatórios, caminhos protegidos, operações proibidas e o gate
-de Spec; constituição define princípios arquiteturais não-negociáveis
-(`CN-XXX`). Gerados pelo `/init-project` (Blocos 6 e 7), inclusive em projeto existente.
-
-Em caso de conflito, guardrails vence qualquer outra instrução — inclusive as
-deste diretório.
+1. Crie `skills/specnico-<nome>/SKILL.md` com frontmatter (`name`, `description`;
+   descriptions com `: ` vão entre aspas).
+2. Faça o comando ler o `state.json` primeiro e terminar com `Próximo:`.
+3. Se muda fase ou Status, atualize a tabela de ciclo de vida acima e em
+   `specs/README.md`.
+4. Registre o comando em `CLAUDE.md` e rode `node meta/tests/lint-docs.mjs`
+   (verifica que todo `/specnico-*` citado existe).
+5. Nunca instrua `git add -A`, `git add .` ou `git commit -a`: stage só caminhos
+   explícitos.

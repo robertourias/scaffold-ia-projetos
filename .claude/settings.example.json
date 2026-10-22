@@ -73,12 +73,13 @@
       "Write(./.claude/settings.local.json)",
       "Edit(./.claude/hooks/**)",
       "Write(./.claude/hooks/**)",
-      "Edit(./.claude/skills/approve/**)",
-      "Write(./.claude/skills/approve/**)"
+      "Edit(./.claude/skills/specnico-approve/**)",
+      "Write(./.claude/skills/specnico-approve/**)"
     ],
     "allow": [
       "Read(./**)",
-      "Write(./docs/**)",
+      "Write(./.specify/memory/**)",
+      "Write(./specs/**)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

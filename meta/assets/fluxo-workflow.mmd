@@ -1,43 +1,35 @@
 graph TD
   Start(("Ideia / requisito"))
-  Init["1  /init-project<br/>Detecta o Modo (single | monorepo | microfrontends) e<br/>conduz entrevista em 9 blocos (0-8): preenche<br/>docs/context/, gera .claude/settings.json"]
-  Modo{"Modo?"}
-  InitUnits["2  /init-app &lt;nome&gt;<br/>/init-package &lt;nome&gt;<br/>Um por app/package: cria a pasta (se faltar)<br/>+ docs/apps|packages/&lt;nome&gt;/"]
-  Backlog["3  /backlog<br/>Gera TASK01..TASKNN a partir de<br/>product.md (root ou por escopo)"]
-  Spec["4  /spec TASK01<br/>Levantamento → gera Spec + plano<br/>técnico  (Status: review)<br/>branch spec/&lt;slug&gt; + commit"]
-  Gate{{"⛔ GATE HUMANO — /approve &lt;spec&gt;<br/>valida FR, Arquivos e Verificação,<br/>grava Status: approved + Aprovado por<br/>(spec-gate.mjs bloqueia antes e pede confirmação)<br/>commit docs(spec): aprova"}}
-  Back["5  /back tarefa1, tarefa2...<br/>(ou /hands-on em ondas<br/>via subagente backend)"]
-  Front["/front tela1, tela2...<br/>(ou /hands-on em ondas<br/>via subagente frontend)"]
-  WaveReview["Review da onda (reviewer)<br/>🔴/🟡 → correção, até 3 rodadas<br/>limpa → commit da onda"]
-  Pend{{"Pendência Manual anotada na Spec<br/>(critério fora do alcance do agente:<br/>device real, credencial, decisão de negócio)"}}
-  Resolve["Você resolve manualmente<br/>e descreve o que ajustou"]
-  Recheck["/recheck &lt;spec&gt; &lt;o que foi ajustado&gt;<br/>Fecha o(s) critério(s) confirmado(s),<br/>relê a Spec inteira"]
-  Review["6  Review final (/hands-on)<br/>diff do branch inteiro · 1 rodada<br/>(ou /review avulso)"]
-  PR["PR spec/&lt;slug&gt; → main<br/>(gh pr create, com confirmação)<br/>CI verify.yml roda"]
-  Checkpoint["7  /checkpoint (sem parâmetro)<br/>Salva current-state.md, gera changelog,<br/>arquiva Specs concluídas → git commit"]
-  Archive(("8  docs/archive/<br/>Spec concluída"))
-  Retomar["/retomar (sem parâmetro)<br/>Reconstrói contexto após interrupção<br/>(lê current-state.md + changelog + git log)"]
+  Const["1  /specnico-constitution<br/>Entrevista em 5 blocos (1× por projeto; re-executar = emenda):<br/>constituição, memória, product-backlog em fases,<br/>settings.json e CI"]
+  Spec["2  /specnico-spec Bnn | texto livre<br/>Branch spec/NNN-slug + spec.md (Status: review)<br/>state.json: fase spec"]
+  Clarify["/specnico-clarify (opcional)<br/>Até 5 perguntas, uma por vez<br/>respostas em ## Clarificações"]
+  Plan["3  /specnico-plan<br/>plan.md (Constitution Check) +<br/>tasks.md em ondas"]
+  Analyze["/specnico-analyze (opcional)<br/>Consistência spec ↔ plan ↔ tasks ↔ constituição<br/>somente leitura"]
+  Gate{{"⛔ GATE HUMANO — /specnico-approve<br/>roda o analyze + checagens do pacote<br/>review → approved<br/>(spec-gate.mjs bloqueia o código antes)"}}
+  Impl["4  /specnico-implement [Tnnn,…]<br/>Ondas do tasks.md: subagentes backend/frontend<br/>review por onda (até 3 rodadas) e commit por onda"]
+  Pend{{"Pendência Manual<br/>(device real, credencial,<br/>decisão de negócio)"}}
+  Resolve["Você resolve manualmente<br/>e relata o que ajustou"]
+  FinalReview["Review final do branch (reviewer)<br/>PR spec/NNN-slug → main (com confirmação)<br/>CI verify.yml roda"]
+  Conv["5  /specnico-converge [ajuste]<br/>Código × artefatos: fecha Pendências,<br/>acrescenta tarefas em ## Convergência"]
+  Done(("Spec done<br/>backlog done · state.json: ativo null<br/>feature live quando todos os itens fecham"))
+  Fix["/specnico-fix &quot;sintoma&quot;<br/>Bug: reprodução → correção mínima → verificação<br/>specs/bugs/NNN-slug.md"]
+  Review["/specnico-review [alvo]<br/>Funcional → Qualidade, somente leitura<br/>(avulso, a qualquer momento)"]
+  Next["Próximo item do backlog<br/>/specnico-spec Bnn"]
 
-  Start --> Init --> Modo
-  Modo -->|single| Backlog
-  Modo -->|monorepo / microfrontends| InitUnits --> Backlog
-  Backlog --> Spec --> Gate
-  Gate --> Back
-  Gate --> Front
-  Back --> WaveReview
-  Front --> WaveReview
-  WaveReview -->|próxima onda| Back
-  WaveReview -->|última onda| Review
-  Back -.-> Pend
-  Front -.-> Pend
-  Pend --> Resolve --> Recheck
-  Recheck -. ainda falta algo .-> Back
-  Review -->|sem 🔴, sem pendência| PR
-  PR --> Checkpoint
-  Recheck -->|tudo fechado| Checkpoint
-  Checkpoint --> Archive
-  Checkpoint -. "próxima tarefa (/spec TASK02)" .-> Spec
-  Checkpoint -. após interrupção .-> Retomar
+  Start --> Const --> Spec
+  Spec -->|"[NEEDS CLARIFICATION]"| Clarify --> Plan
+  Spec --> Plan
+  Plan --> Analyze --> Gate
+  Plan --> Gate
+  Gate --> Impl
+  Impl --> FinalReview --> Conv
+  Impl -.-> Pend --> Resolve --> Conv
+  Conv -. "lacunas: novas tarefas" .-> Impl
+  Conv -->|"sem lacunas nem pendências"| Done
+  Done --> Next
+  Next -.-> Spec
+  Const -. "emenda / replanejar backlog" .-> Const
+  Fix ~~~ Review
 
   classDef start fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
   classDef initStyle fill:#9333ea,stroke:#6b21a8,stroke-width:2px,color:#ffffff;
@@ -47,10 +39,10 @@ graph TD
   classDef reviewStyle fill:#ef4444,stroke:#b91c1c,stroke-width:2px,color:#ffffff;
   classDef noteStyle fill:#facc15,stroke:#a16207,stroke-width:2px,color:#1f2937;
 
-  class Start,Archive start;
-  class Init,Checkpoint initStyle;
-  class Modo,Gate,Pend gateStyle;
-  class InitUnits,Backlog,Spec,PR flowStyle;
-  class Back,Front,Recheck workStyle;
-  class Review,WaveReview reviewStyle;
-  class Resolve,Retomar noteStyle;
+  class Start,Done start;
+  class Const initStyle;
+  class Gate,Pend gateStyle;
+  class Spec,Clarify,Plan,Analyze,Next flowStyle;
+  class Impl,Conv,Fix workStyle;
+  class Review,FinalReview reviewStyle;
+  class Resolve noteStyle;

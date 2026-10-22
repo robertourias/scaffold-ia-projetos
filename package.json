@@ -1,9 +1,9 @@
 {
-  "name": "@robertourias/scaffold-ia",
-  "version": "1.2.0",
-  "description": "Scaffold de harness para projetos com agentes de IA (Claude Code): papeis, specs, guardrails e docs de contexto.",
+  "name": "specnico",
+  "version": "2.0.0",
+  "description": "Fluxo spec-driven para Claude Code: constituição, specs, gate humano e execução em ondas.",
   "bin": {
-    "scaffold-ia": "bin/cli.js"
+    "specnico": "bin/cli.js"
   },
   "scripts": {
     "test": "node --test \"meta/tests/*.test.mjs\"",
@@ -16,21 +16,16 @@
   "files": [
     "bin",
     ".claude/agents",
-    ".claude/commands",
     ".claude/hooks",
     ".claude/skills",
-    ".claude/templates",
-    ".claude/packs",
-    ".claude/workflows",
-    ".claude/context-index.md",
     ".claude/CLAUDE.md",
     ".claude/README.md",
     ".claude/settings.example.json",
-    "docs/architecture",
-    "docs/context",
-    "docs/features",
-    "docs/specs",
-    "docs/archive"
+    ".specify/templates",
+    ".specify/packs",
+    ".specify/workflows",
+    ".specify/memory",
+    "specs/README.md"
   ],
   "engines": {
     "node": ">=18"
@@ -48,7 +43,9 @@
     "ai-agents",
     "scaffold",
     "harness",
-    "spec-driven"
+    "spec-driven",
+    "spec-kit",
+    "sdd"
   ],
   "publishConfig": {
     "access": "public"
