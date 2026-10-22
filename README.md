@@ -258,6 +258,13 @@ do agente e o gate humano. Sem comando de teste, lint ou type-check configurado,
 os critérios de aceite viram autodeclaração do agente, e o
 `/specnico-constitution` avisa quando isso acontece.
 
+**Commit só com confirmação.** Nenhum comando commita sem perguntar: antes de
+cada commit (inclusive por onda no `/specnico-implement`) ele mostra a mensagem
+e os arquivos e pergunta "Posso commitar?". Além disso, o
+`settings.example.json` põe `git commit` em `ask`, e nenhuma skill pré-aprova
+commit, então o Claude Code também pede a permissão. Regra completa em
+[`.specify/workflows/git-flow.md`](.specify/workflows/git-flow.md).
+
 **Desligar os hooks de verificação:** `SPECNICO_VERIFY=0` (o antigo
 `SCAFFOLD_VERIFY=0` segue aceito como alias).
 

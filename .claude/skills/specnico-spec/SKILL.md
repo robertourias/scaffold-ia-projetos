@@ -2,7 +2,7 @@
 name: specnico-spec
 description: "Especifica um item do backlog (Bnn) ou um requisito novo em texto livre: cria a branch, gera specs/NNN-slug/spec.md (Status review, só o quê e porquê) e o checklist de qualidade"
 argument-hint: "[Bnn | requisito em texto livre]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(git status:*), Bash(git branch --show-current), Bash(git switch:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git rev-parse:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(git status:*), Bash(git branch --show-current), Bash(git switch:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git rev-parse:*), Bash(git add:*)
 ---
 
 # /specnico-spec — o quê e porquê de um item
@@ -23,6 +23,10 @@ Modelo: `.specify/templates/spec-template.md`. Siga `.specify/workflows/git-flow
 - **Uma pergunta por mensagem.** Proponha a melhor interpretação e peça
   confirmação em vez de pergunta aberta, quando houver palpite razoável.
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 
 ## 1. Estado
 
@@ -102,10 +106,11 @@ Item falho: corrija a Spec e revalide, **até 3 iterações**. Se sobrar falha
 ## 8. Commit e handoff
 
 Stage explícito de: `specs/NNN-slug/spec.md`, `specs/NNN-slug/checklists/requirements.md`,
-`.specify/memory/product-backlog.md`, `.specify/state.json`. Commit:
+`.specify/memory/product-backlog.md`, `.specify/state.json`. Pergunte "Posso commitar?"
+(mensagem + arquivos) e, só com confirmação, commite:
 
 `docs(spec): <título> (review)`
 
-Informe branch, commit e quantos marcadores ficaram. Não aprove a Spec — isso é do humano.
+Informe branch, commit (ou que ficou pendente) e quantos marcadores ficaram. Não aprove a Spec — isso é do humano.
 
 Próximo: `/specnico-clarify` se a Spec tem `[NEEDS CLARIFICATION]`; senão `/specnico-plan`

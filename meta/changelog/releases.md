@@ -4,6 +4,12 @@
 
 ---
 
+## [2.1.1] - 2026-10-22
+
+Nenhum comando commita sem perguntar. Ver [2026-10-22-2.1.1](2026-10-22-2.1.1.md).
+
+---
+
 ## [2.1.0] - 2026-10-22
 
 Novo comando `/specnico-onboard` para projetos existentes. Ver [2026-10-22](2026-10-22.md).

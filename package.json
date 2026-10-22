@@ -1,6 +1,6 @@
 {
   "name": "specnico",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Fluxo spec-driven para Claude Code: constituição, specs, gate humano e execução em ondas.",
   "bin": {
     "specnico": "bin/cli.js"

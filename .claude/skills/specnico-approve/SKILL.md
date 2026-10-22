@@ -3,7 +3,7 @@ name: specnico-approve
 description: "Gate humano do pacote spec + plan + tasks: roda a análise e as checagens sintáticas e aprova (Status review → approved). Só o humano invoca"
 disable-model-invocation: true
 argument-hint: "[specs/NNN-slug]"
-allowed-tools: Read, Edit, Grep, Glob, Bash(git config:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Edit, Grep, Glob, Bash(git config:*), Bash(git status:*), Bash(git add:*)
 ---
 
 # /specnico-approve — gate humano da Spec
@@ -19,6 +19,10 @@ Entrada do usuário (pasta da Spec, opcional): `$ARGUMENTS`
 ## Regras gerais
 
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - Nunca corrija a Spec, o plano ou as tarefas você mesmo; só aponte.
 
 ## 1. Resolver a Spec
@@ -64,14 +68,14 @@ Tracking: mostre-a ao humano — a aprovação é a decisão dele.
    `**Status:** approved`, seguida da linha `**Aprovado por:** <nome> em <data>`.
 3. Backlog (`.specify/memory/product-backlog.md`): o item `Item:` da Spec passa a `approved`. Spec sem `**Item:**` ou sem linha no backlog: avise e pule este item.
 4. `.specify/state.json`: **só se** `ativo` não for nulo **e** a pasta alvo for igual a `ativo.spec` → `ativo.fase = "approved"`, `atualizado` = agora (ISO 8601); preserve o resto. Alvo diferente: avise e não toque.
-5. Commit (stage explícito: `<pasta>/spec.md` — incluindo edições manuais do humano feitas na review —, `plan.md` e `tasks.md` se tiverem edições pendentes, backlog e `state.json` se mudaram): `docs(spec): aprova NNN-slug`.
+5. Pergunte "Posso commitar?" (mensagem + arquivos) e, só com confirmação, commite (stage explícito: `<pasta>/spec.md` — incluindo edições manuais do humano feitas na review —, `plan.md` e `tasks.md` se tiverem edições pendentes, backlog e `state.json` se mudaram): `docs(spec): aprova NNN-slug`.
 
 ## 4. Confirmar
 
 ```
 ✅ Spec aprovada: <pasta>
    Aprovado por: <nome> em <data>
-Commit: <hash curto> docs(spec): aprova NNN-slug
+Commit: <hash curto> docs(spec): aprova NNN-slug   (ou: commit pendente — não autorizado)
 ```
 
 Se o hook pedir confirmação e o humano negar, pare e reporte — não tente outro caminho.

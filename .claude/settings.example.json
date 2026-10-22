@@ -52,6 +52,7 @@
       "Bash(npx prisma migrate reset:*)"
     ],
     "ask": [
+      "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(git rebase:*)",
       "Bash(git merge:*)",
@@ -86,7 +87,6 @@
       "Bash(git show:*)",
       "Bash(git branch:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)",
       "Bash(git switch:*)",
       "Bash(git stash:*)",
       "Bash(npm run test:*)",

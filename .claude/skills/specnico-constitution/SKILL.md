@@ -2,7 +2,7 @@
 name: specnico-constitution
 description: "Cria ou emenda a constituição do projeto: entrevista em 5 blocos, gera a memória (.specify/memory), o product backlog, settings.json e o CI. Re-executar = modo emenda; projeto migrado da 1.x = modo migração"
 argument-hint: "[princípios ou ajuste]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*), Bash(git status:*), Bash(git add:*)
 ---
 
 # /specnico-constitution — constituição, memória e backlog
@@ -28,6 +28,10 @@ seguintes.
   original, nunca invente.
 - Resposta vaga → peça clarificação antes de escrever.
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 
 ## 1. Detecção de modo (leia só ao chegar aqui)
 
@@ -293,7 +297,7 @@ texto 1.x concatenado (constitution + guardrails, cada trecho depois de um
 ## 8. Commit e handoff (leia só ao chegar aqui)
 
 Resuma: arquivos escritos, comandos `(não configurado)`, CI instalado ou não e
-o que "requer revisão manual". Pergunte se pode commitar listando exatamente os
+o que "requer revisão manual". Pergunte "Posso commitar?" listando exatamente os
 arquivos escritos nesta sessão. Só com confirmação, stage explícito desses
 caminhos e commit:
 

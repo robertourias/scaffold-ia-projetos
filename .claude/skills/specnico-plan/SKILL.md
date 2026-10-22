@@ -2,7 +2,7 @@
 name: specnico-plan
 description: "Planeja a Spec ativa: gera plan.md (como, com Constitution Check) e tasks.md (ondas Fundacional → US1 MVP → … → Polimento, com propriedade de arquivos e critérios verificáveis)"
 argument-hint: "[specs/NNN-slug]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(git status:*), Bash(git add:*)
 ---
 
 # /specnico-plan — o como: plano técnico e tarefas em ondas
@@ -24,6 +24,10 @@ Invoque a skill `planner` (decomposição, ondas, rastreabilidade) e leia
 
 - **Uma pergunta por mensagem**; proponha a melhor interpretação e peça confirmação.
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - Nunca invente comando de verificação: use os da constituição (seção 4). Verificação `(não configurado)`: escreva isso e avise que aqueles critérios serão autodeclarados.
 
 ## 1. Spec alvo e estado
@@ -103,7 +107,8 @@ resto. Alvo diferente ou `ativo` nulo: avise e **não toque** em `state.json`.
 Stage explícito de: `<pasta>/plan.md`, `<pasta>/tasks.md` e, só se
 criados/alterados, `<pasta>/contracts/`, `.specify/memory/decisions.md`,
 `.specify/memory/projects/<apps-x>.md`, `.specify/memory/constitution.md` e
-`.specify/state.json`. Commit:
+`.specify/state.json`. Pergunte "Posso commitar?" (mensagem + arquivos) e, só com
+confirmação, commite:
 
 `docs(spec): planeja NNN-slug`
 

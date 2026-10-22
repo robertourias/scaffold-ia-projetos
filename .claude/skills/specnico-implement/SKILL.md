@@ -2,7 +2,7 @@
 name: specnico-implement
 description: "ORQUESTRADOR: executa o tasks.md de uma Spec aprovada em ondas (todas, ou só Tnnn[,Tnnn]), com review por onda, commit por onda, review final e PR oferecido. Não fecha a Spec"
 argument-hint: "[Tnnn[,Tnnn]] [specs/NNN-slug] [--dry-run | --worktree | --serial | --no-review]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git merge-base:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git worktree add:*), Bash(git worktree remove:*), Bash(gh pr create:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git merge-base:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git worktree add:*), Bash(git worktree remove:*), Bash(gh pr create:*)
 ---
 
 # /specnico-implement — executar o tasks.md em ondas
@@ -34,6 +34,10 @@ Siga `.specify/workflows/git-flow.md`.
 ## Regras gerais
 
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - `allowed-tools` pré-aprova só os `git` deste fluxo e o `gh pr create`. Os comandos de verificação da constituição dependem do `permissions.allow` do `.claude/settings.json`; `git push`, `git merge --squash`, `git -C` e `git branch -D` (modo `--worktree`) pedem permissão.
 - Nunca paralelize tarefas com dependência real nem que declarem o mesmo arquivo.
 - Nunca execute tarefa com dependência não atendida; nunca avance de onda com a anterior quebrada.
@@ -170,7 +174,9 @@ Para cada onda, **em ordem**:
    - Máximo **3 rodadas** por onda. Estourou → **pare**, não commite a onda e reporte os achados abertos (`arquivo:linha` e correção sugerida). Para retomar: resolva manualmente (commit ou `git stash`) e rode `/specnico-implement <Tnnn da onda>`.
    - 🟢 SUGGESTION / 💡 NOTE → anote em `specs/NNN-slug/review.md`, sem loop: `- [onda N] arquivo:linha — texto`. Crie o arquivo se faltar, com o cabeçalho `# Notas de review — NNN-slug`. Essas notas **não** vão para a Spec.
 
-5. **Commit da onda** (review limpa): stage explícito de arquivos declarados + reportados + `tasks.md` + `review.md` (se mudou) e, na primeira onda executada, o backlog e `state.json`. Mensagem:
+5. **Commit da onda** (review limpa) — pergunte "Posso commitar?" com a mensagem e a
+   lista de arquivos; negado → **pare a execução** aqui (onda fica no working tree)
+   e vá ao resumo. Confirmado: stage explícito de arquivos declarados + reportados + `tasks.md` + `review.md` (se mudou) e, na primeira onda executada, o backlog e `state.json`. Mensagem:
 
    `<tipo>(<escopo>): NNN-slug — onda N (T001, T002)`
 

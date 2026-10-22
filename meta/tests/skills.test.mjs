@@ -171,3 +171,34 @@ test("specnico-onboard: sincronização edita campos da Fonte, preserva seções
   assert.ok(skill.includes("git status --porcelain -uall"), "git status sem -uall");
   assert.match(skill, /ignorando `\.specify\/`, `specs\/` e `\.claude\/`/);
 });
+
+const COMMITAM = [
+  "specnico-constitution",
+  "specnico-spec",
+  "specnico-clarify",
+  "specnico-plan",
+  "specnico-approve",
+  "specnico-implement",
+  "specnico-converge",
+  "specnico-fix",
+];
+
+test("nenhuma skill specnico-* pré-aprova git commit em allowed-tools", () => {
+  for (const d of SKILLS) {
+    for (const t of allowed(d)) {
+      assert.ok(!/^Bash\(git (-C \S+ )?commit/.test(t), `${d}: ${t} pré-aprova commit`);
+    }
+  }
+});
+
+test("toda skill que commita pergunta antes (Posso commitar?)", () => {
+  for (const d of COMMITAM) {
+    assert.ok(skillText(d).includes("Posso commitar?"), `${d}: não pergunta antes de commitar`);
+  }
+});
+
+test("settings.example.json: git commit em ask, nunca em allow", () => {
+  const s = JSON.parse(readFileSync(path.join(root, ".claude/settings.example.json"), "utf8"));
+  assert.ok(s.permissions.ask.includes("Bash(git commit:*)"), "git commit fora de ask");
+  assert.ok(!s.permissions.allow.some((t) => t.startsWith("Bash(git commit")), "git commit em allow");
+});

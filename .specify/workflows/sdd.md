@@ -18,7 +18,8 @@ bug: /specnico-fix "<sintoma>"
 
 Todo comando lê `.specify/state.json` ao começar, mostra a fase em uma linha
 e termina com `Próximo:` apontando o passo seguinte. Branch, stage e
-mensagens de commit: `.specify/workflows/git-flow.md`.
+mensagens de commit: `.specify/workflows/git-flow.md`. Nenhum comando commita
+sem perguntar antes ("Posso commitar?").
 
 ## 0. Constituição
 
@@ -67,7 +68,7 @@ qualquer código, se não houver `Arquivos:`). Depois, mudança normativa em
 `/specnico-implement` (todas as ondas, ou só `Tnnn[,Tnnn]`) despacha um
 subagente `backend`/`frontend` por tarefa, conforme `Agente:`. Por onda:
 verificação com evidência (skill `verification`), review do `reviewer` (até 3
-rodadas) e commit. Ao fim, review final do branch e PR oferecido (com
+rodadas) e commit, só depois de você confirmar. Ao fim, review final do branch e PR oferecido (com
 confirmação). Pendência Manual não bloqueia: fica anotada no `tasks.md`.
 
 Os passos de cada camada (schema, validação, mocks, rotas) seguem os packs

@@ -2,7 +2,7 @@
 name: specnico-fix
 description: "Fluxo leve de bugfix sem gate de Spec: sintoma → reprodução (teste que falha) → diagnóstico → correção mínima → verificação → veredito, registrado em specs/bugs/NNN-slug.md. Mudança de requisito para e sugere /specnico-spec"
 argument-hint: "<sintoma do bug> [apps/<app>]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*)
 ---
 
 # /specnico-fix — corrigir um bug com evidência
@@ -21,6 +21,10 @@ de verificação) e siga `.specify/workflows/git-flow.md`.
 ## Regras gerais
 
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos (arquivos da correção, do teste e do relato do bug).
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - `allowed-tools` pré-aprova só os `git` deste fluxo; o teste da reprodução e os comandos de verificação da constituição dependem do `permissions.allow` do `.claude/settings.json` (fora dele, pedem permissão).
 - Correção **mínima**: nada de refatoração, limpeza ou feature carona.
 - Não edite `spec.md`/`plan.md` de nenhuma Spec e não mexa em Status nem no backlog.
@@ -56,7 +60,7 @@ Sem saída real, o veredito não é `verificado` (skill `verification`).
 ## Passo 5 — Registro, veredito e commit
 
 1. Numere o bug: maior `NNN` em `specs/bugs/` + 1 (3 dígitos, começando em `001`; numeração própria, separada das Specs). Slug em kebab-case do sintoma. Crie `specs/bugs/NNN-slug.md` pelo template: sintoma e reprodução, diagnóstico, correção (diff resumido), verificação (saídas reais), veredito `verificado | parcial | falhou — <justificativa>`, data e escopo.
-2. Commit, stage explícito (arquivos da correção + teste + `specs/bugs/NNN-slug.md`): `fix(<escopo>): <slug>` (`<escopo>` = app/package; omita em `single`). Corpo: `Bug: specs/bugs/NNN-slug.md`.
+2. Pergunte "Posso commitar?" (mensagem + arquivos) e, só com confirmação, commite com stage explícito (arquivos da correção + teste + `specs/bugs/NNN-slug.md`): `fix(<escopo>): <slug>` (`<escopo>` = app/package; omita em `single`). Corpo: `Bug: specs/bugs/NNN-slug.md`.
 3. Resumo curto: causa, arquivos, evidência (teste antes/depois e suíte), veredito, hash do commit.
 
 Veredito `parcial` ou `falhou` → não finja sucesso: diga o que falta.

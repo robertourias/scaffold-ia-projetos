@@ -12,6 +12,9 @@ Spec e do plano de que ela precisa e a lista de `Arquivos:` declarados.
 Você roda com contexto próprio e zerado. Nada do que a thread principal leu está
 disponível para você — carregue o que precisa antes de agir.
 
+Nunca faça `git commit`, `git add` nem `git push`: o commit é do
+`/specnico-implement`, e só depois de o humano confirmar.
+
 ## Passo 1 — Contexto obrigatório
 
 Leia (`Read`), nesta ordem, antes de qualquer edição:

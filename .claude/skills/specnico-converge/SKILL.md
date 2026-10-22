@@ -2,7 +2,7 @@
 name: specnico-converge
 description: "Converge código × artefatos de uma Spec implementada: fecha Pendências Manuais, avalia lacunas pelo reviewer, acrescenta tarefas em ## Convergência e, sem lacunas, conclui a Spec (done), o backlog e a feature"
 argument-hint: "[specs/NNN-slug] [o que você ajustou manualmente]"
-allowed-tools: Read, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git diff:*), Bash(git log:*), Bash(git merge-base:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git diff:*), Bash(git log:*), Bash(git merge-base:*), Bash(git add:*)
 ---
 
 # /specnico-converge — fechar a Spec (código × artefatos)
@@ -23,6 +23,10 @@ Invoque a skill `verification` (evidência antes de `[x]`) e leia
 ## Regras gerais
 
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - Nunca marque `[x]` sem correspondência explícita entre o relato do humano (ou evidência) e o que a Instrução da pendência pedia.
 - Nunca edite tarefas já existentes em `tasks.md` além de checkbox/Pendência Manual; lacunas viram tarefas **novas** em `## Convergência`.
 - Nunca altere `plan.md` nem o texto da Spec; só o cabeçalho de Status (passo 5).
@@ -102,7 +106,7 @@ Cada lacuna vira uma tarefa **nova** na seção `## Convergência` de `tasks.md`
 - Mesmo formato das demais: `### Tnnn — <título>`, `**Story:** — | **Agente:** … | **Tipo:** …`, `**Depende de:**`, uma linha própria `- **Arquivos:** \`…\`` (o hook de propriedade de arquivos lê essa linha), `**Cobre:**` e critérios com comando de verificação.
 - Pendência Manual aberta **não** é lacuna: continua listada, sem tarefa nova.
 
-Commit com stage explícito (`tasks.md`; mais o `.specify/state.json` se mudou):
+Pergunte "Posso commitar?" (mensagem + arquivos) e, só com confirmação, commite com stage explícito (`tasks.md`; mais o `.specify/state.json` se mudou):
 `docs(spec): converge NNN-slug — lacunas (Tnnn…)`. Reporte as lacunas e pare:
 rode `/specnico-implement Tnnn[,Tnnn]` e depois `/specnico-converge` de novo,
 até não faltar nada.
@@ -124,7 +128,7 @@ bloco `> 🟡 Pendência Manual:` está aberto e o parecer não traz 🔴/🟡:
    Feature com item pendente: não mude. Item sem feature (`—`): pule.
 4. `.specify/state.json`: **só se** `ativo` não for nulo **e** a pasta alvo for
    igual a `ativo.spec` → `ativo = null`, `atualizado` = agora. Senão não toque.
-5. Commit, stage explícito (`spec.md`, `tasks.md`, backlog, `state.json` se
+5. Pergunte "Posso commitar?" (mensagem + arquivos) e, só com confirmação, commite com stage explícito (`spec.md`, `tasks.md`, backlog, `state.json` se
    mudaram): `docs(spec): conclui NNN-slug`.
 
 ## 6. Resumo

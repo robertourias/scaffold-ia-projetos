@@ -7,6 +7,20 @@ Regra única de branch, stage e commit usada por todos os comandos
 citam este arquivo em vez de repetir as regras. `/specnico-analyze` e
 `/specnico-review` são somente leitura: não fazem stage nem commit.
 
+## Commit só com confirmação
+
+**Nenhum commit sem perguntar.** Antes de cada `git commit` — inclusive o
+commit de cada onda do `/specnico-implement` e os `wip` no modo `--worktree` —
+o comando mostra a mensagem e a lista exata de arquivos e pergunta
+**"Posso commitar?"**. Sem um sim explícito, não commita: as mudanças ficam no
+working tree e o comando diz o que ficou pendente (no `/specnico-implement`,
+a execução para na onda não commitada).
+
+A regra tem duas camadas: a pergunta, nas skills, e a trava do harness — o
+`.claude/settings.example.json` põe `Bash(git commit:*)` em `permissions.ask`
+e nenhuma skill pré-aprova `git commit` em `allowed-tools`, então o Claude Code
+também pede a permissão. Em modo `bypassPermissions` só a primeira camada vale.
+
 ## Branch padrão
 
 `main` se existir; senão `master`. Com remoto, prefira

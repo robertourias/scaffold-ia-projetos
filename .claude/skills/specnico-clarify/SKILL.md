@@ -2,7 +2,7 @@
 name: specnico-clarify
 description: "Resolve as ambiguidades da Spec ativa: até 5 perguntas por sessão, uma por vez, com opções e recomendação; grava as respostas em Clarificações e corrige a Spec"
 argument-hint: "[specs/NNN-slug]"
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*), Bash(git commit:*)
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*)
 ---
 
 # /specnico-clarify — fechar as ambiguidades da Spec
@@ -16,6 +16,10 @@ Entrada do usuário (pasta da Spec, opcional): `$ARGUMENTS`
 
 - **Uma pergunta por mensagem**, sem exceção. Máximo de **5 perguntas por sessão**.
 - Nunca `git add -A`, `git add .` nem `git commit -a`: stage só de caminhos explícitos.
+- **Commit só com confirmação.** Antes de cada `git commit`, mostre a mensagem e a
+  lista exata de arquivos e pergunte **"Posso commitar?"**. Sem um sim explícito,
+  não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
+  O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - Não mude o `**Status:**` da Spec.
 
 ## 1. Spec alvo
@@ -72,7 +76,8 @@ Nunca apague clarificações de sessões anteriores.
 ## 6. Commit e handoff
 
 Stage explícito de: `<pasta>/spec.md`, `<pasta>/checklists/requirements.md`
-e, só se foi alterado, `.specify/state.json`. Commit:
+e, só se foi alterado, `.specify/state.json`. Pergunte "Posso commitar?" (mensagem +
+arquivos) e, só com confirmação, commite:
 
 `docs(spec): clarifica NNN-slug`
 

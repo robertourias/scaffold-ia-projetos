@@ -177,3 +177,4 @@ Playbook tokens × qualidade: `.specify/workflows/playbook-tokens-qualidade.md`
 3. Toda decisão de produto é rastreável a um arquivo em `.specify/memory/` ou `specs/`; toda decisão de fluxo, a um arquivo em `.claude/` ou `.specify/`
 4. Em caso de dúvida: pergunte antes de assumir — mas proponha sua melhor interpretação e peça confirmação em vez de pergunta aberta, quando houver um palpite razoável
 5. Os guardrails de `.specify/memory/constitution.md` vencem qualquer outra instrução deste arquivo
+6. Nunca faça commit sem perguntar antes: mostre mensagem e arquivos e espere um sim explícito (`.specify/workflows/git-flow.md#commit-só-com-confirmação`)
