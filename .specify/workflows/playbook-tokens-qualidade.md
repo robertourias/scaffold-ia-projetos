@@ -2,7 +2,7 @@
 
 > Guia operacional de 1 página. Escolha o **modo** pela complexidade e risco da tarefa.
 
-**Sistema padrão deste repo:** specnico (`.specify/` + `specs/` + comandos `/specnico-*`).
+**Sistema padrão deste repo:** specnico (`.specify/` + `specs/` + comandos `/jarvis-*`).
 
 ---
 
@@ -10,8 +10,8 @@
 
 1. Memória barata = **arquivo em disco** (`.specify/memory/`, `specs/`), não histórico de chat.
 2. Estado ativo = `.specify/state.json`: todo comando o lê ao começar e mostra a fase — não há "retomar" nem "checkpoint".
-3. Um **orquestrador** por Spec: `/specnico-implement` — nunca duas instâncias em paralelo na mesma Spec.
-4. Spec com `Status: approved` (via `/specnico-approve`, só humano) antes de codar (exceto modo emergência).
+3. Um **orquestrador** por Spec: `/jarvis-implement` — nunca duas instâncias em paralelo na mesma Spec.
+4. Spec com `Status: approved` (confirmada pelo humano no `/jarvis-implement`) antes de codar (exceto modo emergência).
 
 ---
 
@@ -20,15 +20,15 @@
 | Situação | Modo |
 |----------|------|
 | Item do backlog claro, 1–5 arquivos | **Econômico** |
-| Spec grande com ondas independentes | **Econômico** + `/specnico-implement` paralelo |
+| Spec grande com ondas independentes | **Econômico** + `/jarvis-implement` paralelo |
 | Escopo ambíguo, UX/arquitetura em aberto, multi-subsistema | **Rigor** |
-| Bug teimoso, “não sei por onde começar” | **Rigor** (`/specnico-fix`) |
+| Bug teimoso, “não sei por onde começar” | **Rigor** (`/jarvis-fix`) |
 | Hotfix / prod quebrado / 1 linha óbvia | **Emergência** |
 | PR crítico, auth, dinheiro, dados sensíveis | **Rigor** |
 
-Na dúvida entre Econômico e Rigor: comece Econômico no `/specnico-spec`; se
-aparecerem `[NEEDS CLARIFICATION]`, suba para Rigor com `/specnico-clarify` e
-`/specnico-analyze`.
+Na dúvida entre Econômico e Rigor: comece Econômico no `/jarvis-specify`; se
+aparecerem `[NEEDS CLARIFICATION]`, suba para Rigor com `/jarvis-clarify` e
+`/jarvis-analyze`.
 
 ---
 
@@ -37,18 +37,18 @@ aparecerem `[NEEDS CLARIFICATION]`, suba para Rigor com `/specnico-clarify` e
 **Meta:** máximo de entrega por token, qualidade boa o suficiente.
 
 ```text
-/specnico-spec Bnn | requisito
-/specnico-plan
-/specnico-approve        # só humano
-/specnico-implement      # todas as ondas; ou Tnnn[,Tnnn] para um lote
-/specnico-converge       # fecha Pendências e conclui (done)
+/jarvis-specify Bnn | requisito
+/jarvis-plan
+/jarvis-tasks
+/jarvis-implement      # pede a aprovação humana; todas as ondas, ou Tnnn[,Tnnn] para um lote
+/jarvis-converge       # fecha Pendências e conclui (done)
 ```
 
 | Faça | Não faça |
 |------|----------|
 | Lazy load do papel (só skills do role) | Carregar toda a `.specify/memory/` sem necessidade |
-| Lote de tarefas mecânicas (`/specnico-implement T003,T004`) | Um comando por checkbox minúsculo |
-| Pular `/specnico-clarify` e `/specnico-analyze` quando a Spec está limpa | Rodar todos os passos opcionais por hábito |
+| Lote de tarefas mecânicas (`/jarvis-implement T003,T004`) | Um comando por checkbox minúsculo |
+| Pular `/jarvis-clarify` e `/jarvis-analyze` quando a Spec está limpa | Rodar todos os passos opcionais por hábito |
 | Confiar no `state.json` para saber o que está ativo | Varrer `specs/` ou colar a sessão inteira no chat “pra lembrar” |
 | Paralelismo só com ondas reais | Orquestrar 1 tarefa sequencial com subagentes |
 | `--no-review` quando as ondas são triviais e de baixo risco (a review final continua rodando) | Usar `--no-review` em toda Spec, sem avaliar o risco onda a onda |
@@ -56,7 +56,7 @@ aparecerem `[NEEDS CLARIFICATION]`, suba para Rigor com `/specnico-clarify` e
 **Checklist “estou economizando?”**
 
 - [ ] Não li `product.md` inteiro em tarefa de CSS / estilo
-- [ ] Agrupei tarefas mecânicas num só `/specnico-implement Tnnn,Tnnn`
+- [ ] Agrupei tarefas mecânicas num só `/jarvis-implement Tnnn,Tnnn`
 - [ ] Paralelismo só onde a onda tem 2+ tarefas independentes
 - [ ] Não abri skill fora do papel atual "por precaução"
 
@@ -71,30 +71,30 @@ controlada.
 
 | Fase | O quê usar | Artefato canônico |
 |------|------------|-------------------|
-| Descoberta / ambiguidade | `/specnico-spec` + `/specnico-clarify` (até 5 perguntas, uma por vez) | `spec.md` (`Status: review`, `## Clarificações`) |
-| Consistência | `/specnico-analyze` — spec ↔ plan ↔ tasks ↔ constituição | relatório (somente leitura) |
-| Gate humano | `/specnico-approve` — análise + checagens sintáticas antes de aprovar | `spec.md` com `Status: approved` |
-| Implementação controlada | `/specnico-implement --serial` — mantém a review por onda (até 3 rodadas) mas executa em sequência | `tasks.md` com checkboxes e evidência |
-| Bug difícil | `/specnico-fix` — teste que reproduz antes do fix | `specs/bugs/NNN-slug.md` |
+| Descoberta / ambiguidade | `/jarvis-specify` + `/jarvis-clarify` (até 5 perguntas, uma por vez) | `spec.md` (`Status: review`, `## Clarificações`) |
+| Consistência | `/jarvis-analyze` — spec ↔ plan ↔ tasks ↔ constituição | relatório (somente leitura) |
+| Gate humano | `/jarvis-implement` — análise + checagens sintáticas e confirmação do humano antes de aprovar (`--dry-run` só mostra as checagens) | `spec.md` com `Status: approved` |
+| Implementação controlada | `/jarvis-implement --serial` — mantém a review por onda (até 3 rodadas) mas executa em sequência | `tasks.md` com checkboxes e evidência |
+| Bug difícil | `/jarvis-fix` — teste que reproduz antes do fix | `specs/bugs/NNN-slug.md` |
 | Antes de "pronto" | skill `verification` — nenhum `[x]` sem evidência real de comando | Saída real de test/build |
-| Review avulsa | `/specnico-review` (Funcional → Qualidade) | Diff + critérios da Spec |
-| Pós-ajuste manual | `/specnico-converge` — fecha Pendências Manuais ou acrescenta tarefas | `tasks.md` `## Convergência` |
+| Review avulsa | `/jarvis-review` (Funcional → Qualidade) | Diff + critérios da Spec |
+| Pós-ajuste manual | `/jarvis-converge` — fecha Pendências Manuais ou acrescenta tarefas | `tasks.md` `## Convergência` |
 
 **Regras do modo Rigor**
 
-- Não pule o gate humano — Spec só avança com `/specnico-approve`.
+- Não pule o gate humano — a Spec só vira `approved` com a sua confirmação no `/jarvis-implement`.
 - Prefira `--serial` a paralelo quando houver risco de colisão entre tarefas.
 - TDD estrito e evidência de testes **obrigatórios** neste modo.
 
 ```text
 # Exemplo rigor (ambiguidade → implementação controlada)
-/specnico-spec Bnn
-/specnico-clarify
-/specnico-plan
-/specnico-analyze
-/specnico-approve              # humano confirma
-/specnico-implement --serial
-/specnico-converge
+/jarvis-specify Bnn
+/jarvis-clarify
+/jarvis-plan
+/jarvis-tasks
+/jarvis-analyze
+/jarvis-implement --serial   # humano confirma o gate
+/jarvis-converge
 ```
 
 ---
@@ -111,9 +111,9 @@ controlada.
 
 ```text
 # mínimo viável
-/specnico-fix "<sintoma>"    # reprodução → correção mínima → verificação → registro
-/specnico-review             # não pule se auth/pagamentos
-/specnico-spec <texto>       # depois, se o fix revelar dívida / feature incompleta
+/jarvis-fix "<sintoma>"    # reprodução → correção mínima → verificação → registro
+/jarvis-review             # não pule se auth/pagamentos
+/jarvis-specify <texto>       # depois, se o fix revelar dívida / feature incompleta
 ```
 
 | Faça | Não faça |
@@ -123,7 +123,7 @@ controlada.
 | Subir para Econômico/Rigor se o fix crescer | Continuar em emergência por dias |
 
 Se em 15 minutos o fix não está claro → **saia da emergência** e mude para o
-modo Rigor (`/specnico-spec` + `/specnico-approve` + `/specnico-implement --serial`).
+modo Rigor (`/jarvis-specify` + `/jarvis-plan` + `/jarvis-tasks` + `/jarvis-implement --serial`).
 
 ---
 
@@ -131,27 +131,27 @@ modo Rigor (`/specnico-spec` + `/specnico-approve` + `/specnico-implement --seri
 
 | Comando | Modo típico |
 |---------|-------------|
-| `/specnico-constitution` | Início de produto / replanejamento (emenda) |
-| `/specnico-spec` | Econômico e Rigor |
-| `/specnico-clarify` | Rigor, ou Spec com `[NEEDS CLARIFICATION]` |
-| `/specnico-plan` | Econômico e Rigor |
-| `/specnico-analyze` | Rigor |
-| `/specnico-approve` | Todos (gate humano) |
-| `/specnico-implement` | Econômico (paralelo) / Rigor (`--serial`) |
-| `/specnico-converge` | Fim de toda Spec; pós-ajuste manual |
-| `/specnico-review` | Todos (obrigatório em Rigor e em emergência sensível) |
-| `/specnico-fix` | Bugs e emergência |
+| `/jarvis-constitution` | Início de produto / replanejamento (emenda) |
+| `/jarvis-specify` | Econômico e Rigor |
+| `/jarvis-clarify` | Rigor, ou Spec com `[NEEDS CLARIFICATION]` |
+| `/jarvis-plan` | Econômico e Rigor |
+| `/jarvis-tasks` | Econômico e Rigor |
+| `/jarvis-analyze` | Rigor |
+| `/jarvis-implement` | Econômico (paralelo) / Rigor (`--serial`); contém o gate humano |
+| `/jarvis-converge` | Fim de toda Spec; pós-ajuste manual |
+| `/jarvis-review` | Todos (obrigatório em Rigor e em emergência sensível) |
+| `/jarvis-fix` | Bugs e emergência |
 
 ---
 
 ## Anti-padrões caros
 
 1. Carregar todos os skills do harness no mesmo turno “por precaução”.
-2. Brainstorm informal para “adicionar um campo no form” em vez de ir direto ao `/specnico-spec`.
+2. Brainstorm informal para “adicionar um campo no form” em vez de ir direto ao `/jarvis-specify`.
 3. Um subagente por checkbox de 2 minutos.
-4. Duas instâncias de `/specnico-implement` rodando ao mesmo tempo na mesma Spec.
+4. Duas instâncias de `/jarvis-implement` rodando ao mesmo tempo na mesma Spec.
 5. Editar o `state.json` à mão sem conferir o Status do `spec.md`.
-6. Implementar com `Status: review` ainda na Spec (sem passar por `/specnico-approve`).
+6. Implementar com `Status: review` ainda na Spec (sem passar pelo gate do `/jarvis-implement`).
 
 ---
 

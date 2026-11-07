@@ -1,29 +1,31 @@
 graph TD
   Start(("Ideia / requisito"))
-  Const["1  /specnico-constitution<br/>Entrevista em 5 blocos (1× por projeto; re-executar = emenda):<br/>constituição, memória, product-backlog em fases,<br/>settings.json e CI"]
-  Onboard["1  /specnico-onboard (projeto existente)<br/>Lê o código, sem entrevista (re-executar = sincroniza):<br/>memória inferida, backlog com features done,<br/>overview.md (itens a revisar)"]
-  Spec["2  /specnico-spec Bnn | texto livre<br/>Branch spec/NNN-slug + spec.md (Status: review)<br/>state.json: fase spec"]
-  Clarify["/specnico-clarify (opcional)<br/>Até 5 perguntas, uma por vez<br/>respostas em ## Clarificações"]
-  Plan["3  /specnico-plan<br/>plan.md (Constitution Check) +<br/>tasks.md em ondas"]
-  Analyze["/specnico-analyze (opcional)<br/>Consistência spec ↔ plan ↔ tasks ↔ constituição<br/>somente leitura"]
-  Gate{{"⛔ GATE HUMANO — /specnico-approve<br/>roda o analyze + checagens do pacote<br/>review → approved<br/>(spec-gate.mjs bloqueia o código antes)"}}
-  Impl["4  /specnico-implement [Tnnn,…]<br/>Ondas do tasks.md: subagentes backend/frontend<br/>review por onda (até 3 rodadas)<br/>commit por onda: pergunta antes"]
+  Const["1  /jarvis-constitution<br/>Entrevista em 5 blocos (1× por projeto; re-executar = emenda):<br/>constituição, memória, product-backlog em fases,<br/>settings.json e CI"]
+  Onboard["1  /jarvis-onboard (projeto existente)<br/>Lê o código, sem entrevista (re-executar = sincroniza):<br/>memória inferida, backlog com features done,<br/>overview.md (itens a revisar)"]
+  Spec["2  /jarvis-specify Bnn | texto livre<br/>Branch spec/NNN-slug + spec.md (Status: review)<br/>state.json: fase spec"]
+  Clarify["/jarvis-clarify (opcional)<br/>Até 5 perguntas, uma por vez<br/>respostas em ## Clarificações"]
+  Plan["3  /jarvis-plan<br/>plan.md: o como técnico<br/>(Constitution Check, contratos, ADRs)"]
+  Tasks["4  /jarvis-tasks<br/>tasks.md em ondas: propriedade de arquivos,<br/>rastreabilidade FR → tarefa → teste"]
+  Analyze["/jarvis-analyze (opcional)<br/>Consistência spec ↔ plan ↔ tasks ↔ constituição<br/>somente leitura"]
+  Gate{{"⛔ GATE HUMANO — início do /jarvis-implement<br/>checagens do pacote + sua confirmação<br/>review → approved<br/>(spec-gate.mjs bloqueia o código antes)"}}
+  Impl["5  /jarvis-implement [Tnnn,…]<br/>Ondas do tasks.md: subagentes backend/frontend<br/>review por onda (até 3 rodadas)<br/>commit por onda: pergunta antes"]
   Pend{{"Pendência Manual<br/>(device real, credencial,<br/>decisão de negócio)"}}
   Resolve["Você resolve manualmente<br/>e relata o que ajustou"]
   FinalReview["Review final do branch (reviewer)<br/>PR spec/NNN-slug → main (com confirmação)<br/>CI verify.yml roda"]
-  Conv["5  /specnico-converge [ajuste]<br/>Código × artefatos: fecha Pendências,<br/>acrescenta tarefas em ## Convergência"]
+  Conv["6  /jarvis-converge [ajuste]<br/>Código × artefatos: fecha Pendências,<br/>acrescenta tarefas em ## Convergência"]
   Done(("Spec done<br/>backlog done · state.json: ativo null<br/>feature live quando todos os itens fecham"))
-  Fix["/specnico-fix &quot;sintoma&quot;<br/>Bug: reprodução → correção mínima → verificação<br/>specs/bugs/NNN-slug.md · commit com confirmação"]
-  Review["/specnico-review [alvo]<br/>Funcional → Qualidade, somente leitura<br/>(avulso, a qualquer momento)"]
-  Next["Próximo item do backlog<br/>/specnico-spec Bnn"]
+  Fix["/jarvis-fix &quot;sintoma&quot;<br/>Bug: reprodução → correção mínima → verificação<br/>specs/bugs/NNN-slug.md · commit com confirmação"]
+  Review["/jarvis-review [alvo]<br/>Funcional → Qualidade, somente leitura<br/>(avulso, a qualquer momento)"]
+  Next["Próximo item do backlog<br/>/jarvis-specify Bnn"]
   CommitRule["Commit só com confirmação<br/>todo comando pergunta &quot;Posso commitar?&quot;<br/>e o settings.json pede permissão (ask)"]
 
   Start -->|"projeto novo"| Const --> Spec
   Start -->|"projeto existente"| Onboard --> Spec
   Spec -->|"[NEEDS CLARIFICATION]"| Clarify --> Plan
   Spec --> Plan
-  Plan --> Analyze --> Gate
-  Plan --> Gate
+  Plan --> Tasks
+  Tasks --> Analyze --> Gate
+  Tasks --> Gate
   Gate --> Impl
   Impl --> FinalReview --> Conv
   Impl -.-> Pend --> Resolve --> Conv
@@ -45,7 +47,7 @@ graph TD
   class Start,Done start;
   class Const,Onboard initStyle;
   class Gate,Pend gateStyle;
-  class Spec,Clarify,Plan,Analyze,Next flowStyle;
+  class Spec,Clarify,Plan,Tasks,Analyze,Next flowStyle;
   class Impl,Conv,Fix workStyle;
   class Review,FinalReview reviewStyle;
   class Resolve,CommitRule noteStyle;

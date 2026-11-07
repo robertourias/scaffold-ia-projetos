@@ -81,7 +81,7 @@ for (const file of walk(root)) {
       if (inFence) return;
       const heading = line.match(/^##\s+(.*)$/);
       if (heading) inMigration = MIGRATION_HEADING.test(heading[1]);
-      for (const [, cmd] of line.matchAll(/(?<![\w.\/-])\/(specnico-[a-z]+)(?![\w-])/g)) {
+      for (const [, cmd] of line.matchAll(/(?<![\w.\/-])\/(jarvis-[a-z]+)(?![\w-])/g)) {
         if (!existsSync(path.join(root, ".claude/skills", cmd, "SKILL.md"))) {
           failures.push(`${rel}:${i + 1}: comando inexistente → /${cmd}`);
         }

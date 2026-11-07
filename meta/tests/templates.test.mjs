@@ -122,5 +122,5 @@ test("overview-template: 8 seções na ordem do design e âncora de leitura", ()
   const t = read("overview-template.md");
   assert.ok(t.includes("**Última leitura:**"));
   assert.ok(t.includes("Atualizados nesta leitura"));
-  assert.ok(t.includes("<!-- a revisar: specnico-onboard -->"));
+  assert.ok(t.includes("<!-- a revisar: jarvis-onboard -->"));
 });

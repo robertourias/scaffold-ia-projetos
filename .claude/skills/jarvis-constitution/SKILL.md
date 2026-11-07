@@ -1,11 +1,11 @@
 ---
-name: specnico-constitution
+name: jarvis-constitution
 description: "Cria ou emenda a constituição do projeto: entrevista em 5 blocos, gera a memória (.specify/memory), o product backlog, settings.json e o CI. Re-executar = modo emenda; projeto migrado da 1.x = modo migração"
 argument-hint: "[princípios ou ajuste]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*), Bash(git status:*), Bash(git add:*)
 ---
 
-# /specnico-constitution — constituição, memória e backlog
+# /jarvis-constitution — constituição, memória e backlog
 
 Você é o agente que dá ao projeto sua **memória** (`.specify/memory/`) e seu
 **roteiro** (`product-backlog.md`). Roda uma vez por projeto; rodar de novo é
@@ -43,7 +43,7 @@ for diferente de `null`, avise que há uma Spec em andamento antes de seguir
 Leia `.specify/memory/constitution.md` e `.specify/memory/product-backlog.md`.
 Os modos são testados nesta ordem — o primeiro que casar vence:
 
-1. A constituição começa com `<!-- migrado da 1.x: revise com /specnico-constitution -->`
+1. A constituição começa com `<!-- migrado da 1.x: revise com /jarvis-constitution -->`
    (gravado pelo `npx specnico --migrate`) **ou** o backlog tem a seção
    `## Legado (1.x)` → **modo migração**: seção 7, depois 8. Vence o stub: uma
    constituição 1.x nunca preenchida chega com o stub concatenado aos guardrails.
@@ -90,7 +90,7 @@ que encontrou ("Vi `@prisma/client`, é o ORM em uso?"). Leia
 
 1. Linguagem, frameworks, banco, ORM, autenticação, filas e cache. Em
    monorepo, só o que é **compartilhado** — a stack por app é decidida no
-   `/specnico-plan` do item de arquitetura correspondente.
+   `/jarvis-plan` do item de arquitetura correspondente.
 2. Hospedagem e CI/CD (podem ser "a definir").
 3. Packs: "Encontrei os sinais X; ativo os packs `<ids>`?". Aceite zero ou mais
    IDs distribuídos. Nenhum aplicável → registre `nenhum` e **não invente stack**.
@@ -143,7 +143,7 @@ assim, avise ao final:
 
 > Sem comando de `<verificação>`, nenhum agente consegue provar que o código
 > funciona — os critérios de aceite viram autodeclaração. Configure antes de
-> rodar `/specnico-spec`.
+> rodar `/jarvis-specify`.
 
 ## 3. Geração da memória (leia só ao chegar aqui)
 
@@ -168,8 +168,8 @@ isso é esperado, não parcialidade.
 (`create-next-app`, `nest new`, menos de ~15 linhas reais), escreva um novo:
 nome + tagline, 1–2 parágrafos do que o produto faz e estágio, tabela de stack,
 "Quick Start" com comandos reais lidos de `package.json` (não invente) e uma
-seção "Desenvolvimento com IA" com o fluxo `/specnico-spec` → `/specnico-plan`
-→ `/specnico-approve` → `/specnico-implement` e o gate de Spec (`approved`
+seção "Desenvolvimento com IA" com o fluxo `/jarvis-specify` → `/jarvis-plan`
+→ `/jarvis-tasks` → `/jarvis-implement` e o gate de Spec (`approved`
 antes de implementar). Se já tiver conteúdo real do produto, **acrescente** só
 a seção "Desenvolvimento com IA" e não toque no resto. Diga ao usuário o que fez.
 
@@ -206,7 +206,7 @@ Complementar) e P3 (Fase 4 — Polimento) do Bloco 1, agrupadas em features
 - `## Features`: uma linha por `F-<SIGLA>` com Itens, Status `planejada` e Resumo de 1 linha.
 - **Proponha o backlog em lista numerada e pergunte** "Quer alterar ordem,
   adicionar, remover ou renomear algo antes de gravar?" Só grave após aprovação.
-- Cabeçalho: `**Gerado por:** /specnico-constitution em <data> | **Modo:** <modo>`.
+- Cabeçalho: `**Gerado por:** /jarvis-constitution em <data> | **Modo:** <modo>`.
 
 ## 5. Ferramentas (leia só ao chegar aqui)
 
@@ -233,8 +233,8 @@ e confirme antes de sobrescrever. Sem CI, registre em "requer revisão manual".
 
 ## 6. Modo emenda (leia só ao chegar aqui)
 
-Memória gerada pelo `/specnico-onboard` é emenda normal (já tem `**Versão:**`).
-Campo marcado `<!-- a revisar: specnico-onboard -->` que o usuário confirma ou
+Memória gerada pelo `/jarvis-onboard` é emenda normal (já tem `**Versão:**`).
+Campo marcado `<!-- a revisar: jarvis-onboard -->` que o usuário confirma ou
 altera perde o marcador, e a linha correspondente sai de "A revisar" em
 `.specify/memory/overview.md`.
 
@@ -287,7 +287,7 @@ texto 1.x concatenado (constitution + guardrails, cada trecho depois de um
    `## Notas do legado (1.x)` no fim do arquivo. Proponha a lista numerada
    (legado → `Bnn`) e **só grave após confirmação**; a seção `## Legado (1.x)`
    sai só depois de convertida. Cabeçalho:
-   `**Gerado por:** /specnico-constitution (migração 1.x) em <data> | **Modo:** <modo>`.
+   `**Gerado por:** /jarvis-constitution (migração 1.x) em <data> | **Modo:** <modo>`.
 5. **Ferramentas.** Seção 5. `.claude/settings.json` vindo da 1.x: mostre o
    diff contra `.claude/settings.example.json` (comandos 1.x, hooks 2.0) e
    confirme antes de alterar.
@@ -306,4 +306,4 @@ caminhos e commit:
 
 Sem confirmação, não commite: as mudanças seguem no working tree.
 
-Próximo: `/specnico-spec <Bnn>` — o primeiro item `backlog` com dependências `done` (`B01` num projeto novo)
+Próximo: `/jarvis-specify <Bnn>` — o primeiro item `backlog` com dependências `done` (`B01` num projeto novo)

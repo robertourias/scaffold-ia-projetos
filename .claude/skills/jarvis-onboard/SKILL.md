@@ -1,17 +1,17 @@
 ---
-name: specnico-onboard
+name: jarvis-onboard
 description: "Lê um projeto existente e preenche a memória do specnico (constituição, produto, arquitetura, convenções, decisões, backlog com features done) e o resumo de onboarding em .specify/memory/overview.md. Re-executar = sincroniza o que mudou no código"
 argument-hint: "[área ou caminho para focar]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Agent, Bash(ls:*), Bash(git log:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git status:*), Bash(git ls-files:*)
 ---
 
-# /specnico-onboard — leitura de um projeto existente
+# /jarvis-onboard — leitura de um projeto existente
 
 Você é o agente que chega a um projeto que **já existe**, lê o que encontra e
 deixa o specnico pronto para trabalhar nele: a memória em `.specify/memory/`,
 o product backlog com o que já foi entregue e um resumo de onboarding para os
 humanos em `.specify/memory/overview.md`. Para projeto novo, o caminho é o
-`/specnico-constitution`.
+`/jarvis-constitution`.
 
 Entrada do usuário (área ou caminho para focar, opcional): `$ARGUMENTS`
 
@@ -21,7 +21,7 @@ seguintes.
 ## Regras gerais
 
 - **Grave direto, sem perguntas.** O humano revisa depois. O que não dá para
-  inferir com evidência leva `<!-- a revisar: specnico-onboard -->` no campo e
+  inferir com evidência leva `<!-- a revisar: jarvis-onboard -->` no campo e
   entra em "A revisar" do `overview.md`.
 - **Nunca invente.** Comando que não existe → `(não configurado)`; feature,
   regra de negócio ou decisão sem evidência no repositório → não entra (ou
@@ -51,10 +51,10 @@ Leia `.specify/memory/constitution.md`, `.specify/memory/product-backlog.md`
 e `.specify/memory/overview.md` (se existir). O primeiro caso que casar vence:
 
 1. A constituição começa com
-   `<!-- migrado da 1.x: revise com /specnico-constitution -->` **ou** o
+   `<!-- migrado da 1.x: revise com /jarvis-constitution -->` **ou** o
    backlog tem a seção `## Legado (1.x)` → **pare**: o projeto veio da 1.x e
-   a conversão é do `/specnico-constitution` (modo migração). Diga isso em
-   uma linha e encerre com `Próximo: /specnico-constitution`.
+   a conversão é do `/jarvis-constitution` (modo migração). Diga isso em
+   uma linha e encerre com `Próximo: /jarvis-constitution`.
 2. Constituição com `**Status do arquivo:** vazio` → **primeira leitura**:
    seções 2, 3 e 4, depois 6.
 3. `overview.md` existe com `**Última leitura:**` → **sincronização**:
@@ -112,7 +112,7 @@ gravado (lembre: arquivo sem o aviso não é sobrescrito — vai para
 
 | Arquivo | Conteúdo |
 |---|---|
-| `.specify/memory/constitution.md` | De `constitution-template.md`: Versão `1.0.0`, Ratificada e Última emenda = hoje. §1 Identidade (nome, Modo — `single`, `monorepo` ou `microfrontends` pelos sinais —, Projetos, Packs ativos). §2 CN-001 a CN-003 e §3 GR-001 a GR-004 com o texto padrão do `/specnico-constitution` (Blocos 4 e 5), cada um com `<!-- a revisar: specnico-onboard -->` — princípios e guardrails são decisão humana. GR-005 em diante só para regra de negócio inviolável **com evidência** no código (ex: invoice só é anulada, nunca deletada), também a revisar. §4 comandos de type-check, lint, testes e build **só os que existem** (scripts, CI), senão `(não configurado)`. §5 Governança como no template |
+| `.specify/memory/constitution.md` | De `constitution-template.md`: Versão `1.0.0`, Ratificada e Última emenda = hoje. §1 Identidade (nome, Modo — `single`, `monorepo` ou `microfrontends` pelos sinais —, Projetos, Packs ativos). §2 CN-001 a CN-003 e §3 GR-001 a GR-004 com o texto padrão do `/jarvis-constitution` (Blocos 4 e 5), cada um com `<!-- a revisar: jarvis-onboard -->` — princípios e guardrails são decisão humana. GR-005 em diante só para regra de negócio inviolável **com evidência** no código (ex: invoice só é anulada, nunca deletada), também a revisar. §4 comandos de type-check, lint, testes e build **só os que existem** (scripts, CI), senão `(não configurado)`. §5 Governança como no template |
 | `.specify/memory/product.md` | De `product-template.md`: nome e descrição (README, manifesto), usuários e features **observáveis** (rotas, telas, comandos, endpoints), termos de domínio (entidades). Estágio, métrica de sucesso, não-escopo e restrições não-funcionais → `<!-- a definir -->` |
 | `.specify/memory/architecture.md` | Preserve a estrutura e as seções de referência do arquivo (arquitetura de referência, Monorepo); preencha Modo, packs, tabela de tecnologias real, camadas/módulos e como conversam; monorepo: tabela "Projetos do Monorepo" preenchida. Desvio da arquitetura de referência vira nota, nunca correção |
 | `.specify/memory/conventions.md` | Preserve a estrutura e as seções existentes (inclusive `## UI` e Monorepo, que outras skills e packs citam); acrescente as convenções **observadas** (nomes, estrutura de pastas, padrão de testes, lint) e os termos de domínio. Divergência do padrão vira nota, não substituição |
@@ -136,11 +136,11 @@ evidências.
 
 Grave `.specify/memory/product-backlog.md` no formato de
 `.specify/templates/product-backlog-template.md`, com o cabeçalho
-`**Gerado por:** /specnico-onboard em <data> | **Modo:** <modo>`.
+`**Gerado por:** /jarvis-onboard em <data> | **Modo:** <modo>`.
 
 - Só o que **já existe**: todo item com Status `done` e Spec `—`. Nenhum item
-  `backlog` — o futuro é do `/specnico-constitution` (emenda) ou do
-  `/specnico-spec` com texto livre.
+  `backlog` — o futuro é do `/jarvis-constitution` (emenda) ou do
+  `/jarvis-specify` com texto livre.
 - Fundação e arquitetura existentes nas Fases 0 e 1; cada feature observável
   na Fase 2, agrupada em `F-<SIGLA>`. Fases 3 e 4 ficam vazias.
 - Cada item tem entrada em `## Descrições` (o quê e porquê, nunca o como) e
@@ -170,7 +170,7 @@ Rodar de novo atualiza só o que mudou no código desde a última leitura.
    intacta → campo intacto, mesmo que o humano o tenha editado.
 4. **Evidência mudou → sobrescreva o campo com o valor novo**, mesmo que o
    humano o tenha revisado: para o que é inferido, o código é a verdade. O
-   campo volta a levar `<!-- a revisar: specnico-onboard -->` e entra em
+   campo volta a levar `<!-- a revisar: jarvis-onboard -->` e entra em
    "Atualizados nesta leitura" com o valor antigo → novo.
 5. **Nunca toque** em CN, GR, ADRs, itens existentes do backlog nem em nada
    que não seja inferido do código.
@@ -190,4 +190,4 @@ Onboarding gravado em .specify/memory/overview.md (<N> itens a revisar).
 Na sincronização sem mudanças, a segunda linha é
 `Nada mudou desde <commit>: memória e overview.md intactos.`
 
-Próximo: revise os itens "a revisar" em .specify/memory/overview.md; ajuste com /specnico-constitution (emenda); depois /specnico-spec <requisito>
+Próximo: revise os itens "a revisar" em .specify/memory/overview.md; ajuste com /jarvis-constitution (emenda); depois /jarvis-specify <requisito>

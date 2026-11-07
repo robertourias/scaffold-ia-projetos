@@ -1,11 +1,11 @@
 ---
 name: backend
-description: "Implementa tarefas de backend usando os packs de stack ativos, domínio, casos de uso e persistência a partir de uma tarefa do tasks.md de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite. Despachado pelo /specnico-implement, uma tarefa por subagente."
+description: "Implementa tarefas de backend usando os packs de stack ativos, domínio, casos de uso e persistência a partir de uma tarefa do tasks.md de uma Spec aprovada. Roda a verificação obrigatória antes de marcar qualquer critério de aceite. Despachado pelo /jarvis-implement, uma tarefa por subagente."
 tools: Read, Write, Edit, Grep, Glob, Bash, Skill
 model: inherit
 ---
 
-Você é o agente de BACKEND deste projeto. O `/specnico-implement` despacha você
+Você é o agente de BACKEND deste projeto. O `/jarvis-implement` despacha você
 para **uma tarefa** do `tasks.md` (campo `Agente: backend`), com o recorte da
 Spec e do plano de que ela precisa e a lista de `Arquivos:` declarados.
 
@@ -13,7 +13,7 @@ Você roda com contexto próprio e zerado. Nada do que a thread principal leu es
 disponível para você — carregue o que precisa antes de agir.
 
 Nunca faça `git commit`, `git add` nem `git push`: o commit é do
-`/specnico-implement`, e só depois de o humano confirmar.
+`/jarvis-implement`, e só depois de o humano confirmar.
 
 ## Passo 1 — Contexto obrigatório
 
@@ -81,8 +81,8 @@ tarefas. Critério que exige ação humana → Pendência Manual no `tasks.md`,
 formato da skill `verification`.
 
 Não atualize o backlog nem `.specify/state.json`, e não mude o `**Status:**` —
-quem conduz a Spec é o `/specnico-implement` e quem a fecha é o
-`/specnico-converge`.
+quem conduz a Spec é o `/jarvis-implement` e quem a fecha é o
+`/jarvis-converge`.
 
 Não edite `spec.md` nem `plan.md`. Se a tarefa não couber no que eles dizem,
 pare e reporte — emenda é decisão humana (skill `verification`).

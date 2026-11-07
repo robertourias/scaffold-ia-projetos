@@ -1,7 +1,7 @@
 # Specs
 
 Uma pasta por Spec, `specs/NNN-slug/` (NNN = 3 dígitos sequenciais), criada
-pelo `/specnico-spec`. As pastas concluídas ficam aqui como histórico
+pelo `/jarvis-specify`. As pastas concluídas ficam aqui como histórico
 (flow-forward: Spec `done` não é reescrita nem arquivada).
 
 ## O que vive aqui
@@ -12,11 +12,11 @@ specs/
     spec.md                  ← o quê e porquê (Status: review | approved | done)
     plan.md                  ← como (Constitution Check, contratos, decisões)
     tasks.md                 ← tarefas em ondas, critérios, Pendências, Convergência
-    review.md                ← notas de review do /specnico-implement
+    review.md                ← notas de review do /jarvis-implement
     checklists/requirements.md
     contracts/               ← opcional
   bugs/
-    NNN-slug.md              ← registro do /specnico-fix (numeração própria)
+    NNN-slug.md              ← registro do /jarvis-fix (numeração própria)
   legacy/                    ← só em projetos migrados da 1.x (somente leitura)
 ```
 
@@ -27,15 +27,15 @@ Modelos em `.specify/templates/` (`spec-template.md`, `plan-template.md`,
 
 | Momento | `spec.md` (`**Status:**`) | Item no backlog | `state.json` (`ativo.fase`) |
 |---|---|---|---|
-| `/specnico-spec` gera | `review` | `spec` | `spec` |
-| `/specnico-clarify` | `review` | `spec` | `clarify` |
-| `/specnico-plan` | `review` | `spec` | `plan` |
-| `/specnico-approve` (só humano) | `approved` | `approved` | `approved` |
-| `/specnico-implement` | `approved` | `in-progress` | `implement` |
-| `/specnico-converge` com lacunas ou Pendências | `approved` | `in-progress` | `converge` |
-| `/specnico-converge` sem lacunas nem Pendências | `done` | `done` | `ativo: null` |
+| `/jarvis-specify` gera | `review` | `spec` | `spec` |
+| `/jarvis-clarify` | `review` | `spec` | `clarify` |
+| `/jarvis-plan` | `review` | `spec` | `plan` |
+| `/jarvis-tasks` | `review` | `spec` | `tasks` |
+| `/jarvis-implement` (gate: o humano confirma `review → approved`) | `approved` | `in-progress` | `implement` |
+| `/jarvis-converge` com lacunas ou Pendências | `approved` | `in-progress` | `converge` |
+| `/jarvis-converge` sem lacunas nem Pendências | `done` | `done` | `ativo: null` |
 
-Cada Spec vive no branch `spec/NNN-slug` do `/specnico-spec` ao PR — ver
+Cada Spec vive no branch `spec/NNN-slug` do `/jarvis-specify` ao PR — ver
 `.specify/workflows/git-flow.md`. Mudança normativa em `spec.md` ou `plan.md`
 de uma Spec `approved` é registrada em `## Emendas` (o hook `spec-gate.mjs`
 pede confirmação); o `tasks.md` é livre.

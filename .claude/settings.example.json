@@ -74,8 +74,8 @@
       "Write(./.claude/settings.local.json)",
       "Edit(./.claude/hooks/**)",
       "Write(./.claude/hooks/**)",
-      "Edit(./.claude/skills/specnico-approve/**)",
-      "Write(./.claude/skills/specnico-approve/**)"
+      "Edit(./.claude/skills/jarvis-implement/**)",
+      "Write(./.claude/skills/jarvis-implement/**)"
     ],
     "allow": [
       "Read(./**)",

@@ -4,6 +4,12 @@
 
 ---
 
+## [3.0.0] - 2026-11-07
+
+Comandos `/jarvis-*` alinhados ao fluxo do Spec Kit; `/jarvis-tasks` novo; `approve` removido. Ver [2026-11-07-3.0.0](2026-11-07-3.0.0.md).
+
+---
+
 ## [2.1.1] - 2026-10-22
 
 Nenhum comando commita sem perguntar. Ver [2026-10-22-2.1.1](2026-10-22-2.1.1.md).

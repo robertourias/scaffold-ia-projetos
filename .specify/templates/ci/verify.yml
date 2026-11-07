@@ -1,4 +1,4 @@
-# Template de CI do harness — instalado pelo /specnico-constitution em
+# Template de CI do harness — instalado pelo /jarvis-constitution em
 # .github/workflows/verify.yml. Os passos marcados com `scaffold:<nome>`
 # (no fim da linha `run:`) recebem os comandos da seção 4 de
 # .specify/memory/constitution.md;
@@ -41,7 +41,7 @@ jobs:
         run: echo "defina o comando" # scaffold:build
 
       # Opcional para repositórios que distribuem este scaffold. O
-      # /specnico-constitution não instala este passo automaticamente em projetos de
+      # /jarvis-constitution não instala este passo automaticamente em projetos de
       # produto, pois o script de manutenção não faz parte do código deles.
       # - name: Manutenção do harness
       #   run: npm run check # scaffold:maintenance

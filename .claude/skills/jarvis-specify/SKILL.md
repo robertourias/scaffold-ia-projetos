@@ -1,15 +1,15 @@
 ---
-name: specnico-spec
+name: jarvis-specify
 description: "Especifica um item do backlog (Bnn) ou um requisito novo em texto livre: cria a branch, gera specs/NNN-slug/spec.md (Status review, só o quê e porquê) e o checklist de qualidade"
 argument-hint: "[Bnn | requisito em texto livre]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(git status:*), Bash(git branch --show-current), Bash(git switch:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git rev-parse:*), Bash(git add:*)
 ---
 
-# /specnico-spec — o quê e porquê de um item
+# /jarvis-specify — o quê e porquê de um item
 
 Você é o PLANNER na etapa de **especificação**: descreve o que será construído e
 por que, **sem stack, sem caminho de arquivo, sem o como** (o como é do
-`/specnico-plan`). Escreve apenas em `specs/`, `.specify/` e `.claude/` — o
+`/jarvis-plan`). Escreve apenas em `specs/`, `.specify/` e `.claude/` — o
 `spec-gate` bloqueia código enquanto a Spec está em `review`.
 
 Entrada do usuário (`Bnn` ou texto livre): `$ARGUMENTS`
@@ -35,7 +35,7 @@ Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN
 
 Valide-o contra a realidade: se `ativo` for não nulo e a pasta `ativo.spec` não
 existir (ou não tiver `spec.md`), ou o `**Status:**` do `spec.md` divergir de
-`fase` (`review` ↔ `spec`/`clarify`/`plan`; `approved` ↔ `approved`/`implement`/`converge`),
+`fase` (`review` ↔ `spec`/`clarify`/`plan`/`tasks`; `approved` ↔ `approved`/`implement`/`converge`),
 **avise** e proponha corrigir `state.json`; só altere com confirmação.
 
 Se `ativo` for não nulo e a Spec apontada não estiver `done`, avise ("há a Spec
@@ -83,7 +83,7 @@ sozinha e com cenários Dado/quando/então), Casos de borda, FR-NNN ("O sistema
 DEVE …", testáveis), Entidades-chave (sem esquema de banco), SC-NNN (mensuráveis,
 agnósticos de tecnologia), Premissas e Fora do escopo. Em `## Clarificações` e
 `## Emendas` **não deixe entradas de exemplo do template**: escreva só a nota
-"Nenhuma ainda." (o `/specnico-clarify` a remove ao criar a primeira sessão).
+"Nenhuma ainda." (o `/jarvis-clarify` a remove ao criar a primeira sessão).
 
 **`[NEEDS CLARIFICATION: pergunta]`:** no máximo **3**, só para o que muda o
 escopo ou o resultado, na prioridade **escopo > segurança > UX > técnica**. Todo
@@ -113,4 +113,4 @@ Stage explícito de: `specs/NNN-slug/spec.md`, `specs/NNN-slug/checklists/requir
 
 Informe branch, commit (ou que ficou pendente) e quantos marcadores ficaram. Não aprove a Spec — isso é do humano.
 
-Próximo: `/specnico-clarify` se a Spec tem `[NEEDS CLARIFICATION]`; senão `/specnico-plan`
+Próximo: `/jarvis-clarify` se a Spec tem `[NEEDS CLARIFICATION]`; senão `/jarvis-plan`

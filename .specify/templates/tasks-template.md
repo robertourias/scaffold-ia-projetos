@@ -50,4 +50,4 @@
 <!-- Critério que exige ação humana: ver skill `verification`. -->
 
 ## Convergência
-<!-- append-only, escrito pelo /specnico-converge -->
+<!-- append-only, escrito pelo /jarvis-converge -->

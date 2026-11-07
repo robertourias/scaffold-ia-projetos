@@ -1,6 +1,6 @@
 # Pacotes de stack
 
-O núcleo do specnico (skills `specnico-*` e de papel em `.claude/skills/`,
+O núcleo do specnico (skills `jarvis-*` e de papel em `.claude/skills/`,
 hooks em `.claude/hooks/`, templates e workflows em `.specify/`) é agnóstico
 de framework. Regras específicas de tecnologia vivem
 em pacotes nesta pasta.
@@ -14,7 +14,7 @@ Cada pacote deve ter:
 - nenhum arquivo deve alterar silenciosamente o núcleo ou sobrescrever docs do
   projeto consumidor.
 
-`appliesTo` é informativo e ajuda o `/specnico-constitution` a propor packs; a
+`appliesTo` é informativo e ajuda o `/jarvis-constitution` a propor packs; a
 escolha final é do usuário. Packs ativos são registrados em
 `.specify/memory/constitution.md`, no campo **Packs ativos** (espelhado em
 **Packs de stack** de `.specify/memory/architecture.md`).

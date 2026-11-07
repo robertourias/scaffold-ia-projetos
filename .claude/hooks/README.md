@@ -4,7 +4,7 @@ Verificação automática executada pelo harness — não pelo agente. É a dife
 entre "o agente disse que está pronto" e "o projeto compila".
 
 Ligados em `.claude/settings.example.json` → copie para `.claude/settings.json`
-(o `/specnico-constitution` faz isso).
+(o `/jarvis-constitution` faz isso).
 
 ## O que roda
 
@@ -16,7 +16,7 @@ Ligados em `.claude/settings.example.json` → copie para `.claude/settings.json
 
 Divisão proposital: lint por arquivo é barato e roda sempre; type-check é caro e
 roda uma vez por turno. Testes **não** rodam em hook — são responsabilidade
-explícita do agente (subagentes do `/specnico-implement`, `/specnico-fix`), porque a
+explícita do agente (subagentes do `/jarvis-implement`, `/jarvis-fix`), porque a
 suíte pode levar minutos e nem toda tarefa a exige.
 
 ## O gate de Spec — de honra para mecânico
@@ -38,11 +38,11 @@ texto novo isolado — ou que crie um `spec.md` novo já fora de `review`,
 devolve no stdout:
 
 ```json
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Aprovação de Spec exige confirmação humana (/specnico-approve)."}}
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Aprovação de Spec exige confirmação humana (/jarvis-implement)."}}
 ```
 
 O Claude Code pede confirmação humana no prompt antes de aplicar a edição. É
-o caminho que o `/specnico-approve` usa; uma tentativa de autoaprovação pelo
+o caminho que o `/jarvis-implement` usa; uma tentativa de autoaprovação pelo
 agente vira um prompt que o humano nega.
 
 **Regra 2 — implementação antes da aprovação.** O hook lê
@@ -52,7 +52,7 @@ apenas nos arquivos declarados no campo `Arquivos:` de cada tarefa do
 `<spec>/tasks.md`. Uma Spec sem `tasks.md`, ou cujo `tasks.md` não declara
 nenhum `Arquivos:`, bloqueia qualquer arquivo de código. `.specify/`, `specs/`
 e `.claude/` nunca são bloqueados por esta regra. A mensagem de bloqueio manda
-rodar `/specnico-approve <spec>`.
+rodar `/jarvis-implement <spec>` (que pede a aprovação ao humano).
 
 **Regra 3 — emenda em Spec aprovada.** Vale para `spec.md` e `plan.md`; no
 caso do `plan.md`, o Status vem do `spec.md` da mesma pasta. Com Status antes
@@ -136,7 +136,7 @@ Ou remova o bloco `hooks` de `.claude/settings.json`.
 ## Limitações
 
 - Verificam **sintaxe e tipos**, não corretude. Type-check verde não prova que a
-  regra de negócio está certa — isso é o `/specnico-review` e os testes.
+  regra de negócio está certa — isso é o `/jarvis-review` e os testes.
 - `verify-file.mjs` roda ESLint sem `--fix`: o agente corrige, o hook não edita
   código por conta própria.
 - Em monorepo, `verify-project.mjs` roda o script de type-check da **raiz**

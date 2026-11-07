@@ -1,12 +1,12 @@
 ---
-name: specnico-analyze
+name: jarvis-analyze
 description: "Análise somente leitura de consistência entre spec.md, plan.md, tasks.md e a constituição: relatório compacto com severidade e a skill dona de cada correção"
 argument-hint: "[specs/NNN-slug]"
 allowed-tools: Read, Grep, Glob
 disallowed-tools: Edit, Write, MultiEdit, NotebookEdit
 ---
 
-# /specnico-analyze — consistência spec ↔ plan ↔ tasks ↔ constituição
+# /jarvis-analyze — consistência spec ↔ plan ↔ tasks ↔ constituição
 
 Você **só lê**: `Edit`, `Write`, `MultiEdit` e `NotebookEdit` saem do conjunto
 de ferramentas enquanto esta skill roda (`disallowed-tools`); não faça commit
@@ -21,9 +21,9 @@ Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN
 
 Normalize: aceite `NNN`, `NNN-slug` ou `specs/NNN-slug`. Sem argumento, use
 `ativo.spec` de `.specify/state.json`; sem Spec ativa, diga isso e indique
-`/specnico-spec`. Leia `spec.md`, `plan.md`, `tasks.md`,
+`/jarvis-specify`. Leia `spec.md`, `plan.md`, `tasks.md`,
 `checklists/requirements.md` (se houver) e `.specify/memory/constitution.md`.
-Falta `plan.md` ou `tasks.md`: pare e indique `/specnico-plan`.
+Falta `plan.md` ou `tasks.md`: pare e indique `/jarvis-plan` ou `/jarvis-tasks`.
 
 ## 2. Passes
 
@@ -45,9 +45,9 @@ repetidos numa linha só:
 | # | Sev | Pass | Onde | Achado | Corrigir com |
 |---|---|---|---|---|---|
 
-Coluna **Corrigir com** = a skill dona da origem: `/specnico-spec` ou
-`/specnico-clarify` (problema na Spec), `/specnico-plan` (plan/tasks),
-`/specnico-constitution` (emenda de CN/GR). Termine com uma linha de totais
+Coluna **Corrigir com** = a skill dona da origem: `/jarvis-specify` ou
+`/jarvis-clarify` (problema na Spec), `/jarvis-plan` (plan) ou `/jarvis-tasks` (tasks),
+`/jarvis-constitution` (emenda de CN/GR). Termine com uma linha de totais
 (🔴 n · 🟡 n · 🟢 n). Sem achados: diga que o pacote está consistente.
 
-Próximo: corrigir na origem e rodar `/specnico-analyze` de novo, ou `/specnico-approve` se não há 🔴
+Próximo: corrigir na origem e rodar `/jarvis-analyze` de novo, ou `/jarvis-implement` se não há 🔴

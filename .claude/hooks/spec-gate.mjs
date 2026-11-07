@@ -26,7 +26,7 @@
  * confirma no prompt. Se não dá para computar o resultado (old_string não
  * encontrado), cai no fallback: qualquer texto novo que declare
  * `**Status:**` com valor diferente de review. É o caminho do
- * /specnico-approve; tentativa de autoaprovação vira um prompt que o humano
+ * /jarvis-implement (gate humano); tentativa de autoaprovação vira um prompt que o humano
  * nega.
  *
  * Regra 2 — implementação antes da aprovação. Com a Spec ativa em
@@ -157,7 +157,7 @@ if (isSpec || isPlan) {
           hookEventName: "PreToolUse",
           permissionDecision: "ask",
           permissionDecisionReason:
-            "Aprovação de Spec exige confirmação humana (/specnico-approve).",
+            "Aprovação de Spec exige confirmação humana (/jarvis-implement).",
         },
       }),
     );
@@ -167,7 +167,7 @@ if (isSpec || isPlan) {
   // --- Regra 3: emenda em Spec aprovada -------------------------------------
   // Numa Spec approved, compara o conteúdo NORMATIVO antes/depois. Não conta
   // como emenda: marcar checkbox, linhas em branco, blocos de Pendência
-  // Manual (🟡 aberta ou ✅ resolvida pelo /specnico-converge — mesmo formato de bloco,
+  // Manual (🟡 aberta ou ✅ resolvida pelo /jarvis-converge — mesmo formato de bloco,
   // linha de abertura + continuações ">"), as seções "## Notas de Review" e
   // "## Emendas" (mesmo numeradas ou com sufixo, ex. "## 9. Emendas"), e as
   // linhas Status / Aprovado por / Concluído em (approved → done é
@@ -288,6 +288,6 @@ process.stderr.write(
       ? `"${rel}" está declarado no campo Arquivos: dessa Spec. `
       : `Essa Spec não declara Arquivos:, então todo código fica bloqueado. `) +
     `Implementação não começa antes da aprovação: peça ao humano para ` +
-    `revisar e rodar /specnico-approve ${specRef}.\n`,
+    `revisar e rodar /jarvis-implement ${specRef} (ele pede a aprovação).\n`,
 );
 process.exit(2);

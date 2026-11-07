@@ -1,13 +1,13 @@
 ---
-name: specnico-converge
+name: jarvis-converge
 description: "Converge código × artefatos de uma Spec implementada: fecha Pendências Manuais, avalia lacunas pelo reviewer, acrescenta tarefas em ## Convergência e, sem lacunas, conclui a Spec (done), o backlog e a feature"
 argument-hint: "[specs/NNN-slug] [o que você ajustou manualmente]"
 allowed-tools: Read, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git diff:*), Bash(git log:*), Bash(git merge-base:*), Bash(git add:*)
 ---
 
-# /specnico-converge — fechar a Spec (código × artefatos)
+# /jarvis-converge — fechar a Spec (código × artefatos)
 
-Você é o responsável por **convergir** uma Spec depois do `/specnico-implement`:
+Você é o responsável por **convergir** uma Spec depois do `/jarvis-implement`:
 confere se o código entregue bate com `spec.md`, `plan.md` e `tasks.md`, fecha
 as Pendências Manuais que o humano resolveu e só então marca a Spec como
 concluída. Substitui o `recheck` da 1.x. Você **não implementa código**.
@@ -37,13 +37,13 @@ Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN
 
 Normalize o alvo (`NNN`, `NNN-slug`, `specs/NNN-slug`). Sem argumento, use
 `ativo.spec` de `.specify/state.json`; sem `ativo` → diga que não há Spec e
-indique `/specnico-spec`. `state.json` ilegível, pasta sem `spec.md`/`tasks.md`
+indique `/jarvis-specify`. `state.json` ilegível, pasta sem `spec.md`/`tasks.md`
 ou `fase` divergente → **avise** e proponha corrigir; só altere com confirmação.
 
 Gate pelo `**Status:**` de `spec.md`:
 
 - `approved` → prossiga.
-- `review` → pare: a Spec nunca foi aprovada nem implementada (`/specnico-approve`).
+- `review` → pare: a Spec nunca foi aprovada nem implementada (`/jarvis-implement`).
 - `done` → avise que já está concluída e pare.
 
 **Branch.** Compare `git branch --show-current` com `ativo.branch` (ou
@@ -77,7 +77,7 @@ Localize em `tasks.md` todo bloco:
 
 Para cada um, cruze com a descrição do humano: endereça claramente → marque
 `[x]` e troque o bloco por `> ✅ Pendência Manual resolvida em <data> via
-/specnico-converge: <resumo do relato>`; descrição genérica com 2+ pendências →
+/jarvis-converge: <resumo do relato>`; descrição genérica com 2+ pendências →
 **uma pergunta** listando os itens; não mencionada → continua pendente. Sem
 descrição e com pendências abertas → pergunte o que foi ajustado.
 
@@ -108,7 +108,7 @@ Cada lacuna vira uma tarefa **nova** na seção `## Convergência` de `tasks.md`
 
 Pergunte "Posso commitar?" (mensagem + arquivos) e, só com confirmação, commite com stage explícito (`tasks.md`; mais o `.specify/state.json` se mudou):
 `docs(spec): converge NNN-slug — lacunas (Tnnn…)`. Reporte as lacunas e pare:
-rode `/specnico-implement Tnnn[,Tnnn]` e depois `/specnico-converge` de novo,
+rode `/jarvis-implement Tnnn[,Tnnn]` e depois `/jarvis-converge` de novo,
 até não faltar nada.
 
 ## 5. Sem lacunas nem pendências: concluir
@@ -143,4 +143,4 @@ Commit: <hash curto> <mensagem>
 
 Concluída: o PR é mergeado pelo humano; depois a branch é limpa à mão (ver `.specify/workflows/git-flow.md`, Push e PR).
 
-Próximo: `/specnico-spec` (próximo item do backlog) ou, com lacunas, `/specnico-implement Tnnn`
+Próximo: `/jarvis-specify` (próximo item do backlog) ou, com lacunas, `/jarvis-implement Tnnn`

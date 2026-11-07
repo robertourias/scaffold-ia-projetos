@@ -1,12 +1,12 @@
 ---
 name: verification
-description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação, e todo critério que exige ação humana vira Pendência Manual rastreável. Invocada por /specnico-implement, /specnico-converge, /specnico-fix, a skill quality e todos os subagentes de implementação."
+description: "Define o que significa \"pronto\" neste projeto: nenhum critério de aceite vira [x] sem evidência real de comando de verificação, e todo critério que exige ação humana vira Pendência Manual rastreável. Invocada por /jarvis-implement, /jarvis-converge, /jarvis-fix, a skill quality e todos os subagentes de implementação."
 ---
 
 # Skill: Verificação
 
 Fonte canônica do que significa "pronto" neste projeto. Referenciada por
-`/specnico-implement`, `/specnico-converge`, `/specnico-fix`,
+`/jarvis-implement`, `/jarvis-converge`, `/jarvis-fix`,
 `.claude/skills/quality/SKILL.md` e pelos subagentes em `.claude/agents/`.
 
 > Os comandos concretos vivem em `.specify/memory/constitution.md`, seção 4
@@ -72,13 +72,13 @@ ou ambiente externo que você não acessa, decisão de negócio, aprovação hum
 Não deixe isso em aberto silenciosamente e não marque `[x]` por suposição.
 Anote no `tasks.md` (formato abaixo), reporte ao usuário com instrução
 concreta do que fazer, e siga sem bloquear o restante da tarefa. Quando o
-humano resolver, ele roda `/specnico-converge` para fechar o critério — não é
+humano resolver, ele roda `/jarvis-converge` para fechar o critério — não é
 seu trabalho como agente de implementação ficar esperando.
 
 ## Como anotar uma Pendência Manual no `tasks.md`
 
 Logo abaixo do critério de aceite afetado — na própria tarefa, ou em
-`## Pendências Manuais` quando o `/specnico-plan` já a previu —, insira
+`## Pendências Manuais` quando o `/jarvis-tasks` já a previu —, insira
 (mantendo o checkbox `- [ ]`):
 
 ```markdown
@@ -89,9 +89,9 @@ Logo abaixo do critério de aceite afetado — na própria tarefa, ou em
   > se X é aceitável", "gerar a credencial Y em produção e configurar .env">
 ```
 
-`/specnico-converge` procura por esse bloco (linha `> 🟡 Pendência Manual:`)
+`/jarvis-converge` procura por esse bloco (linha `> 🟡 Pendência Manual:`)
 em todo o `tasks.md` para saber o que rechecar, e o troca por
-`> ✅ Pendência Manual resolvida em <data> via /specnico-converge: <resumo>`. Não use esse formato para falhas normais (caso 2) — só para o
+`> ✅ Pendência Manual resolvida em <data> via /jarvis-converge: <resumo>`. Não use esse formato para falhas normais (caso 2) — só para o
 que está genuinamente fora do seu alcance como agente.
 
 ## Emenda em Spec aprovada
@@ -105,9 +105,9 @@ aprovados. FR novo ou removido **não** é emenda — é mudança de escopo: par
 escale ao humano.
 
 O `tasks.md` é livre (não é emenda): marcar checkbox, anotar Pendência Manual
-(aberta ou resolvida pelo `/specnico-converge`), tarefas novas em
+(aberta ou resolvida pelo `/jarvis-converge`), tarefas novas em
 `## Convergência`. Também não é emenda escrever o `review.md` nem fechar a
-Spec (`approved → done`, pelo `/specnico-converge`).
+Spec (`approved → done`, pelo `/jarvis-converge`).
 
 ## Proibido
 

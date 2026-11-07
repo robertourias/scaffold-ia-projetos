@@ -1,11 +1,11 @@
 ---
-name: specnico-fix
-description: "Fluxo leve de bugfix sem gate de Spec: sintoma → reprodução (teste que falha) → diagnóstico → correção mínima → verificação → veredito, registrado em specs/bugs/NNN-slug.md. Mudança de requisito para e sugere /specnico-spec"
+name: jarvis-fix
+description: "Fluxo leve de bugfix sem gate de Spec: sintoma → reprodução (teste que falha) → diagnóstico → correção mínima → verificação → veredito, registrado em specs/bugs/NNN-slug.md. Mudança de requisito para e sugere /jarvis-specify"
 argument-hint: "<sintoma do bug> [apps/<app>]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*)
 ---
 
-# /specnico-fix — corrigir um bug com evidência
+# /jarvis-fix — corrigir um bug com evidência
 
 Você corrige **um bug** com o menor desvio possível, provando por teste que o
 sintoma existia e deixou de existir. Não há gate de aprovação nem Spec nova: o
@@ -33,7 +33,7 @@ de verificação) e siga `.specify/workflows/git-flow.md`.
 
 ## Passo 0 — Preflight do estado
 
-Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN-slug · fase <fase> · Bnn`, ou `Ativo: nenhum`; formato de `.specify/workflows/context-resolution.md`). Se `ativo` aponta para uma Spec cujo `**Status:**` é `review`, **pare antes de editar qualquer código**: o hook `spec-gate` bloqueia (exit 2) edição de código enquanto a Spec ativa está em `review` (todo código, se o `tasks.md` dela não tem `Arquivos:`; senão, os arquivos declarados). Explique isso e ofereça: aprovar a Spec (`/specnico-approve`), concluí-la ou abandoná-la, ou — se o bug for independente dela — o humano limpar `ativo` com confirmação. Nunca proponha `SPECNICO_VERIFY=0` como caminho padrão. `approved`, `done`, `ativo: null` ou `state.json` ausente/ilegível (avise) → prossiga.
+Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN-slug · fase <fase> · Bnn`, ou `Ativo: nenhum`; formato de `.specify/workflows/context-resolution.md`). Se `ativo` aponta para uma Spec cujo `**Status:**` é `review`, **pare antes de editar qualquer código**: o hook `spec-gate` bloqueia (exit 2) edição de código enquanto a Spec ativa está em `review` (todo código, se o `tasks.md` dela não tem `Arquivos:`; senão, os arquivos declarados). Explique isso e ofereça: iniciar a implementação dela com `/jarvis-implement` (que pede a aprovação), concluí-la ou abandoná-la, ou — se o bug for independente dela — o humano limpar `ativo` com confirmação. Nunca proponha `SPECNICO_VERIFY=0` como caminho padrão. `approved`, `done`, `ativo: null` ou `state.json` ausente/ilegível (avise) → prossiga.
 
 ## Passo 1 — Sintoma e reprodução
 
@@ -44,7 +44,7 @@ Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN
 
 Ache a **causa raiz** (leia o código, rode o teste isolado; evidência, não palpite). Registre causa e arquivos.
 
-**Checagem de requisito:** a correção esperada contradiz ou amplia o que a Spec/constituição afirma (FR, regra de negócio, contrato)? Isto é **mudança de requisito**, não bug. **Pare**, não altere código, explique o conflito (cite o FR/regra) e sugira `/specnico-spec`.
+**Checagem de requisito:** a correção esperada contradiz ou amplia o que a Spec/constituição afirma (FR, regra de negócio, contrato)? Isto é **mudança de requisito**, não bug. **Pare**, não altere código, explique o conflito (cite o FR/regra) e sugira `/jarvis-specify`.
 
 ## Passo 3 — Correção mínima
 
@@ -65,4 +65,4 @@ Sem saída real, o veredito não é `verificado` (skill `verification`).
 
 Veredito `parcial` ou `falhou` → não finja sucesso: diga o que falta.
 
-Próximo: `/specnico-review` para revisar a correção; o bugfix encerra o fluxo aqui, sem Spec a fechar
+Próximo: `/jarvis-review` para revisar a correção; o bugfix encerra o fluxo aqui, sem Spec a fechar

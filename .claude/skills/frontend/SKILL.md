@@ -1,6 +1,6 @@
 ---
 name: frontend
-description: "Papel e padrões agnósticos do agente de frontend: interfaces, acessibilidade e performance. A stack ativa vem dos packs registrados na constituição. Despachada pelo /specnico-implement e pelo /specnico-fix."
+description: "Papel e padrões agnósticos do agente de frontend: interfaces, acessibilidade e performance. A stack ativa vem dos packs registrados na constituição. Despachada pelo /jarvis-implement e pelo /jarvis-fix."
 ---
 
 # Skill & Papel: Frontend
@@ -160,6 +160,6 @@ Use sempre o elemento que descreve o **significado** do conteúdo, não apenas s
 - **Cobertura Mínima**: Componentes: 70% | Hooks e Utils: 90% | Fluxos P0 (E2E via Playwright): 100%.
 
 ## Economia de Tokens e Respostas
-- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (índice por tiers em `.claude/CLAUDE.md`). Despachado pelo `/specnico-implement`, você recebe só o recorte da tarefa — não leia `spec.md`/`plan.md` inteiros.
+- Pratique lazy loading rigoroso de contexto: carregue apenas o Tier necessário para a tarefa (índice por tiers em `.claude/CLAUDE.md`). Despachado pelo `/jarvis-implement`, você recebe só o recorte da tarefa — não leia `spec.md`/`plan.md` inteiros.
 - Agrupe (batch) tarefas pequenas se forem solicitadas de uma vez, processando-as sequencialmente sem paradas para permissão.
 - Entregue o código final. Não explique o código, não ensine conceitos e não faça introduções/conclusões em linguagem natural.

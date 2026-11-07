@@ -59,7 +59,7 @@ test("review + arquivo declarado → bloqueia", () => {
   const cwd = project();
   const r = run(cwd, { file_path: "src/a.ts", new_string: "x" });
   assert.equal(r.code, 2);
-  assert.match(r.err, /\/specnico-approve/);
+  assert.match(r.err, /\/jarvis-implement/);
   assert.doesNotMatch(r.err, /prossiga normalmente/);
 });
 
@@ -512,7 +512,7 @@ test("review + sem tasks.md → bloqueia qualquer código", () => {
   const cwd = project({ tasks: false });
   const r = run(cwd, { file_path: "src/x.ts", new_string: "x" });
   assert.equal(r.code, 2);
-  assert.match(r.err, /\/specnico-approve/);
+  assert.match(r.err, /\/jarvis-implement/);
 });
 
 test("review + arquivo em .specify/ ou specs/ → libera", () => {
@@ -576,8 +576,8 @@ test("tasks.md: marcar checkbox / anexar Convergência com spec approved → sem
   );
 });
 
-test("autoaprovação: reason cita /specnico-approve", () => {
+test("autoaprovação: reason cita /jarvis-implement", () => {
   const cwd = project();
   const r = run(cwd, { file_path: "specs/001-s/spec.md", old_string: "review", new_string: "approved" });
-  assert.match(r.out, /\/specnico-approve/);
+  assert.match(r.out, /\/jarvis-implement/);
 });

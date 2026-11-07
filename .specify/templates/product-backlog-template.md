@@ -1,7 +1,7 @@
 # Product Backlog — <Projeto>
 
-**Gerado por:** /specnico-constitution em YYYY-MM-DD | **Modo:** <modo>
-**Status:** backlog → spec → approved → in-progress → done | descartado
+**Gerado por:** /jarvis-constitution em YYYY-MM-DD | **Modo:** <modo>
+**Status:** backlog → spec → in-progress → done | descartado
 **Tipo:** fundação | arquitetura | feature
 
 ## Fase 0 — Fundação
@@ -33,7 +33,7 @@
 
 ## Descrições
 
-Entrada do `/specnico-spec Bnn`. O quê e porquê — nunca o como.
+Entrada do `/jarvis-specify Bnn`. O quê e porquê — nunca o como.
 
 ### B01 — Monorepo base
 <descrição em 2-5 linhas>

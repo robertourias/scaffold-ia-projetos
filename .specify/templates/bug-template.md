@@ -18,4 +18,4 @@
 ## Veredito
 verificado | parcial | falhou — <justificativa>
 
-> Correção que exige mudar requisito: pare e use `/specnico-spec`.
+> Correção que exige mudar requisito: pare e use `/jarvis-specify`.

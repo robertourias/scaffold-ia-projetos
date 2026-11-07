@@ -1,6 +1,6 @@
 ---
 name: quality
-description: "Checklist de revisão em dois estágios (Funcional -> Qualidade) e escala de severidade para revisão de código. Invocada pelo subagente reviewer (despachado por /specnico-implement, /specnico-review e /specnico-converge) antes de emitir qualquer parecer."
+description: "Checklist de revisão em dois estágios (Funcional -> Qualidade) e escala de severidade para revisão de código. Invocada pelo subagente reviewer (despachado por /jarvis-implement, /jarvis-review e /jarvis-converge) antes de emitir qualquer parecer."
 ---
 
 # Skill & Papel: Reviewer (Qualidade de Código)

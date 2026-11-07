@@ -20,7 +20,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const CLI = path.join(root, "bin/cli.js");
 const VERSION = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).version;
-const SRC_SPEC = readFileSync(path.join(root, ".claude/skills/specnico-spec/SKILL.md"), "utf8");
+const SRC_SPEC = readFileSync(path.join(root, ".claude/skills/jarvis-specify/SKILL.md"), "utf8");
 
 const { isLegacyInstall, VERSION_FILE, LEGACY_VERSION_FILE } = createRequire(import.meta.url)(CLI);
 
@@ -34,8 +34,9 @@ test("instalação limpa copia harness e docs e grava versão", () => {
   const dir = tmp();
   const r = run(dir);
   assert.equal(r.status, 0, r.stderr);
-  assert.ok(existsSync(path.join(dir, ".claude/skills/specnico-spec/SKILL.md")));
-  assert.ok(existsSync(path.join(dir, ".claude/skills/specnico-approve/SKILL.md")));
+  assert.ok(existsSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md")));
+  assert.ok(existsSync(path.join(dir, ".claude/skills/jarvis-tasks/SKILL.md")));
+  assert.ok(!existsSync(path.join(dir, ".claude/skills/jarvis-approve")));
   assert.ok(!existsSync(path.join(dir, ".claude/commands")));
   assert.ok(!existsSync(path.join(dir, ".claude/skills/approve")));
   assert.ok(existsSync(path.join(dir, ".specify/templates/spec-template.md")));
@@ -55,9 +56,9 @@ test("instalação limpa copia harness e docs e grava versão", () => {
 test("reinstalação sem flag não sobrescreve", () => {
   const dir = tmp();
   run(dir);
-  writeFileSync(path.join(dir, ".claude/skills/specnico-spec/SKILL.md"), "LOCAL");
+  writeFileSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md"), "LOCAL");
   assert.equal(run(dir).status, 0);
-  assert.equal(read(dir, ".claude/skills/specnico-spec/SKILL.md"), "LOCAL");
+  assert.equal(read(dir, ".claude/skills/jarvis-specify/SKILL.md"), "LOCAL");
 });
 
 test("--check diagnostica instalação atualizada e drift local", () => {
@@ -66,7 +67,7 @@ test("--check diagnostica instalação atualizada e drift local", () => {
   let r = run(dir, "--check");
   assert.equal(r.status, 0, r.stderr);
   assert.match(r.stdout, /sem drift local/);
-  writeFileSync(path.join(dir, ".claude/skills/specnico-spec/SKILL.md"), "LOCAL");
+  writeFileSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md"), "LOCAL");
   r = run(dir, "--check");
   assert.equal(r.status, 1);
   assert.match(r.stdout, /Drift no harness: 1 arquivo/);
@@ -75,14 +76,14 @@ test("--check diagnostica instalação atualizada e drift local", () => {
 test("--upgrade atualiza harness e preserva contexto e settings", () => {
   const dir = tmp();
   run(dir);
-  writeFileSync(path.join(dir, ".claude/skills/specnico-spec/SKILL.md"), "VELHO");
+  writeFileSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md"), "VELHO");
   fill(dir);
   writeFileSync(path.join(dir, ".claude/settings.json"), "{}");
   writeFileSync(path.join(dir, ".specify/.specnico-version"), "0.9.0\n");
   rmSync(path.join(dir, ".specify/memory/decisions.md"));
   const r = run(dir, "--upgrade");
   assert.equal(r.status, 0, r.stderr);
-  assert.equal(read(dir, ".claude/skills/specnico-spec/SKILL.md"), SRC_SPEC);
+  assert.equal(read(dir, ".claude/skills/jarvis-specify/SKILL.md"), SRC_SPEC);
   assert.equal(read(dir, ".specify/memory/product.md"), "# Produto\nPREENCHIDO\n");
   assert.equal(read(dir, ".claude/settings.json"), "{}");
   assert.ok(existsSync(path.join(dir, ".specify/memory/decisions.md")));
@@ -151,24 +152,24 @@ test("--upgrade sem mudanças não imprime overwrite; com mudança imprime só o
   assert.equal(r.status, 0, r.stderr);
   assert.ok(!/overwrite/.test(r.stdout));
 
-  writeFileSync(path.join(dir, ".claude/skills/specnico-spec/SKILL.md"), "LOCAL");
+  writeFileSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md"), "LOCAL");
   r = run(dir, "--upgrade");
   assert.equal(r.status, 0, r.stderr);
   const overwriteLines = r.stdout.split("\n").filter((l) => l.includes("overwrite"));
   assert.equal(overwriteLines.length, 1);
-  assert.match(overwriteLines[0], /specnico-spec[\\/]SKILL\.md/);
+  assert.match(overwriteLines[0], /jarvis-specify[\\/]SKILL\.md/);
 });
 
 test("--upgrade não sobrescreve arquivo instalado só com line endings CRLF", () => {
   const dir = tmp();
   run(dir);
-  const specPath = path.join(dir, ".claude/skills/specnico-spec/SKILL.md");
+  const specPath = path.join(dir, ".claude/skills/jarvis-specify/SKILL.md");
   writeFileSync(specPath, readFileSync(specPath, "utf8").replace(/\n/g, "\r\n"));
   const r = run(dir, "--upgrade");
   assert.equal(r.status, 0, r.stderr);
   const overwriteLines = r.stdout
     .split("\n")
-    .filter((l) => l.includes("overwrite") && /specnico-spec[\\/]SKILL\.md/.test(l));
+    .filter((l) => l.includes("overwrite") && /jarvis-specify[\\/]SKILL\.md/.test(l));
   assert.equal(overwriteLines.length, 0);
 });
 
@@ -306,7 +307,7 @@ function assertMigrated(dir) {
   assert.equal(read(dir, ".specify/memory/product.md"), fixtureText("docs/context/product.md"));
   assert.equal(read(dir, ".specify/memory/decisions.md"), fixtureText("docs/context/decisions.md"));
   const constitution = read(dir, ".specify/memory/constitution.md");
-  assert.match(constitution, /<!-- migrado da 1\.x: revise com \/specnico-constitution -->/);
+  assert.match(constitution, /<!-- migrado da 1\.x: revise com \/jarvis-constitution -->/);
   assert.ok(constitution.includes(fixtureText("docs/context/constitution.md")));
   assert.ok(constitution.includes(fixtureText("docs/context/guardrails.md")));
   const conventions = read(dir, ".specify/memory/conventions.md");
@@ -337,7 +338,7 @@ function assertMigrated(dir) {
   assert.ok(!Number.isNaN(Date.parse(state.atualizado)));
   assert.equal(read(dir, ".specify/.specnico-version").trim(), VERSION);
   // harness 2.0 instalado
-  assert.ok(existsSync(path.join(dir, ".claude/skills/specnico-spec/SKILL.md")));
+  assert.ok(existsSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md")));
   assert.ok(existsSync(path.join(dir, ".specify/templates/spec-template.md")));
   assert.ok(existsSync(path.join(dir, "specs/README.md")));
 }
@@ -517,11 +518,11 @@ test("planMigration dá destino a todo arquivo de docs/ e não remove dado do us
   assert.ok(Object.keys(snapshot(dir)).some((k) => k.endsWith("img/a.png")));
 });
 
-test("--migrate aponta /specnico-constitution, que detecta a migração (sem 'modo emenda')", () => {
+test("--migrate aponta /jarvis-constitution, que detecta a migração (sem 'modo emenda')", () => {
   const dir = v1();
   const r = run(dir, "--migrate", "--yes");
   assert.equal(r.status, 0, r.stderr);
-  assert.match(r.stdout, /\/specnico-constitution/);
+  assert.match(r.stdout, /\/jarvis-constitution/);
   assert.match(r.stdout, /detecta a migracao/);
   assert.ok(!/modo emenda/.test(r.stdout));
   assert.ok(!/modo emenda/.test(read(dir, ".specify/memory/product-backlog.md")));
@@ -543,7 +544,7 @@ test("Spec Kit: avisa que os templates dele prevalecem e não sugere --upgrade",
   const r = run(dir);
   assert.equal(r.status, 0, r.stderr);
   assert.match(r.stdout, /\.specify\/templates\/.*prevalecem/);
-  assert.match(r.stdout, /skills specnico-\* precisam dos templates do specnico/);
+  assert.match(r.stdout, /skills jarvis-\* precisam dos templates do specnico/);
   assert.ok(!/use --upgrade/.test(r.stdout), "não deve sugerir --upgrade com Spec Kit");
   assert.match(r.stdout, /revise manualmente/);
   assert.equal(read(dir, ".specify/templates/spec-template.md"), "# Spec Kit\n");
@@ -573,17 +574,17 @@ test("hasExistingCode: manifesto ou src/ → true; diretório vazio ou só .clau
   assert.equal(hasExistingCode(s), true);
 });
 
-test("instalação sugere /specnico-onboard em projeto existente e /specnico-constitution em vazio", () => {
+test("instalação sugere /jarvis-onboard em projeto existente e /jarvis-constitution em vazio", () => {
   const novo = tmp();
   const r1 = run(novo);
   assert.equal(r1.status, 0, r1.stderr);
-  assert.match(r1.stdout, /Próximo: \/specnico-constitution/);
-  assert.doesNotMatch(r1.stdout, /Próximo: \/specnico-onboard/);
+  assert.match(r1.stdout, /Próximo: \/jarvis-constitution/);
+  assert.doesNotMatch(r1.stdout, /Próximo: \/jarvis-onboard/);
   const existente = tmp();
   writeFileSync(path.join(existente, "package.json"), "{}");
   const r2 = run(existente);
   assert.equal(r2.status, 0, r2.stderr);
-  assert.match(r2.stdout, /Próximo: \/specnico-onboard/);
+  assert.match(r2.stdout, /Próximo: \/jarvis-onboard/);
   const up = run(existente, "--upgrade");
   assert.equal(up.status, 0, up.stderr);
   assert.doesNotMatch(up.stdout, /Próximo:/);
@@ -596,4 +597,25 @@ test("reinstalação sobre harness existente não sugere próximo passo", () => 
   const again = run(dir);
   assert.equal(again.status, 0, again.stderr);
   assert.doesNotMatch(again.stdout, /Próximo:/);
+});
+
+test("--upgrade remove as skills specnico-* antigas e preserva arquivos do usuário", () => {
+  const dir = tmp();
+  run(dir);
+  for (const s of ["spec", "approve", "plan"]) {
+    mkdirSync(path.join(dir, `.claude/skills/specnico-${s}`), { recursive: true });
+    writeFileSync(path.join(dir, `.claude/skills/specnico-${s}/SKILL.md`), "ANTIGA");
+  }
+  writeFileSync(path.join(dir, ".claude/skills/specnico-plan/minha-nota.md"), "MINHA");
+  let r = run(dir, "--check");
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /Skills antigas \(specnico-\*\) ainda instaladas: 3/);
+  r = run(dir, "--upgrade");
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(!existsSync(path.join(dir, ".claude/skills/specnico-spec")));
+  assert.ok(!existsSync(path.join(dir, ".claude/skills/specnico-approve")));
+  assert.ok(!existsSync(path.join(dir, ".claude/skills/specnico-plan/SKILL.md")));
+  assert.equal(read(dir, ".claude/skills/specnico-plan/minha-nota.md"), "MINHA");
+  assert.match(r.stdout, /remove\s+\.claude[\/]skills[\/]specnico-spec/);
+  assert.ok(existsSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md")));
 });

@@ -11,7 +11,7 @@ zerado** e devolve só um relatório à thread principal.
 | `planner` | Read, Write, Edit, Grep, Glob, Bash, Skill | escreve a Spec (o quê) ou o plano e as tarefas em ondas (como) |
 
 Todos têm `Skill` para invocar o papel compartilhado com os comandos
-`specnico-*` (ver "Relação com as skills" abaixo).
+`jarvis-*` (ver "Relação com as skills" abaixo).
 
 ## Por que subagente e não prompt inline
 
@@ -23,7 +23,7 @@ Todos têm `Skill` para invocar o papel compartilhado com os comandos
 
 Os 4 agentes acima são fixos (papel definido, sempre os mesmos). Fora deles,
 a thread principal também pode despachar um subagente genérico (`general-purpose`
-ou equivalente) — não só dentro dos comandos `specnico-*`. Vale a pena quando:
+ou equivalente) — não só dentro dos comandos `jarvis-*`. Vale a pena quando:
 
 | Situação | Por quê vale o overhead |
 |----------|--------------------------|
@@ -40,17 +40,17 @@ subagente errado desperdiça tokens em vez de economizar.
 
 | Agente | Despachado por |
 |--------|----------------|
-| `planner` | `/specnico-spec` (Spec) e `/specnico-plan` (plano e tarefas), quando o trabalho é grande o bastante para valer o contexto isolado; senão o comando roda inline com a skill `planner` |
-| `backend` / `frontend` | `/specnico-implement`, um por tarefa, conforme o campo `Agente:` do `tasks.md` |
-| `reviewer` | `/specnico-implement` (por onda e final), `/specnico-review` e `/specnico-converge` |
+| `planner` | `/jarvis-specify` (Spec) e `/jarvis-plan` (plano) e `/jarvis-tasks` (tarefas), quando o trabalho é grande o bastante para valer o contexto isolado; senão o comando roda inline com a skill `planner` |
+| `backend` / `frontend` | `/jarvis-implement`, um por tarefa, conforme o campo `Agente:` do `tasks.md` |
+| `reviewer` | `/jarvis-implement` (por onda e final), `/jarvis-review` e `/jarvis-converge` |
 
 Não há comando para implementar uma tarefa avulsa inline: use
-`/specnico-implement Tnnn`. Bugs vão pelo `/specnico-fix`, que roda inline
+`/jarvis-implement Tnnn`. Bugs vão pelo `/jarvis-fix`, que roda inline
 com a skill `backend` ou `frontend`.
 
 ## Relação com as skills
 
-Comandos (`.claude/skills/specnico-*`) e agentes descrevem o mesmo papel em
+Comandos (`.claude/skills/jarvis-*`) e agentes descrevem o mesmo papel em
 dois modos de execução: o comando roda **inline** na thread atual e orquestra;
 o agente roda em **subagente** (contexto isolado, para tarefas paralelas e
 pareceres independentes).

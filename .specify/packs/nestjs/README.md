@@ -14,7 +14,7 @@ registrados em `.specify/memory/decisions.md`.
 
 ## Passos no fluxo SDD
 
-Ao planejar (`/specnico-plan`) e implementar (`/specnico-implement`) tarefas
+Ao planejar (`/jarvis-plan`) e implementar (`/jarvis-implement`) tarefas
 de backend NestJS, cubra, nesta ordem de dependência:
 
 1. **Domínio e banco** — entidades e value objects puros; migration para toda

@@ -14,7 +14,7 @@ decisões do projeto em `.specify/memory/decisions.md`.
 
 ## Passos no fluxo SDD
 
-Ao planejar (`/specnico-plan`) e implementar (`/specnico-implement`) tarefas
+Ao planejar (`/jarvis-plan`) e implementar (`/jarvis-implement`) tarefas
 de frontend Next.js, cubra, nesta ordem de dependência:
 
 1. **Dados** — tipos TypeScript para as respostas da API; função de

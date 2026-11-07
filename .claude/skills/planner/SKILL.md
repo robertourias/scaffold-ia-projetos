@@ -1,6 +1,6 @@
 ---
 name: planner
-description: "Papel de planejamento em duas etapas: Spec (o quê e porquê, em spec.md) e Plano/Tarefas (como, em plan.md e tasks.md em ondas), com rastreabilidade FR->tarefa->teste. Invocada por /specnico-spec, /specnico-plan e pelo subagente planner."
+description: "Papel de planejamento em três etapas: Spec (o quê e porquê, em spec.md), Plano (como, em plan.md) e Tarefas (tasks.md em ondas), com rastreabilidade FR->tarefa->teste. Invocada por /jarvis-specify, /jarvis-plan, /jarvis-tasks e pelo subagente planner."
 ---
 
 # Skill & Papel: Planner
@@ -9,13 +9,15 @@ Você atua como analista de produto e arquiteto de software. Traduz requisitos
 de negócio em uma Spec clara e, depois, em um plano técnico e tarefas
 executáveis, consistentes, seguras e de baixo acoplamento.
 
-São **duas etapas separadas**, cada uma com o seu comando e o seu artefato.
-Não misture: a Spec não fala de stack; o plano não muda o quê.
+São **etapas separadas**, cada uma com o seu comando e o seu artefato.
+Não misture: a Spec não fala de stack; o plano não muda o quê; as tarefas não
+mudam o plano.
 
 | Etapa | Comando | Artefatos | Template |
 |---|---|---|---|
-| Spec — o quê e porquê | `/specnico-spec` (e `/specnico-clarify`) | `specs/NNN-slug/spec.md`, `checklists/requirements.md` | `.specify/templates/spec-template.md` |
-| Plano/Tarefas — como | `/specnico-plan` | `plan.md`, `tasks.md`, `contracts/` (opcional) | `.specify/templates/plan-template.md`, `.specify/templates/tasks-template.md` |
+| Spec — o quê e porquê | `/jarvis-specify` (e `/jarvis-clarify`) | `specs/NNN-slug/spec.md`, `checklists/requirements.md` | `.specify/templates/spec-template.md` |
+| Plano — como | `/jarvis-plan` | `plan.md`, `contracts/` (opcional) | `.specify/templates/plan-template.md` |
+| Tarefas — em ondas | `/jarvis-tasks` | `tasks.md` | `.specify/templates/tasks-template.md` |
 
 Os comandos cuidam de branch, `state.json`, backlog e commit; esta skill define
 **como pensar e escrever** cada artefato.
@@ -24,7 +26,7 @@ Sempre: se a feature exigir violar um `GR-XXX` ou `CN-XXX` de
 `.specify/memory/constitution.md`, **não gere o artefato**. Pare e escale ao
 humano — isso não se resolve com uma exceção pontual na tarefa (no plano, uma
 violação inevitável vai para `## Complexity Tracking` e depende da aprovação
-humana no `/specnico-approve`).
+humana ao iniciar o `/jarvis-implement`).
 
 ---
 
@@ -44,11 +46,11 @@ o requisito em texto livre.
 4. **Requisitos funcionais** `FR-001…` testáveis, com "O sistema DEVE".
    Dúvida que muda escopo ou comportamento → `[NEEDS CLARIFICATION: <pergunta>]`
    no próprio FR (máx. 3; o resto vira premissa explícita). O
-   `/specnico-clarify` resolve os marcadores.
+   `/jarvis-clarify` resolve os marcadores.
 5. **Critérios de sucesso** `SC-001…` mensuráveis e agnósticos de tecnologia;
    **Fora do escopo** explícito.
 
-## Etapa 2 — Plano e Tarefas: o como
+## Etapa 2 — Plano e Tarefas: o como (`/jarvis-plan` faz o `plan.md`; `/jarvis-tasks`, o `tasks.md`)
 
 Leia o `spec.md` inteiro, `.specify/memory/constitution.md` (CN, GR e comandos
 de verificação), `.specify/memory/architecture.md`,
@@ -133,7 +135,7 @@ por alguém que não participou da conversa está mal escrito — reescreva.
   - [ ] Dado <estado de falha>, quando <ação>, então <erro tratado de forma X> — verificado por `<comando ou arquivo de teste>`
 ```
 
-`Agente:` é `backend` ou `frontend` (o `/specnico-implement` despacha por ele);
+`Agente:` é `backend` ou `frontend` (o `/jarvis-implement` despacha por ele);
 `Tipo:` é `feature | fix | refactor | chore`. Tarefa que toca as duas camadas
 vira duas tarefas ligadas por `Depende de:`.
 

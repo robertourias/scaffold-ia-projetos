@@ -17,7 +17,7 @@ Este é o harness do Claude Code apenas, sem camada agnóstica de ferramenta.
   README.md                 ← este arquivo
   settings.example.json     ← permissões + hooks (copie para settings.json)
   skills/
-    specnico-*/SKILL.md     ← os 11 comandos de fluxo
+    jarvis-*/SKILL.md     ← os 11 comandos de fluxo
     backend/ frontend/ planner/ quality/ verification/   ← papéis (sem prefixo)
   agents/                   ← backend, frontend, reviewer, planner (contexto isolado)
   hooks/                    ← spec-gate.mjs, verify-file.mjs, verify-project.mjs
@@ -32,13 +32,13 @@ Este é o harness do Claude Code apenas, sem camada agnóstica de ferramenta.
 
 specs/
   NNN-slug/                 ← spec.md, plan.md, tasks.md, review.md, checklists/, contracts/
-  bugs/  legacy/            ← registros do /specnico-fix; Specs migradas da 1.x
+  bugs/  legacy/            ← registros do /jarvis-fix; Specs migradas da 1.x
 ```
 
 `.specify/memory/`, `specs/` e `state.json` são **dado do projeto**: o CLI só cria,
 nunca sobrescreve. O restante é harness e o `--upgrade` o atualiza.
 
-## Comandos (`skills/specnico-*`)
+## Comandos (`skills/jarvis-*`)
 
 Cada comando é uma skill. Todos leem `.specify/state.json` primeiro, mostram a
 fase atual em uma linha e terminam com `Próximo:`. Edite a skill para mudar o
@@ -46,35 +46,35 @@ comportamento; a skill de papel que ela invoca é a fonte única do papel.
 
 | Skill | Entrada | Saída | Muda |
 |---|---|---|---|
-| `specnico-constitution` | ajuste opcional (re-executar = emenda; projeto migrado da 1.x = migração) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `product-backlog.md`, `settings.json`, CI | `state.json` |
-| `specnico-onboard` | área ou caminho opcional (re-executar = sincroniza o que mudou no código) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `projects/*.md`, `product-backlog.md` (features `done`), `overview.md`, `settings.json` se ausente — inferidos do código, sem commit | `state.json` (`atualizado`); não toca em Spec |
-| `specnico-spec` | `Bnn` ou texto livre | branch `spec/NNN-slug`, `spec.md`, `checklists/requirements.md` | spec `review`, backlog `spec`, fase `spec` |
-| `specnico-clarify` | Spec ativa ou indicada | até 5 perguntas, uma por vez; `## Clarificações` | fase `clarify` |
-| `specnico-plan` | Spec ativa ou indicada | `plan.md` (Constitution Check), `tasks.md` em ondas, `contracts/`, ADRs em `decisions.md` | fase `plan` |
-| `specnico-analyze` | Spec ativa ou indicada | relatório de consistência com severidade (somente leitura) | nada |
-| `specnico-approve` | Spec ativa ou indicada | aprovação do pacote spec + plan + tasks (só humano, `disable-model-invocation`) | spec `approved`, backlog `approved`, fase `approved` |
-| `specnico-implement` | vazio (todas as ondas), `Tnnn[,Tnnn]`, `NNN`/`NNN-slug`/`specs/NNN-slug`, `--dry-run`, `--serial`, `--worktree`, `--no-review` | código, commit por onda, `review.md`, PR oferecido | backlog `in-progress`, fase `implement` |
-| `specnico-converge` | Spec e ajuste opcional | fecha Pendências Manuais; tarefas novas em `## Convergência`; ou conclusão | com lacunas: fase `converge`; sem lacunas: spec `done`, backlog `done`, `ativo: null` |
-| `specnico-review` | alvo opcional | parecer em dois estágios (Funcional → Qualidade), somente leitura | nada |
-| `specnico-fix` | sintoma entre aspas | teste que falha, correção mínima, `specs/bugs/NNN-slug.md` | nada (sem Spec) |
+| `jarvis-constitution` | ajuste opcional (re-executar = emenda; projeto migrado da 1.x = migração) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `product-backlog.md`, `settings.json`, CI | `state.json` |
+| `jarvis-onboard` | área ou caminho opcional (re-executar = sincroniza o que mudou no código) | `constitution.md`, `product.md`, `architecture.md`, `conventions.md`, `decisions.md`, `projects/*.md`, `product-backlog.md` (features `done`), `overview.md`, `settings.json` se ausente — inferidos do código, sem commit | `state.json` (`atualizado`); não toca em Spec |
+| `jarvis-specify` | `Bnn` ou texto livre | branch `spec/NNN-slug`, `spec.md`, `checklists/requirements.md` | spec `review`, backlog `spec`, fase `spec` |
+| `jarvis-clarify` | Spec ativa ou indicada | até 5 perguntas, uma por vez; `## Clarificações` | fase `clarify` |
+| `jarvis-plan` | Spec ativa ou indicada | `plan.md` (Constitution Check), `contracts/`, ADRs em `decisions.md` | fase `plan` |
+| `jarvis-tasks` | Spec ativa ou indicada | `tasks.md` em ondas (propriedade de arquivos, rastreabilidade, critérios) | fase `tasks` |
+| `jarvis-analyze` | Spec ativa ou indicada | relatório de consistência com severidade (somente leitura) | nada |
+| `jarvis-implement` | vazio (todas as ondas), `Tnnn[,Tnnn]`, `NNN`/`NNN-slug`/`specs/NNN-slug`, `--dry-run`, `--serial`, `--worktree`, `--no-review` | gate humano (valida o pacote e pede a aprovação), código, commit por onda, `review.md`, PR oferecido (só humano, `disable-model-invocation`) | spec `approved`, backlog `in-progress`, fase `implement` |
+| `jarvis-converge` | Spec e ajuste opcional | fecha Pendências Manuais; tarefas novas em `## Convergência`; ou conclusão | com lacunas: fase `converge`; sem lacunas: spec `done`, backlog `done`, `ativo: null` |
+| `jarvis-review` | alvo opcional | parecer em dois estágios (Funcional → Qualidade), somente leitura | nada |
+| `jarvis-fix` | sintoma entre aspas | teste que falha, correção mínima, `specs/bugs/NNN-slug.md` | nada (sem Spec) |
 
-Fluxo: `/specnico-constitution` (projeto novo) ou `/specnico-onboard` (projeto
-existente) → por item: `/specnico-spec` →
-[`/specnico-clarify`] → `/specnico-plan` → [`/specnico-analyze`] →
-`/specnico-approve` → `/specnico-implement` → `/specnico-converge` (repita
+Fluxo: `/jarvis-constitution` (projeto novo) ou `/jarvis-onboard` (projeto
+existente) → por item: `/jarvis-specify` →
+[`/jarvis-clarify`] → `/jarvis-plan` → `/jarvis-tasks` →
+[`/jarvis-analyze`] → `/jarvis-implement` → `/jarvis-converge` (repita
 implement → converge até `done`).
 
 ### Ciclo de vida do Status
 
 | Momento | `spec.md` | Backlog | `state.json` (`ativo.fase`) |
 |---|---|---|---|
-| `/specnico-spec` | `review` | `spec` | `spec` |
-| `/specnico-clarify` | `review` | `spec` | `clarify` |
-| `/specnico-plan` | `review` | `spec` | `plan` |
-| `/specnico-approve` | `approved` | `approved` | `approved` |
-| `/specnico-implement` | `approved` | `in-progress` | `implement` |
-| `/specnico-converge` com lacunas | `approved` | `in-progress` | `converge` |
-| `/specnico-converge` sem lacunas | `done` | `done` | `ativo: null` |
+| `/jarvis-specify` | `review` | `spec` | `spec` |
+| `/jarvis-clarify` | `review` | `spec` | `clarify` |
+| `/jarvis-plan` | `review` | `spec` | `plan` |
+| `/jarvis-tasks` | `review` | `spec` | `tasks` |
+| `/jarvis-implement` (após a sua confirmação no gate) | `approved` | `in-progress` | `implement` |
+| `/jarvis-converge` com lacunas | `approved` | `in-progress` | `converge` |
+| `/jarvis-converge` sem lacunas | `done` | `done` | `ativo: null` |
 
 O `Status` da Spec existe só no `spec.md`. O `state.json` é conferido contra ele
 no início de cada comando; divergência é avisada e só corrigida com sua
@@ -88,9 +88,9 @@ constituição. Os subagentes dão contexto isolado por papel:
 
 | Subagente | Despachado por | Observação |
 |---|---|---|
-| `planner` | `/specnico-spec`, `/specnico-plan` | nunca aprova: a Spec fica em `review` |
-| `backend`, `frontend` | `/specnico-implement` | uma tarefa por subagente; roda a verificação antes de marcar `[x]` |
-| `reviewer` | `/specnico-implement` (por onda e final), `/specnico-review`, `/specnico-converge` | sem `Edit`/`Write`, por construção |
+| `planner` | `/jarvis-specify`, `/jarvis-plan`, `/jarvis-tasks` | nunca aprova: a Spec fica em `review` |
+| `backend`, `frontend` | `/jarvis-implement` | uma tarefa por subagente; roda a verificação antes de marcar `[x]` |
+| `reviewer` | `/jarvis-implement` (por onda e final), `/jarvis-review`, `/jarvis-converge` | sem `Edit`/`Write`, por construção |
 
 Use um subagente genérico só para tarefas independentes em paralelo, buscas
 amplas no código ou quando o isolamento por ferramenta é o guardrail. Detalhes
@@ -107,7 +107,7 @@ demanda. O implementador recebe só o recorte da sua tarefa.
 ## Hooks
 
 Ligados por `settings.json` (copiado de `settings.example.json` pelo
-`/specnico-constitution`):
+`/jarvis-constitution`):
 
 | Hook | Evento | Efeito |
 |---|---|---|
@@ -133,7 +133,7 @@ O **Modo** (`single | monorepo | microfrontends`) e os projetos estão em
 `## 1. Identidade` da constituição. `specs/` é plano: o escopo de uma Spec é o
 campo `**Escopo:**` do `spec.md` (`raiz`, `apps/api` ou lista). O contexto
 local de cada app/package fica em `.specify/memory/projects/<apps-x>.md`, criado
-pelo `/specnico-plan` do item de arquitetura daquele projeto. Nunca há
+pelo `/jarvis-plan` do item de arquitetura daquele projeto. Nunca há
 documentação dentro de `apps/<app>/` ou `packages/<pkg>/`.
 
 ## Modelo de persistência
@@ -143,19 +143,19 @@ documentação dentro de `apps/<app>/` ou `packages/<pkg>/`.
   ativo, agentes nunca varrem `specs/`.
 - **Features como documentação viva.** O índice de features do
   `product-backlog.md` (`F-<SIGLA>`, `planejada` → `live`) é reescrito pelo
-  `/specnico-converge` quando todos os itens da feature ficam `done`.
+  `/jarvis-converge` quando todos os itens da feature ficam `done`.
 - **Decisões** ficam em `decisions.md`; o histórico do trabalho, no `git log`.
 - **Nada de estado duplicado:** fase em `state.json`, Status em `spec.md`,
   progresso nos checkboxes do `tasks.md`.
 
 ## Adicionar um comando novo
 
-1. Crie `skills/specnico-<nome>/SKILL.md` com frontmatter (`name`, `description`;
+1. Crie `skills/jarvis-<nome>/SKILL.md` com frontmatter (`name`, `description`;
    descriptions com `: ` vão entre aspas).
 2. Faça o comando ler o `state.json` primeiro e terminar com `Próximo:`.
 3. Se muda fase ou Status, atualize a tabela de ciclo de vida acima e em
    `specs/README.md`.
 4. Registre o comando em `CLAUDE.md` e rode `node meta/tests/lint-docs.mjs`
-   (verifica que todo `/specnico-*` citado existe).
+   (verifica que todo `/jarvis-*` citado existe).
 5. Nunca instrua `git add -A`, `git add .` ou `git commit -a`: stage só caminhos
    explícitos.

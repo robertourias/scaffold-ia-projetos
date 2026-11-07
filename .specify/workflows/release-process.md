@@ -15,8 +15,8 @@
 ### 1. Pre-Release Checklist
 - [ ] All PRs intended for this release are merged to `main`
 - [ ] CI pipeline is green on `main`
-- [ ] No open BLOCKER issues from review (`/specnico-review` sem 🔴)
-- [ ] Specs incluídas em `Status: done` (`/specnico-converge`)
+- [ ] No open BLOCKER issues from review (`/jarvis-review` sem 🔴)
+- [ ] Specs incluídas em `Status: done` (`/jarvis-converge`)
 - [ ] Migrations have been tested locally and on staging
 - [ ] Environment variables for new features are configured in all environments
 - [ ] Feature flags are set correctly (if applicable)
@@ -53,14 +53,14 @@ git push origin v[X.Y.Z]
 
 ### 4. Post-Deploy
 - [ ] Registrar a versão no changelog do projeto (`CHANGELOG.md`, se houver), a partir do `git log` desde a última tag — os commits do fluxo (`docs(spec): conclui NNN-slug`, ondas, `fix(...)`) apontam as Specs e bugs entregues (formato na seção "Changelog Format" abaixo)
-- [ ] Conferir no índice `## Features` de `.specify/memory/product-backlog.md` que as features entregues estão `live` (o `/specnico-converge` as marca quando todos os itens ficam `done`)
+- [ ] Conferir no índice `## Features` de `.specify/memory/product-backlog.md` que as features entregues estão `live` (o `/jarvis-converge` as marca quando todos os itens ficam `done`)
 - [ ] Notify stakeholders (Slack, email, etc.)
 - [ ] Close related tasks/tickets
 - [ ] Celebrate 🎉
 
 ## Hotfix Process
 
-For urgent production bugs (registre a correção com `/specnico-fix`, que exige o teste que reproduz o bug e grava `specs/bugs/NNN-slug.md`):
+For urgent production bugs (registre a correção com `/jarvis-fix`, que exige o teste que reproduz o bug e grava `specs/bugs/NNN-slug.md`):
 
 ```bash
 git checkout -b hotfix/describe-the-issue main

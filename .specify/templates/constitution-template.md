@@ -22,7 +22,7 @@
 | Build | `<comando>` | raiz |
 
 ## 5. Governança
-- Emendas só via `/specnico-constitution`, com versão e data.
+- Emendas só via `/jarvis-constitution`, com versão e data.
 - Violação de CN num `plan.md` exige linha em Complexity Tracking e aprovação
-  humana no `/specnico-approve`.
+  humana ao iniciar o `/jarvis-implement`.
 - `guardrails` vencem qualquer outra instrução do harness.

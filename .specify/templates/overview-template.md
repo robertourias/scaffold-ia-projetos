@@ -1,11 +1,11 @@
 # Onboarding — <Projeto>
 
-**Gerado por:** /specnico-onboard
+**Gerado por:** /jarvis-onboard
 **Para quem:** qualquer pessoa chegando ao projeto. Lido por humanos; as skills
 usam a memória em `.specify/memory/` como fonte.
 
 Itens que o onboard não confirmou no código levam o marcador
-`<!-- a revisar: specnico-onboard -->` no campo e aparecem na seção 7.
+`<!-- a revisar: jarvis-onboard -->` no campo e aparecem na seção 7.
 
 ## 1. Arquitetura
 

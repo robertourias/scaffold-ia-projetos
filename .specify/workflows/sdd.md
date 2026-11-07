@@ -7,13 +7,13 @@
 ## Visão geral
 
 ```
-/specnico-constitution          (1× por projeto novo; re-executar = emenda)
-  ou /specnico-onboard           (projeto existente: lê o código; re-executar = sincroniza)
+/jarvis-constitution          (1× por projeto novo; re-executar = emenda)
+  ou /jarvis-onboard           (projeto existente: lê o código; re-executar = sincroniza)
   └─ por item do backlog:
-     /specnico-spec Bnn → [/specnico-clarify] → /specnico-plan → [/specnico-analyze]
-       → ⛔ /specnico-approve (humano) → /specnico-implement → /specnico-converge
+     /jarvis-specify Bnn → [/jarvis-clarify] → /jarvis-plan → /jarvis-tasks → [/jarvis-analyze]
+       → /jarvis-implement (⛔ gate: o humano aprova) → /jarvis-converge
          (repetir implement → converge até done)
-bug: /specnico-fix "<sintoma>"
+bug: /jarvis-fix "<sintoma>"
 ```
 
 Todo comando lê `.specify/state.json` ao começar, mostra a fase em uma linha
@@ -23,49 +23,55 @@ sem perguntar antes ("Posso commitar?").
 
 ## 0. Constituição
 
-`/specnico-constitution` entrevista o humano e gera a memória do projeto em
+`/jarvis-constitution` entrevista o humano e gera a memória do projeto em
 `.specify/memory/` (constituição com CN, GR e comandos de verificação;
 produto; arquitetura; convenções; decisões), o product backlog em fases,
 `.claude/settings.json` e o CI. Re-executar = emenda versionada.
 
-Projeto que já existe: `/specnico-onboard` faz o mesmo papel lendo o
+Projeto que já existe: `/jarvis-onboard` faz o mesmo papel lendo o
 repositório em vez de entrevistar — grava a memória inferida, o backlog com as
 features entregues (`done`) e o resumo `.specify/memory/overview.md`. O que não
 dá para inferir fica marcado "a revisar" para o humano ajustar com
-`/specnico-constitution` (emenda).
+`/jarvis-constitution` (emenda).
 
 ## 1. Especificação — o quê e por quê
 
-`/specnico-spec Bnn` (ou texto livre, que vira item novo no backlog) cria a
+`/jarvis-specify Bnn` (ou texto livre, que vira item novo no backlog) cria a
 branch `spec/NNN-slug`, a pasta `specs/NNN-slug/` com `spec.md` em
 `Status: review` e o checklist `checklists/requirements.md`. Sem stack, sem
 caminho de arquivo.
 
-`/specnico-clarify` (opcional, recomendado com `[NEEDS CLARIFICATION]`) faz até
+`/jarvis-clarify` (opcional, recomendado com `[NEEDS CLARIFICATION]`) faz até
 5 perguntas, uma por vez, e grava as respostas em `## Clarificações`.
 
 ## 2. Planejamento — como
 
-`/specnico-plan` gera `plan.md` (contexto técnico, Constitution Check,
-contratos, decisões registradas em `.specify/memory/decisions.md`) e
-`tasks.md` em ondas: Fundacional → US1 🎯 MVP → … → Polimento. Cada tarefa
-declara `Agente:`, `Depende de:`, `Arquivos:`, `Cobre:` e critérios
-verificáveis; duas tarefas da mesma onda nunca compartilham arquivo.
+`/jarvis-plan` gera `plan.md`: contexto técnico, Constitution Check, contratos e
+decisões registradas em `.specify/memory/decisions.md`.
 
-`/specnico-analyze` (opcional) confere spec ↔ plan ↔ tasks ↔ constituição sem
+## 2.1 Tarefas — em ondas
+
+`/jarvis-tasks` gera `tasks.md` a partir do plano, em ondas: Fundacional → US1
+🎯 MVP → … → Polimento. Cada tarefa declara `Agente:`, `Depende de:`,
+`Arquivos:`, `Cobre:` e critérios verificáveis; duas tarefas da mesma onda
+nunca compartilham arquivo.
+
+`/jarvis-analyze` (opcional) confere spec ↔ plan ↔ tasks ↔ constituição sem
 editar nada.
 
-## ⛔ Gate — aprovação humana
+## ⛔ Gate — aprovação humana (início do `/jarvis-implement`)
 
-`/specnico-approve` só é invocado pelo humano. Roda a análise e as checagens
-sintáticas e aprova o pacote (`review → approved`). Antes disso, o hook
-`spec-gate.mjs` bloqueia a edição dos arquivos declarados no `tasks.md` (ou de
-qualquer código, se não houver `Arquivos:`). Depois, mudança normativa em
-`spec.md`/`plan.md` exige registro em `## Emendas`.
+Não há comando de aprovação à parte: o `/jarvis-implement` só é invocado pelo
+humano e, com a Spec em `review`, começa pelo gate. Roda a análise e as
+checagens sintáticas do pacote, mostra o resultado e pergunta se aprova;
+com o sim, passa `review → approved` e segue para as ondas. Antes disso, o
+hook `spec-gate.mjs` bloqueia a edição dos arquivos declarados no `tasks.md`
+(ou de qualquer código, se não houver `Arquivos:`). Depois, mudança normativa
+em `spec.md`/`plan.md` exige registro em `## Emendas`.
 
 ## 3. Implementação
 
-`/specnico-implement` (todas as ondas, ou só `Tnnn[,Tnnn]`) despacha um
+`/jarvis-implement` (todas as ondas, ou só `Tnnn[,Tnnn]`), depois do gate, despacha um
 subagente `backend`/`frontend` por tarefa, conforme `Agente:`. Por onda:
 verificação com evidência (skill `verification`), review do `reviewer` (até 3
 rodadas) e commit, só depois de você confirmar. Ao fim, review final do branch e PR oferecido (com
@@ -76,18 +82,18 @@ ativos e `.specify/memory/decisions.md` — este fluxo não os presume.
 
 ## 4. Convergência
 
-`/specnico-converge` compara código × artefatos: fecha as Pendências Manuais
+`/jarvis-converge` compara código × artefatos: fecha as Pendências Manuais
 resolvidas pelo humano, pede ao `reviewer` as lacunas e as acrescenta como
 tarefas novas em `## Convergência` (append-only; volte ao
-`/specnico-implement`). Sem lacunas nem pendências: `Status: done`, item do
+`/jarvis-implement`). Sem lacunas nem pendências: `Status: done`, item do
 backlog `done`, índice de features atualizado e `state.json` zerado.
 
 ## Bugs
 
-`/specnico-fix "<sintoma>"` — sem Spec nem gate: teste que reproduz →
+`/jarvis-fix "<sintoma>"` — sem Spec nem gate: teste que reproduz →
 diagnóstico → correção mínima → verificação → registro em
 `specs/bugs/NNN-slug.md`. Correção que muda requisito para e sugere
-`/specnico-spec`.
+`/jarvis-specify`.
 
 ## Pós-merge e release
 
@@ -97,7 +103,7 @@ Merge do PR, volta à branch padrão e remoção da branch: ver
 ## Definition of Done
 
 - [ ] Todos os critérios de aceite do `tasks.md` em `[x]` com evidência, ou
-      Pendências Manuais fechadas pelo `/specnico-converge`
+      Pendências Manuais fechadas pelo `/jarvis-converge`
 - [ ] Review final sem 🔴 e CI verde no PR
 - [ ] Spec em `Status: done` e item do backlog em `done`
 - [ ] `.specify/memory/architecture.md` e `.specify/memory/decisions.md`

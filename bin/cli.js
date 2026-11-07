@@ -64,10 +64,33 @@ const DATA = [
   "specs/README.md",
 ];
 const VERSION_FILE = ".specify/.specnico-version";
+
+// Skills 2.x (specnico-*) substituidas pelas jarvis-* na 3.0. O --upgrade e o
+// --force removem so o SKILL.md entregue pelo pacote (e a pasta, se ficar
+// vazia): arquivos que o usuario acrescentou ali ficam onde estao.
+const OBSOLETE_SKILLS = [
+  "analyze", "approve", "clarify", "constitution", "converge", "fix", "implement",
+  "onboard", "plan", "review", "spec",
+].map((c) => `specnico-${c}`);
+
+function obsoleteSkillFiles() {
+  return OBSOLETE_SKILLS.map((s) => `.claude/skills/${s}/SKILL.md`).filter((rel) =>
+    fs.existsSync(path.join(cwd, rel)),
+  );
+}
+
+function removeObsoleteSkills() {
+  for (const rel of obsoleteSkillFiles()) {
+    fs.rmSync(path.join(cwd, rel));
+    const dir = path.dirname(path.join(cwd, rel));
+    if (fs.readdirSync(dir).length === 0) fs.rmdirSync(dir);
+    console.log(`  remove     ${rel} (substituido por jarvis-*)`);
+  }
+}
 const LEGACY_VERSION_FILE = ".claude/.scaffold-version";
 
 // Projeto com codigo (manifesto de linguagem ou src/ / app/): o proximo passo
-// e o /specnico-onboard, que le o que existe; vazio, o /specnico-constitution.
+// e o /jarvis-onboard, que le o que existe; vazio, o /jarvis-constitution.
 const CODE_MARKERS = [
   "package.json",
   "pyproject.toml",
@@ -227,7 +250,7 @@ function warnSpecKit(templatesKept) {
   );
   if (templatesKept) {
     console.log(
-      "Aviso: os templates do Spec Kit em .specify/templates/ nao sao sobrescritos e prevalecem; as skills specnico-* precisam dos templates do specnico.",
+      "Aviso: os templates do Spec Kit em .specify/templates/ nao sao sobrescritos e prevalecem; as skills jarvis-* precisam dos templates do specnico.",
     );
   }
 }
@@ -250,7 +273,11 @@ function checkInstallation() {
   console.log(`specnico instalado: ${installedVersion}`);
   console.log(`specnico disponivel: ${version}`);
   console.log(`Drift no harness: ${drift} arquivo(s)`);
-  if (installedVersion !== version || drift > 0) {
+  const obsolete = obsoleteSkillFiles();
+  if (obsolete.length > 0) {
+    console.log(`Skills antigas (specnico-*) ainda instaladas: ${obsolete.length}; o --upgrade as remove.`);
+  }
+  if (installedVersion !== version || drift > 0 || obsolete.length > 0) {
     console.log("Atualizacao recomendada: npx specnico@latest --upgrade");
     process.exitCode = 1;
   } else {
@@ -339,7 +366,7 @@ async function runMigrate() {
     `\nMigracao concluida (${useGit ? "git mv/git rm" : "sistema de arquivos"}). ${stats.created} criado(s), ${stats.overwritten} sobrescrito(s).`,
   );
   console.log("Proximos passos: revise o diff (git status), faca o commit dos caminhos migrados e rode");
-  console.log("/specnico-constitution: ele detecta a migracao, reconstroi a constituicao e converte o backlog legado.");
+  console.log("/jarvis-constitution: ele detecta a migracao, reconstroi a constituicao e converte o backlog legado.");
 }
 
 async function main() {
@@ -395,6 +422,7 @@ async function main() {
   console.log(`specnico ${version} -> ${cwd}\n`);
 
   installFiles(upgrade || force, force);
+  if (upgrade || force) removeObsoleteSkills();
 
   // So grava a versao instalada em: instalacao nova (sem versao previa e sem
   // nenhum arquivo de harness ignorado), --upgrade ou --force. Uma reinstalacao
@@ -414,8 +442,8 @@ async function main() {
   if (!upgrade && !force && stats.skipped === 0) {
     console.log(
       hasExistingCode(cwd)
-        ? "Próximo: /specnico-onboard (projeto existente: lê o código e preenche a memória)"
-        : "Próximo: /specnico-constitution (projeto novo: entrevista e memória)",
+        ? "Próximo: /jarvis-onboard (projeto existente: lê o código e preenche a memória)"
+        : "Próximo: /jarvis-constitution (projeto novo: entrevista e memória)",
     );
   }
 
@@ -434,7 +462,7 @@ async function main() {
     if (hasSpecKit()) {
       // --upgrade sobrescreveria os templates do Spec Kit em .specify/templates/.
       console.log(
-        "Arquivos existentes foram mantidos (Spec Kit no mesmo .specify/): revise manualmente os templates e a constituicao antes de usar as skills specnico-*.",
+        "Arquivos existentes foram mantidos (Spec Kit no mesmo .specify/): revise manualmente os templates e a constituicao antes de usar as skills jarvis-*.",
       );
     } else {
       console.log("Para atualizar o harness de uma instalacao anterior use --upgrade.");
@@ -449,9 +477,9 @@ async function main() {
 // destino (move ou concat); remove so atinge arquivos que o harness 1.x
 // publicou (lista abaixo) e o marcador de versao legado.
 
-// O /specnico-constitution detecta o modo migracao por estes dois textos
+// O /jarvis-constitution detecta o modo migracao por estes dois textos
 // (meta/tests/skills.test.mjs fixa o contrato).
-const MIGRATION_MARKER = "<!-- migrado da 1.x: revise com /specnico-constitution -->";
+const MIGRATION_MARKER = "<!-- migrado da 1.x: revise com /jarvis-constitution -->";
 const LEGACY_BACKLOG_SECTION = "## Legado (1.x)";
 
 // Arquivos do harness 1.x (todas as releases 1.x) que deixam de existir na 2.0.
@@ -615,7 +643,7 @@ function planMigration(dir) {
   }
   concat(concats, backlogs, `${M}/product-backlog.md`, {
     header:
-      `# Product Backlog\n\n<!-- migrado da 1.x: /specnico-constitution converte para o formato 2.0 -->\n\n${LEGACY_BACKLOG_SECTION}`,
+      `# Product Backlog\n\n<!-- migrado da 1.x: /jarvis-constitution converte para o formato 2.0 -->\n\n${LEGACY_BACKLOG_SECTION}`,
   });
 
   // Historico -> specs/legacy/ (fora da numeracao).

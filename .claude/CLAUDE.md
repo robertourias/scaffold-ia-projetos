@@ -3,7 +3,7 @@
 `.specify/memory/` é a memória do **produto**: o que ele é, suas regras de
 negócio, decisões e arquitetura. `specs/` é o histórico das Specs (uma pasta
 por Spec, `specs/NNN-slug/`) e dos bugs (`specs/bugs/`). `.claude/` é o
-**harness** que o Claude Code carrega: comandos (skills `specnico-*`), papéis,
+**harness** que o Claude Code carrega: comandos (skills `jarvis-*`), papéis,
 subagentes e hooks; o resto do processo (templates, packs, workflows) vive em
 `.specify/`. Leia apenas o que é relevante ao seu papel antes de qualquer
 tarefa.
@@ -18,9 +18,9 @@ Invoque também a skill **`verification`** — o que significa "pronto" (evidên
 
 ## Estado ativo — `.specify/state.json`
 
-Toda skill `specnico-*` lê `.specify/state.json` **primeiro** e mostra a fase
+Toda skill `jarvis-*` lê `.specify/state.json` **primeiro** e mostra a fase
 atual em uma linha. Confira `ativo.spec` contra o `**Status:**` do `spec.md`
-daquela pasta (e a fase: `spec`/`clarify`/`plan` ⇒ `review`;
+daquela pasta (e a fase: `spec`/`clarify`/`plan`/`tasks` ⇒ `review`;
 `approved`/`implement`/`converge` ⇒ `approved`). Divergência (Status
 incompatível com a fase, pasta sem `spec.md`, branch ≠ `ativo.branch`) →
 avise e corrija o `state.json` só com confirmação. Nunca varra `specs/` para
@@ -42,7 +42,7 @@ histórica. Parâmetro ou escopo explícito sempre vence a inferência.
 - `.specify/memory/decisions.md`
 - `.specify/memory/conventions.md` (inclui a seção `## UI`)
 - `.specify/memory/architecture.md`
-- `.specify/memory/overview.md` (resumo de onboarding gerado pelo `/specnico-onboard`, quando existir)
+- `.specify/memory/overview.md` (resumo de onboarding gerado pelo `/jarvis-onboard`, quando existir)
 - `.specify/packs/<id>/README.md` para cada ID em `**Packs ativos:**` da constituição
 
 **Tier 3 — referência sob demanda** (não carregue por padrão):
@@ -53,20 +53,20 @@ histórica. Parâmetro ou escopo explícito sempre vence a inferência.
 
 | Papel/comando | Tier 1 | Tier 2 adicional |
 | --- | --- | --- |
-| planner (`/specnico-spec`, `/specnico-plan`) | constituição, Spec ativa | product/domains, backlog, architecture, decisions, conventions |
-| backend (`/specnico-implement`, `/specnico-fix`) | constituição, recorte da tarefa | decisions, conventions, architecture + pack ativo |
-| frontend (`/specnico-implement`, `/specnico-fix`) | constituição, recorte da tarefa | decisions, conventions (`## UI`), architecture + pack ativo |
-| reviewer (`/specnico-review`, `/specnico-implement`, `/specnico-converge`) | constituição, Spec ativa | decisions, conventions, arquitetura e pack do diff |
+| planner (`/jarvis-specify`, `/jarvis-plan`, `/jarvis-tasks`) | constituição, Spec ativa | product/domains, backlog, architecture, decisions, conventions |
+| backend (`/jarvis-implement`, `/jarvis-fix`) | constituição, recorte da tarefa | decisions, conventions, architecture + pack ativo |
+| frontend (`/jarvis-implement`, `/jarvis-fix`) | constituição, recorte da tarefa | decisions, conventions (`## UI`), architecture + pack ativo |
+| reviewer (`/jarvis-review`, `/jarvis-implement`, `/jarvis-converge`) | constituição, Spec ativa | decisions, conventions, arquitetura e pack do diff |
 
 ## Subagentes (`.claude/agents/`)
 ```
 backend | frontend | reviewer | planner
 ```
 Contexto isolado por papel. `reviewer` não tem Edit/Write — por construção.
-`planner` é despachado por `/specnico-spec` e `/specnico-plan`;
-`backend`/`frontend` pelo `/specnico-implement`; `reviewer` pelo
-`/specnico-implement` (por onda e final), `/specnico-review` e
-`/specnico-converge`. Ver `.claude/agents/README.md`.
+`planner` é despachado por `/jarvis-specify`, `/jarvis-plan` e `/jarvis-tasks`;
+`backend`/`frontend` pelo `/jarvis-implement`; `reviewer` pelo
+`/jarvis-implement` (por onda e final), `/jarvis-review` e
+`/jarvis-converge`. Ver `.claude/agents/README.md`.
 
 ## Skills de papel (`.claude/skills/`)
 ```
@@ -117,7 +117,7 @@ invente uma stack.
 ## Quando usar subagentes
 
 Além dos 4 papéis fixos (`backend`/`frontend`/`reviewer`/`planner`, despachados
-pelos comandos `specnico-*`), use um subagente genérico (`Task`/`Agent`) quando:
+pelos comandos `jarvis-*`), use um subagente genérico (`Task`/`Agent`) quando:
 
 - **2+ tarefas realmente independentes** podem rodar em paralelo — dispare todas na mesma resposta, não uma por vez.
 - **Busca ampla no código** (múltiplos diretórios, convenção de nome desconhecida) não vale poluir o contexto principal com dezenas de resultados — delegue e peça só a conclusão.
@@ -143,28 +143,28 @@ em `## 1. Identidade` de `.specify/memory/constitution.md`. Toda documentação
 vive em `.specify/` e `specs/` na raiz — **nunca** dentro de `apps/<app>/` ou
 `packages/<pkg>/`. O contexto local de cada app/package fica em
 `.specify/memory/projects/<apps-x>.md` (ex: `apps-api.md`), criado pelo
-`/specnico-plan` do item de arquitetura daquele projeto. `specs/` é plano: o
+`/jarvis-plan` do item de arquitetura daquele projeto. `specs/` é plano: o
 escopo de uma Spec é o campo `**Escopo:**` do `spec.md`. Convenção:
 `.specify/memory/conventions.md#monorepo-appspackages`.
 
-## Comandos (`/specnico-*`)
+## Comandos (`/jarvis-*`)
 ```
-/specnico-constitution [ajuste]   ← cria ou emenda a constituição: memória do projeto, product backlog, settings.json e CI
-/specnico-onboard [área]          ← projeto existente: lê o código, preenche a memória e o backlog (done) e grava .specify/memory/overview.md
-/specnico-spec [Bnn | requisito]  ← especifica um item do backlog (ou texto livre): branch + specs/NNN-slug/spec.md (Status: review)
-/specnico-clarify [spec]          ← até 5 perguntas, uma por vez; grava em ## Clarificações
-/specnico-plan [spec]             ← plan.md (como, com Constitution Check) + tasks.md em ondas
-/specnico-analyze [spec]          ← consistência spec ↔ plan ↔ tasks ↔ constituição (somente leitura)
-/specnico-approve [spec]          ← (só humano) gate do pacote: análise + checagens, review → approved
-/specnico-implement [Tnnn,…]      ← executa as ondas do tasks.md: subagentes, review e commit por onda, review final, PR
-/specnico-converge [spec] [ajuste]← código × artefatos: fecha Pendências Manuais, acrescenta tarefas ou conclui (done)
-/specnico-review [alvo]           ← revisão em dois estágios (Funcional → Qualidade), somente leitura
-/specnico-fix "<sintoma>"         ← bugfix leve: reprodução → correção mínima → verificação → specs/bugs/NNN-slug.md
+/jarvis-constitution [ajuste]   ← cria ou emenda a constituição: memória do projeto, product backlog, settings.json e CI
+/jarvis-onboard [área]          ← projeto existente: lê o código, preenche a memória e o backlog (done) e grava .specify/memory/overview.md
+/jarvis-specify [Bnn | requisito]  ← especifica um item do backlog (ou texto livre): branch + specs/NNN-slug/spec.md (Status: review)
+/jarvis-clarify [spec]          ← até 5 perguntas, uma por vez; grava em ## Clarificações
+/jarvis-plan [spec]             ← plan.md (como, com Constitution Check, contratos e ADRs)
+/jarvis-tasks [spec]            ← tasks.md: tarefas em ondas, com propriedade de arquivos e critérios verificáveis
+/jarvis-analyze [spec]          ← consistência spec ↔ plan ↔ tasks ↔ constituição (somente leitura)
+/jarvis-implement [Tnnn,…]      ← (só humano) gate: valida o pacote e pede a aprovação (review → approved); executa as ondas do tasks.md: subagentes, review e commit por onda, review final, PR
+/jarvis-converge [spec] [ajuste]← código × artefatos: fecha Pendências Manuais, acrescenta tarefas ou conclui (done)
+/jarvis-review [alvo]           ← revisão em dois estágios (Funcional → Qualidade), somente leitura
+/jarvis-fix "<sintoma>"         ← bugfix leve: reprodução → correção mínima → verificação → specs/bugs/NNN-slug.md
 ```
-Fluxo: `/specnico-constitution` (projeto novo) ou `/specnico-onboard` (projeto existente)
-→ por item: `/specnico-spec` → [`/specnico-clarify`]
-→ `/specnico-plan` → [`/specnico-analyze`] → `/specnico-approve` →
-`/specnico-implement` → `/specnico-converge` (repita implement → converge até `done`).
+Fluxo: `/jarvis-constitution` (projeto novo) ou `/jarvis-onboard` (projeto existente)
+→ por item: `/jarvis-specify` → [`/jarvis-clarify`]
+→ `/jarvis-plan` → `/jarvis-tasks` → [`/jarvis-analyze`] →
+`/jarvis-implement` → `/jarvis-converge` (repita implement → converge até `done`).
 
 Referência completa: `.claude/README.md`
 Playbook tokens × qualidade: `.specify/workflows/playbook-tokens-qualidade.md`

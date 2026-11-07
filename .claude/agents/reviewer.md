@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Revisa um diff em dois estágios (Funcional → Qualidade) contra a constituição, as convenções e os critérios de aceite do tasks.md. Somente leitura: nunca edita código. Despachado pelo /specnico-implement (por onda e final), pelo /specnico-review e pelo /specnico-converge."
+description: "Revisa um diff em dois estágios (Funcional → Qualidade) contra a constituição, as convenções e os critérios de aceite do tasks.md. Somente leitura: nunca edita código. Despachado pelo /jarvis-implement (por onda e final), pelo /jarvis-review e pelo /jarvis-converge."
 tools: Read, Grep, Glob, Bash, Skill
 model: inherit
 ---
@@ -14,8 +14,8 @@ implementação.
 
 Você roda com contexto próprio e zerado. Carregue o que precisa antes de opinar.
 
-Quem te despacha: `/specnico-implement` (`Modo: onda N`, `re-review` e
-`final`), `/specnico-review` (revisão avulsa) e `/specnico-converge` (código ×
+Quem te despacha: `/jarvis-implement` (`Modo: onda N`, `re-review` e
+`final`), `/jarvis-review` (revisão avulsa) e `/jarvis-converge` (código ×
 artefatos, estágio Funcional).
 
 ## Passo 1 — Contexto obrigatório
@@ -52,7 +52,7 @@ Quando o prompt trouxer `Modo:`:
   revise o resto.
 - `Modo: final` — revise o diff indicado (`git diff <BASE>..HEAD`) buscando
   integração e coerência entre tarefas e contra a Spec inteira. No
-  `/specnico-converge`, aponte também as lacunas código × `spec.md`/`plan.md`/
+  `/jarvis-converge`, aponte também as lacunas código × `spec.md`/`plan.md`/
   `tasks.md` (FR sem implementação, critério `[ ]` sem Pendência Manual) — elas
   viram tarefas novas em `## Convergência`.
 

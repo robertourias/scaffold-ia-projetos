@@ -8,7 +8,7 @@ Regras de negócio **fragmentadas por domínio**. Um arquivo por domínio:
 `.specify/memory/product.md` cresce e vira um arquivo caro de carregar. Quando uma
 tarefa toca só autenticação, carregar as regras de pagamento é desperdício de token.
 
-Ordem de leitura que os comandos seguem (`/specnico-spec`, `/specnico-plan`, subagente `planner`):
+Ordem de leitura que os comandos seguem (`/jarvis-specify`, `/jarvis-plan`, subagente `planner`):
 
 1. `.specify/memory/domains/<dominio-da-tarefa>.md` ← prioritário
 2. `.specify/memory/product.md` ← **apenas** se o arquivo de domínio não existir ou for insuficiente

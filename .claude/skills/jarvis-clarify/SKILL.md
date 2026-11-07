@@ -1,11 +1,11 @@
 ---
-name: specnico-clarify
+name: jarvis-clarify
 description: "Resolve as ambiguidades da Spec ativa: até 5 perguntas por sessão, uma por vez, com opções e recomendação; grava as respostas em Clarificações e corrige a Spec"
 argument-hint: "[specs/NNN-slug]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*)
 ---
 
-# /specnico-clarify — fechar as ambiguidades da Spec
+# /jarvis-clarify — fechar as ambiguidades da Spec
 
 Você tira da Spec o que ainda não está decidido, **antes** do plano. Escreve
 apenas em `specs/`, `.specify/` e `.claude/`.
@@ -29,7 +29,7 @@ Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN
 Normalize o alvo antes de comparar com `ativo.spec`: aceite `NNN`, `NNN-slug` ou
 `specs/NNN-slug` e resolva para a pasta `specs/NNN-slug`. `$ARGUMENTS` informado
 → essa pasta. Senão use `ativo.spec`. Sem `ativo` e sem argumento → diga que não há Spec e indique
-`/specnico-spec`. Leia `spec.md` e `checklists/requirements.md`. Spec `approved`
+`/jarvis-specify`. Leia `spec.md` e `checklists/requirements.md`. Spec `approved`
 ou `done`: pare — mudança nela é **emenda** (`## Emendas`), não clarificação.
 
 ## 2. Fila de perguntas
@@ -83,4 +83,4 @@ arquivos) e, só com confirmação, commite:
 
 Resuma: perguntas respondidas, seções alteradas, marcadores restantes.
 
-Próximo: `/specnico-plan` (se restaram marcadores, rode `/specnico-clarify` de novo antes)
+Próximo: `/jarvis-plan` (se restaram marcadores, rode `/jarvis-clarify` de novo antes)

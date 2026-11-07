@@ -1,24 +1,23 @@
 ---
-name: specnico-plan
-description: "Planeja a Spec ativa: gera plan.md (como, com Constitution Check) e tasks.md (ondas Fundacional → US1 MVP → … → Polimento, com propriedade de arquivos e critérios verificáveis)"
+name: jarvis-tasks
+description: "Quebra o plano da Spec ativa em tasks.md: tarefas em ondas (Fundacional → US1 MVP → … → Polimento), com propriedade de arquivos, rastreabilidade FR → tarefa → teste e critérios verificáveis"
 argument-hint: "[specs/NNN-slug]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(git status:*), Bash(git add:*)
 ---
 
-# /specnico-plan — o como: plano técnico e tarefas em ondas
+# /jarvis-tasks — tarefas em ondas
 
-Você é o PLANNER na etapa de **planejamento**: traduz o quê/porquê da Spec em
-plano técnico (`plan.md`) e tarefas executáveis (`tasks.md`). Escreve apenas em
-`specs/`, `.specify/` e `.claude/` — não escreve código de produto. Não mude o
+Você é o PLANNER na etapa de **tarefas**: traduz `spec.md` + `plan.md` em
+`tasks.md`, a lista executável que o `/jarvis-implement` despacha. Escreve apenas
+em `specs/`, `.specify/` e `.claude/` — não escreve código de produto. Não mude o
 `**Status:**` da Spec.
 
 Entrada do usuário (pasta da Spec, opcional): `$ARGUMENTS`
 
-Invoque a skill `planner` (decomposição, ondas, rastreabilidade) e leia
-`.specify/memory/constitution.md` (CN/GR/comandos de verificação),
-`.specify/memory/architecture.md`, `.specify/memory/conventions.md` e
-`.specify/memory/decisions.md`. Modelos: `.specify/templates/plan-template.md` e
-`.specify/templates/tasks-template.md`. Siga `.specify/workflows/git-flow.md`.
+Invoque a skill `planner` (Etapa 2: decomposição, ondas, rastreabilidade) e leia
+`.specify/memory/constitution.md` (CN/GR/comandos de verificação) e
+`.specify/memory/conventions.md`. Modelo: `.specify/templates/tasks-template.md`.
+Siga `.specify/workflows/git-flow.md`.
 
 ## Regras gerais
 
@@ -29,42 +28,31 @@ Invoque a skill `planner` (decomposição, ondas, rastreabilidade) e leia
   não commite: as mudanças ficam no working tree e você diz o que ficou pendente.
   O `settings.json` também pede confirmação (`git commit` em `ask`); as duas valem.
 - Nunca invente comando de verificação: use os da constituição (seção 4). Verificação `(não configurado)`: escreva isso e avise que aqueles critérios serão autodeclarados.
+- Não altere `spec.md` nem `plan.md`. Lacuna ou erro neles → aponte e indique `/jarvis-clarify` ou `/jarvis-plan`.
 
 ## 1. Spec alvo e estado
 
 Leia `.specify/state.json` e mostre a fase atual em uma linha (`Ativo: specs/NNN-slug · fase <fase> · Bnn`, ou `Ativo: nenhum`). Parâmetro ausente: `.specify/workflows/context-resolution.md`.
 
 Normalize o alvo: aceite `NNN`, `NNN-slug` ou `specs/NNN-slug`. `$ARGUMENTS`
-informado → essa pasta. Senão leia `.specify/state.json` e use `ativo.spec`. Sem
-`ativo` e sem argumento → diga que não há Spec e indique `/specnico-spec`.
+informado → essa pasta. Senão use `ativo.spec`. Sem `ativo` e sem argumento →
+diga que não há Spec e indique `/jarvis-specify`.
 
 Valide contra a realidade: pasta sem `spec.md`, `state.json` ilegível, ou
-`**Status:**` divergente de `fase` (`review` ↔ `spec`/`clarify`/`plan`;
+`**Status:**` divergente de `fase` (`review` ↔ `spec`/`clarify`/`plan`/`tasks`;
 `approved` ↔ `approved`/`implement`/`converge`) → **avise** e proponha corrigir;
 só altere com confirmação.
 
-Spec `approved` ou `done`: pare — mudar o plano é **emenda** (`## Emendas`), não replanejamento.
+Spec `approved` ou `done`: pare — mudar as tarefas é **emenda** (`## Emendas`) ou
+`## Convergência`, não replanejamento.
 
 ## 2. Pré-condição
 
-Leia `spec.md` e `checklists/requirements.md`. Se houver `[NEEDS CLARIFICATION]`
-na Spec: **pare** (não gere nada) e indique `/specnico-clarify`. Se já existir
-`plan.md`/`tasks.md`, avise e pergunte se substitui.
+Leia `spec.md`, `plan.md` e `checklists/requirements.md`. Falta `plan.md` →
+**pare** e indique `/jarvis-plan`. `[NEEDS CLARIFICATION]` na Spec → **pare** e
+indique `/jarvis-clarify`. Se já existir `tasks.md`, avise e pergunte se substitui.
 
-## 3. plan.md
-
-Packs: leia `**Packs ativos:**` da constituição e carregue só o `README.md` de cada
-pack ativo (`.specify/packs/`); sem pack ativo, não invente stack. Gere
-`<pasta>/plan.md` a partir do template:
-
-- **Cabeçalho:** `# Plano: <título da Spec>`, `**Data:**` = hoje (`YYYY-MM-DD`) e `**Packs:**` = o valor de `**Packs ativos:**` da constituição (ou `nenhum`). O `/specnico-approve` reprova placeholder `<...>` ou `YYYY-MM-DD` remanescente.
-- **Resumo técnico, Contexto técnico, Estrutura** (árvore real dos diretórios tocados), **Modelo de dados, Contratos** (`METHOD /caminho` — request/response/erros; contratos extensos vão para `<pasta>/contracts/`, opcional), **Riscos técnicos** com mitigação.
-- **Constitution Check (obrigatório):** uma linha por CN e GR relevante, com ✅/❌. Violação de CN/GR **não** é apagada nem escondida: vira linha em **Complexity Tracking** (por que é necessária; alternativa simples rejeitada porque) e será decidida pelo humano no `/specnico-approve`. Violação sem justificativa possível: pare e escale.
-- **Decisões:** cada decisão arquitetural relevante vira ADR-NNN (próximo número livre) em `.specify/memory/decisions.md`; no plan, uma linha apontando para ele.
-- **Emendas:** só a nota "Nenhuma ainda." (o template traz apenas um comentário).
-- **Item de arquitetura em monorepo** (`Tipo: arquitetura` no backlog, para um app/package): crie `.specify/memory/projects/<apps-x>.md` (ex: `apps-api.md`; propósito, stack, packs e comandos próprios do app/package) e acrescente o projeto ao campo `**Projetos:**` da constituição. Isso é uma emenda da constituição: atualize "Última emenda" e a versão (patch) e peça confirmação antes de gravar.
-
-## 4. tasks.md
+## 3. tasks.md
 
 Gere `<pasta>/tasks.md` a partir do template. Ondas na ordem **Fundacional →
 US1 🎯 MVP → US2 … → Polimento**; dentro de uma story, as ondas seguem o grafo
@@ -96,22 +84,19 @@ Regras:
 - Preencha **Ondas**, **Rastreabilidade** (todo FR, com tarefas e verificação) e **Verificação** (comandos reais da constituição; sem `<comando>` remanescente). Em `## Convergência` mantenha só o comentário.
 - Sem placeholders `<...>` do template no corpo.
 
-## 5. Estado
+## 4. Estado
 
 `.specify/state.json`: **só se** `ativo` não for nulo **e** a pasta alvo for igual
-a `ativo.spec` → `ativo.fase = "plan"`, `atualizado` = agora (ISO 8601); preserve o
+a `ativo.spec` → `ativo.fase = "tasks"`, `atualizado` = agora (ISO 8601); preserve o
 resto. Alvo diferente ou `ativo` nulo: avise e **não toque** em `state.json`.
 
-## 6. Commit e handoff
+## 5. Commit e handoff
 
-Stage explícito de: `<pasta>/plan.md`, `<pasta>/tasks.md` e, só se
-criados/alterados, `<pasta>/contracts/`, `.specify/memory/decisions.md`,
-`.specify/memory/projects/<apps-x>.md`, `.specify/memory/constitution.md` e
-`.specify/state.json`. Pergunte "Posso commitar?" (mensagem + arquivos) e, só com
-confirmação, commite:
+Stage explícito de: `<pasta>/tasks.md` e, só se alterado, `.specify/state.json`.
+Pergunte "Posso commitar?" (mensagem + arquivos) e, só com confirmação, commite:
 
-`docs(spec): planeja NNN-slug`
+`docs(spec): tarefas de NNN-slug`
 
-Resuma: ondas, nº de tarefas, ADRs criados, violações em Complexity Tracking.
+Resuma: ondas, nº de tarefas, FR cobertos, tarefas serializadas por colisão de arquivo.
 
-Próximo: `/specnico-analyze` (recomendado) ou `/specnico-approve`
+Próximo: `/jarvis-analyze` (recomendado) ou `/jarvis-implement`

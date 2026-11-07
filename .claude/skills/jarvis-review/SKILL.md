@@ -1,12 +1,12 @@
 ---
-name: specnico-review
+name: jarvis-review
 description: "REVIEWER: revisão em dois estágios (Funcional → Qualidade) do diff do branch ativo contra o padrão, ou do alvo informado. Somente leitura — não edita código"
 argument-hint: "[diff, arquivo ou ref] [specs/NNN-slug] (opcional: apps/<app>)"
 allowed-tools: Read, Grep, Glob, Agent, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git show:*), Bash(git merge-base:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git branch --show-current), Bash(git rev-parse:*)
 disallowed-tools: Edit, Write, MultiEdit, NotebookEdit
 ---
 
-# /specnico-review — revisão em dois estágios (somente leitura)
+# /jarvis-review — revisão em dois estágios (somente leitura)
 
 Você coordena uma revisão e **não edita nada**: enquanto esta skill roda,
 `Edit`, `Write`, `MultiEdit` e `NotebookEdit` saem do conjunto de ferramentas
@@ -56,6 +56,6 @@ convenções conforme o diff; não repita esse contexto.
 Repasse o parecer do `reviewer` sem suavizar: `Verdict`, achados 🔴/🟡/🟢 com
 `arquivo:linha` e correção, e notas 💡. Acrescente a lista de arquivos revisados
 e o intervalo do diff. Não corrija, não grave `review.md` (isso é do
-`/specnico-implement`) e não mude Status de Spec nem do backlog.
+`/jarvis-implement`) e não mude Status de Spec nem do backlog.
 
-Próximo: corrigir 🔴/🟡 com `/specnico-implement Tnnn` (tarefa da Spec) ou `/specnico-fix` (bug avulso); sem bloqueantes, `/specnico-converge`
+Próximo: corrigir 🔴/🟡 com `/jarvis-implement Tnnn` (tarefa da Spec) ou `/jarvis-fix` (bug avulso); sem bloqueantes, `/jarvis-converge`

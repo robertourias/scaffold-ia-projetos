@@ -1,6 +1,6 @@
 # Arquitetura
 
-> **Status do arquivo:** vazio — preenchido pelo `/specnico-constitution`. Atualize sempre que uma decisão arquitetural significativa for tomada.
+> **Status do arquivo:** vazio — preenchido pelo `/jarvis-constitution`. Atualize sempre que uma decisão arquitetural significativa for tomada.
 
 ## Visão Arquitetural
 
@@ -10,9 +10,9 @@
 
 **Produto**: [Nome do produto]
 **Status**: [Desenvolvimento inicial / Ativo / Maduro]
-**Modo:** <!-- a definir: single | monorepo | microfrontends — preenchido por /specnico-constitution (espelha a constituição) -->
+**Modo:** <!-- a definir: single | monorepo | microfrontends — preenchido por /jarvis-constitution (espelha a constituição) -->
 
-**Packs de stack:** <!-- a definir: ids separados por vírgula; preenchido por /specnico-constitution (espelha **Packs ativos:** da constituição) -->
+**Packs de stack:** <!-- a definir: ids separados por vírgula; preenchido por /jarvis-constitution (espelha **Packs ativos:** da constituição) -->
 
 ### Stack
 
@@ -29,7 +29,7 @@
 
 ### Projetos do Monorepo
 
-<!-- Uma linha por app/package, acrescentada pelo /specnico-plan do item de arquitetura daquele projeto. Remova a seção se o Modo for `single`. -->
+<!-- Uma linha por app/package, acrescentada pelo /jarvis-plan do item de arquitetura daquele projeto. Remova a seção se o Modo for `single`. -->
 
 | Path | Tipo | Propósito | Stack (se diferir da tabela acima) | Contexto próprio |
 |------|------|-----------|--------------------------------------|------------------|
@@ -38,7 +38,7 @@
 
 Cada app/package ganha um arquivo em `.specify/memory/projects/` (propósito,
 stack e packs que diferem do global, comandos de verificação próprios,
-decisões locais), criado pelo `/specnico-plan` do item de arquitetura do
+decisões locais), criado pelo `/jarvis-plan` do item de arquitetura do
 backlog que introduz o projeto. Toda a documentação fica em `.specify/` e
 `specs/` na raiz — nunca dentro de `apps/[nome]/` ou `packages/[nome]/`
 (ver `.specify/memory/conventions.md#monorepo-appspackages`).

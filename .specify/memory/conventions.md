@@ -41,7 +41,7 @@ kebab-case           paths com múltiplas palavras (/user-profiles)
 
 ## Git & PRs
 
-- Branch de Spec: `spec/NNN-slug` (criada pelo `/specnico-spec`); o `/specnico-fix` commita no branch atual (use `fix/<slug>` se quiser isolar); demais: `feat/` `chore/` `refactor/` `docs/`
+- Branch de Spec: `spec/NNN-slug` (criada pelo `/jarvis-specify`); o `/jarvis-fix` commita no branch atual (use `fix/<slug>` se quiser isolar); demais: `feat/` `chore/` `refactor/` `docs/`
 - Commits: Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `test:`); mensagens do fluxo em `.specify/workflows/git-flow.md`
 - Stage sempre por caminho explícito — nunca `git add -A`, `git add .` nem `git commit -a`
 - PRs: manter abaixo de 400 linhas — features grandes viram PRs sequenciais
@@ -50,8 +50,8 @@ kebab-case           paths com múltiplas palavras (/user-profiles)
 
 Não há protocolo de checkpoint: o estado vive em `.specify/state.json` (Spec
 ativa e fase), nos checkboxes do `tasks.md` e no `git log`. Decisões entram em
-`.specify/memory/decisions.md` durante o `/specnico-plan`. Todo comando
-`specnico-*` lê o `state.json` ao começar.
+`.specify/memory/decisions.md` durante o `/jarvis-plan`. Todo comando
+`jarvis-*` lê o `state.json` ao começar.
 
 ## Monorepo (apps/packages)
 
@@ -67,7 +67,7 @@ arquitetura, convenções e decisões que atravessam apps/packages.
 **Por projeto (`.specify/memory/projects/<apps-x>.md`, ex: `apps-api.md`):**
 - Propósito, stack e packs que diferem do global, comandos de verificação
   próprios e decisões que só fazem sentido dentro daquele app/package.
-- Criado pelo `/specnico-plan` do item de arquitetura do app/package no backlog
+- Criado pelo `/jarvis-plan` do item de arquitetura do app/package no backlog
   (um item por app/package), que também registra o projeto na constituição.
 - **Não recrie** constituição, produto ou backlog por projeto — são sempre globais.
 

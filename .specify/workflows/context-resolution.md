@@ -1,9 +1,9 @@
 # Resolução de contexto (fallback de parâmetros)
 
-Regra única para comandos `specnico-*` que recebem parâmetro (`/specnico-spec`,
-`/specnico-clarify`, `/specnico-plan`, `/specnico-analyze`,
-`/specnico-approve`, `/specnico-implement`, `/specnico-converge`,
-`/specnico-review`). Aplique **apenas quando o parâmetro estiver ausente ou
+Regra única para comandos `jarvis-*` que recebem parâmetro (`/jarvis-specify`,
+`/jarvis-clarify`, `/jarvis-plan`, `/jarvis-tasks`, `/jarvis-analyze`,
+`/jarvis-implement`, `/jarvis-converge`,
+`/jarvis-review`). Aplique **apenas quando o parâmetro estiver ausente ou
 não for reconhecido** — parâmetro válido sempre vence.
 
 ## 1. Estado ativo
@@ -12,7 +12,7 @@ Leia `.specify/state.json` primeiro, sempre:
 
 - `ativo` não nulo → a Spec alvo é `ativo.spec` (pasta `specs/NNN-slug`).
   Confira o `**Status:**` do `spec.md` contra `ativo.fase` (`spec`/`clarify`/
-  `plan` ⇒ `review`; `approved`/`implement`/`converge` ⇒ `approved`).
+  `plan`/`tasks` ⇒ `review`; `approved`/`implement`/`converge` ⇒ `approved`).
   Divergência, pasta sem `spec.md` ou branch atual ≠ `ativo.branch` → avise e
   proponha corrigir o `state.json`; só altere com confirmação.
 - `ativo: null`, arquivo ausente ou ilegível (avise) → vá ao backlog.
@@ -24,11 +24,10 @@ Mostre a fase atual em uma linha antes de seguir
 
 Sem Spec ativa, leia `.specify/memory/product-backlog.md`:
 
-- `/specnico-spec` → primeiro item com Status `backlog` cujas dependências
+- `/jarvis-specify` → primeiro item com Status `backlog` cujas dependências
   estão todas `done`, na ordem das fases.
-- Comandos que precisam de Spec existente (`clarify`, `plan`, `analyze`,
-  `approve`, `implement`, `converge`) → item `spec`, `approved` ou
-  `in-progress` com a coluna `Spec` preenchida; mais de um → ambiguidade.
+- Comandos que precisam de Spec existente (`clarify`, `plan`, `tasks`, `analyze`,
+  `implement`, `converge`) → item `spec` ou `in-progress` com a coluna `Spec` preenchida; mais de um → ambiguidade.
 
 Nunca varra `specs/` para adivinhar o que está ativo: o `state.json` responde.
 
