@@ -26,7 +26,7 @@ sem perguntar antes ("Posso commitar?").
 `/jarvis-constitution` entrevista o humano e gera a memória do projeto em
 `.specify/memory/` (constituição com CN, GR e comandos de verificação;
 produto; arquitetura; convenções; decisões), o product backlog em fases,
-`.claude/settings.json` e o CI. Re-executar = emenda versionada.
+as configurações de hooks/permissões dos targets ativos e o CI. Re-executar = emenda versionada.
 
 Projeto que já existe: `/jarvis-onboard` faz o mesmo papel lendo o
 repositório em vez de entrevistar — grava a memória inferida, o backlog com as
@@ -74,7 +74,8 @@ em `spec.md`/`plan.md` exige registro em `## Emendas`.
 `/jarvis-implement` (todas as ondas, ou só `Tnnn[,Tnnn]`), depois do gate, despacha um
 subagente `backend`/`frontend` por tarefa, conforme `Agente:`. Por onda:
 verificação com evidência (skill `verification`), review do `reviewer` (até 3
-rodadas) e commit, só depois de você confirmar. Ao fim, review final do branch e PR oferecido (com
+rodadas) e commit, só depois de você confirmar. Ao fim, verificação final isolada
+via subagente `runner`, review final do branch e PR oferecido (com
 confirmação). Pendência Manual não bloqueia: fica anotada no `tasks.md`.
 
 Os passos de cada camada (schema, validação, mocks, rotas) seguem os packs

@@ -1,0 +1,19 @@
+{
+  "agents": {
+    "backend": {
+      "tools": ["read", "search", "edit", "execute"]
+    },
+    "frontend": {
+      "tools": ["read", "search", "edit", "execute"]
+    },
+    "planner": {
+      "tools": ["read", "search", "edit", "execute"]
+    },
+    "reviewer": {
+      "tools": ["read", "search", "execute"]
+    },
+    "runner": {
+      "tools": ["read", "search", "execute"]
+    }
+  }
+}

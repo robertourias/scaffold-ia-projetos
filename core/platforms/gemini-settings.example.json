@@ -1,0 +1,43 @@
+{
+  "contextFileName": ["AGENTS.md", "GEMINI.md"],
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "write_file|replace|edit_file",
+        "hooks": [
+          {
+            "name": "specnico-spec-gate",
+            "type": "command",
+            "command": "node .specify/hooks/adapters/gemini-hook.mjs spec-gate",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "write_file|replace|edit_file",
+        "hooks": [
+          {
+            "name": "specnico-verify-file",
+            "type": "command",
+            "command": "node .specify/hooks/adapters/gemini-hook.mjs verify-file",
+            "timeout": 45000
+          }
+        ]
+      }
+    ],
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "name": "specnico-verify-project",
+            "type": "command",
+            "command": "node .specify/hooks/adapters/gemini-hook.mjs verify-project",
+            "timeout": 180000
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -16,10 +16,10 @@ o comando mostra a mensagem e a lista exata de arquivos e pergunta
 working tree e o comando diz o que ficou pendente (no `/jarvis-implement`,
 a execução para na onda não commitada).
 
-A regra tem duas camadas: a pergunta, nas skills, e a trava do harness — o
-`.claude/settings.example.json` põe `Bash(git commit:*)` em `permissions.ask`
-e nenhuma skill pré-aprova `git commit` em `allowed-tools`, então o Claude Code
-também pede a permissão. Em modo `bypassPermissions` só a primeira camada vale.
+A regra tem duas camadas: a pergunta, nas skills, e a trava do harness — as
+permissões do assistente (ex.: `.claude/settings.example.json` no Claude Code)
+põem `git commit` em `ask` e nenhuma skill pré-aprova commit, então o cliente
+também pede permissão. Em modo `bypassPermissions` só a primeira camada vale.
 
 ## Branch padrão
 

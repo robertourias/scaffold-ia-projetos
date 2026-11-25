@@ -1,18 +1,40 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const SKILLS_DIR = path.join(root, ".claude/skills");
+const require = createRequire(import.meta.url);
+const { renderHarness } = require(path.join(root, "bin/adapters"));
+const { MIGRATION_MARKER, LEGACY_BACKLOG_SECTION } = require(path.join(root, "bin/cli.js"));
+
+const SKILLS_DIR = path.join(root, "core/skills");
+const AGENTS_DIR = path.join(root, "core/agents");
 const SKILLS = readdirSync(SKILLS_DIR).filter((d) => d.startsWith("jarvis-"));
+const AGENTS = readdirSync(AGENTS_DIR)
+  .filter((f) => f.endsWith(".md") && f !== "README.md")
+  .map((f) => f.replace(/\.md$/, ""));
+
 const skillText = (d) =>
   readFileSync(path.join(SKILLS_DIR, d, "SKILL.md"), "utf8").replace(/\r\n/g, "\n");
-const frontmatter = (d) => {
-  const m = skillText(d).match(/^---\n([\s\S]*?)\n---\n/);
-  assert.ok(m, `${d}: frontmatter ausente`);
+const agentText = (a) =>
+  readFileSync(path.join(AGENTS_DIR, `${a}.md`), "utf8").replace(/\r\n/g, "\n");
+const fmOf = (text, label) => {
+  const m = text.match(/^---\n([\s\S]*?)\n---\n/);
+  assert.ok(m, `${label}: frontmatter ausente`);
   return m[1];
+};
+
+const renderedClaude = new Map(renderHarness(root, ["claude"]).map((f) => [f.rel, f.content]));
+const renderedCopilot = new Map(renderHarness(root, ["copilot"]).map((f) => [f.rel, f.content]));
+const renderedGemini = new Map(renderHarness(root, ["gemini"]).map((f) => [f.rel, f.content]));
+
+const claudeSkillFm = (d) => fmOf(renderedClaude.get(`.claude/skills/${d}/SKILL.md`), `claude:${d}`);
+const allowed = (d) => {
+  const m = claudeSkillFm(d).match(/^allowed-tools:\s*(.+)$/m);
+  return m ? m[1].split(/,\s*(?![^()]*\))/).map((t) => t.trim()) : [];
 };
 
 const ESPERADAS = [
@@ -29,21 +51,25 @@ const ESPERADAS = [
   "jarvis-onboard",
 ];
 
-test("existem exatamente as 11 skills jarvis-*", () => {
+test("existem exatamente as 11 skills jarvis-* e 5 papéis no núcleo canônico", () => {
   assert.deepEqual([...SKILLS].sort(), [...ESPERADAS].sort());
-});
-
-test("comandos 1.x removidos: sem .claude/commands nem skills sem prefixo fora dos papéis", () => {
-  assert.ok(!existsSync(path.join(root, ".claude/commands")), ".claude/commands ainda existe");
   const PAPEIS = ["backend", "frontend", "planner", "quality", "verification"];
   const outras = readdirSync(SKILLS_DIR).filter((d) => !d.startsWith("jarvis-"));
   assert.deepEqual(outras.sort(), [...PAPEIS].sort());
 });
 
+test("existem exatamente os 5 subagentes canônicos incluindo runner", () => {
+  assert.deepEqual([...AGENTS].sort(), ["backend", "frontend", "planner", "reviewer", "runner"]);
+  const runner = agentText("runner");
+  assert.match(runner, /nunca edita arquivos/i);
+  assert.match(runner, /Status: PASS \| FAIL \| NOT_CONFIGURED/);
+  assert.match(runner, /máximo 15 linhas/i);
+});
+
 test("toda skill jarvis-* tem name = pasta e description", () => {
   for (const d of SKILLS) {
     assert.ok(existsSync(path.join(SKILLS_DIR, d, "SKILL.md")), `${d}: SKILL.md ausente`);
-    const fm = frontmatter(d);
+    const fm = fmOf(skillText(d), d);
     const name = fm.match(/^name:\s*(.+)$/m);
     assert.ok(name && name[1].trim() === d, `${d}: name deve ser igual à pasta`);
     const desc = fm.match(/^description:\s*(.+)$/m);
@@ -51,9 +77,33 @@ test("toda skill jarvis-* tem name = pasta e description", () => {
   }
 });
 
-test("jarvis-approve não existe mais: o gate humano é do jarvis-implement (só humano)", () => {
+test("núcleo canônico não vaza .claude/CLAUDE.md nem .claude/agents/", () => {
+  const agentsMd = readFileSync(path.join(root, "core/AGENTS.md"), "utf8");
+  assert.ok(!agentsMd.includes(".claude/CLAUDE.md"));
+  assert.ok(!agentsMd.includes(".claude/agents/"));
+  assert.match(agentsMd, /runner/);
+  assert.match(agentsMd, /paralel/i);
+  for (const d of readdirSync(SKILLS_DIR)) {
+    const t = skillText(d);
+    assert.ok(!t.includes(".claude/CLAUDE.md"), `${d}: cita .claude/CLAUDE.md`);
+    assert.ok(!t.includes(".claude/agents/"), `${d}: cita .claude/agents/`);
+  }
+  for (const a of AGENTS) {
+    const t = agentText(a);
+    assert.ok(!t.includes(".claude/CLAUDE.md"), `agent ${a}: cita .claude/CLAUDE.md`);
+    assert.ok(!t.includes(".claude/agents/"), `agent ${a}: cita .claude/agents/`);
+  }
+});
+
+test("skills de execução e revisão integram o subagente runner", () => {
+  for (const d of ["jarvis-implement", "jarvis-fix", "jarvis-converge", "jarvis-review", "verification"]) {
+    assert.match(skillText(d), /`runner`/, `${d}: deve citar o subagente runner`);
+  }
+});
+
+test("jarvis-approve não existe mais: o gate humano é do jarvis-implement (só humano no Claude)", () => {
   assert.ok(!SKILLS.includes("jarvis-approve"));
-  assert.match(frontmatter("jarvis-implement"), /^disable-model-invocation:\s*true\s*$/m);
+  assert.match(claudeSkillFm("jarvis-implement"), /^disable-model-invocation:\s*true\s*$/m);
   const skill = skillText("jarvis-implement");
   assert.ok(skill.includes("Gate de aprovação"));
   assert.ok(skill.includes("**Status:** approved"));
@@ -74,7 +124,6 @@ test("nenhuma skill jarvis-* instrui git add -A / git add . / git commit -a", ()
   for (const d of SKILLS) {
     const linhas = skillText(d).split("\n");
     linhas.forEach((l, i) => {
-      // Menções em contexto de proibição ("nunca ...") são permitidas.
       if (proibido.test(l) && !/nunca|não|proibid/i.test(l)) {
         assert.fail(`${d}:${i + 1}: instrui comando proibido → ${l.trim()}`);
       }
@@ -83,7 +132,6 @@ test("nenhuma skill jarvis-* instrui git add -A / git add . / git commit -a", ()
 });
 
 test("toda skill jarvis-* termina com 'Próximo:' ou declara que encerra o fluxo", () => {
-  // Uma das 3 últimas linhas não vazias deve conter "Próximo:" ou "encerra o fluxo".
   for (const d of SKILLS) {
     const ultimas = skillText(d)
       .split("\n")
@@ -96,11 +144,7 @@ test("toda skill jarvis-* termina com 'Próximo:' ou declara que encerra o fluxo
   }
 });
 
-test("marcador de migração do CLI é o mesmo que o jarvis-constitution detecta", async () => {
-  const { createRequire } = await import("node:module");
-  const { MIGRATION_MARKER, LEGACY_BACKLOG_SECTION } = createRequire(import.meta.url)(
-    path.join(root, "bin/cli.js"),
-  );
+test("marcador de migração do CLI é o mesmo que o jarvis-constitution detecta", () => {
   assert.equal(MIGRATION_MARKER, "<!-- migrado da 1.x: revise com /jarvis-constitution -->");
   assert.equal(LEGACY_BACKLOG_SECTION, "## Legado (1.x)");
   const skill = skillText("jarvis-constitution");
@@ -109,14 +153,9 @@ test("marcador de migração do CLI é o mesmo que o jarvis-constitution detecta
   assert.match(skill, /\*\*modo migração\*\*/);
 });
 
-const allowed = (d) => {
-  const m = frontmatter(d).match(/^allowed-tools:\s*(.+)$/m);
-  return m ? m[1].split(/,\s*(?![^()]*\))/).map((t) => t.trim()) : [];
-};
-
-test("jarvis-review e jarvis-analyze removem Edit/Write/MultiEdit/NotebookEdit (disallowed-tools)", () => {
+test("adapter Claude: jarvis-review e jarvis-analyze removem Edit/Write/MultiEdit/NotebookEdit", () => {
   for (const d of ["jarvis-review", "jarvis-analyze"]) {
-    const m = frontmatter(d).match(/^disallowed-tools:\s*(.+)$/m);
+    const m = claudeSkillFm(d).match(/^disallowed-tools:\s*(.+)$/m);
     assert.ok(m, `${d}: disallowed-tools ausente`);
     const tools = m[1].split(",").map((t) => t.trim());
     for (const t of ["Edit", "Write", "MultiEdit", "NotebookEdit"]) assert.ok(tools.includes(t), `${d}: falta ${t}`);
@@ -124,7 +163,7 @@ test("jarvis-review e jarvis-analyze removem Edit/Write/MultiEdit/NotebookEdit (
   }
 });
 
-test("nenhuma skill jarvis-* concede Bash sem prefixo nem symbolic-ref com curinga", () => {
+test("adapter Claude: nenhuma skill jarvis-* concede Bash sem prefixo nem symbolic-ref com curinga", () => {
   for (const d of SKILLS) {
     const tools = allowed(d);
     assert.ok(!tools.includes("Bash"), `${d}: Bash sem prefixo em allowed-tools`);
@@ -133,13 +172,10 @@ test("nenhuma skill jarvis-* concede Bash sem prefixo nem symbolic-ref com curin
     }
   }
   assert.ok(allowed("jarvis-implement").includes("Bash(gh pr create:*)"));
+  assert.ok(allowed("jarvis-fix").includes("Agent"), "jarvis-fix precisa de Agent para despachar runner");
 });
 
-test("jarvis-onboard: contrato do design", async () => {
-  const { createRequire } = await import("node:module");
-  const { MIGRATION_MARKER, LEGACY_BACKLOG_SECTION } = createRequire(import.meta.url)(
-    path.join(root, "bin/cli.js"),
-  );
+test("jarvis-onboard: contrato do design e sync ignora pastas multi-plataforma", () => {
   const skill = skillText("jarvis-onboard");
   for (const s of [
     MIGRATION_MARKER,
@@ -151,8 +187,17 @@ test("jarvis-onboard: contrato do design", async () => {
     "**Gerado por:** /jarvis-onboard",
     "**Status do arquivo:** vazio",
     ".env.example",
+    "git status --porcelain -uall",
+    "## UI",
   ]) {
     assert.ok(skill.includes(s), `jarvis-onboard não cita ${s}`);
+  }
+  assert.match(skill, /primeira leitura/);
+  assert.match(skill, /só os campos listados em "Fonte"/);
+  assert.match(skill, /preserve a estrutura/i);
+  assert.match(skill, /5\. Nenhum dos anteriores/);
+  for (const dir of [".claude/", ".agents/", ".gemini/", "AGENTS.md", "GEMINI.md"]) {
+    assert.ok(skill.includes(dir), `jarvis-onboard sync deve ignorar ${dir}`);
   }
   const tools = allowed("jarvis-onboard");
   assert.ok(tools.includes("Agent"), "jarvis-onboard: falta Agent");
@@ -170,21 +215,6 @@ test("jarvis-constitution reconhece o marcador a revisar do onboard", () => {
   assert.ok(skillText("jarvis-constitution").includes("<!-- a revisar: jarvis-onboard -->"));
 });
 
-test("jarvis-onboard: sincronização edita campos da Fonte, preserva seções de referência e tem fallback", () => {
-  const skill = skillText("jarvis-onboard");
-  // Regra de não sobrescrever vale para gravar o arquivo inteiro na primeira leitura.
-  assert.match(skill, /primeira leitura/);
-  assert.match(skill, /só os campos listados em "Fonte"/);
-  // architecture/conventions/decisions não são stubs vazios: seções de referência ficam.
-  assert.ok(skill.includes("## UI"), "não preserva ## UI");
-  assert.match(skill, /preserve a estrutura/i);
-  // Constituição sem stub nem **Versão:** (Spec Kit, escrita à mão) tem caso próprio.
-  assert.match(skill, /5\. Nenhum dos anteriores/);
-  // Sync ignora o harness e lista arquivos não rastreados um a um.
-  assert.ok(skill.includes("git status --porcelain -uall"), "git status sem -uall");
-  assert.match(skill, /ignorando `\.specify\/`, `specs\/` e `\.claude\/`/);
-});
-
 const COMMITAM = [
   "jarvis-constitution",
   "jarvis-specify",
@@ -196,7 +226,7 @@ const COMMITAM = [
   "jarvis-fix",
 ];
 
-test("nenhuma skill jarvis-* pré-aprova git commit em allowed-tools", () => {
+test("adapter Claude: nenhuma skill jarvis-* pré-aprova git commit em allowed-tools", () => {
   for (const d of SKILLS) {
     for (const t of allowed(d)) {
       assert.ok(!/^Bash\(git (-C \S+ )?commit/.test(t), `${d}: ${t} pré-aprova commit`);
@@ -210,8 +240,38 @@ test("toda skill que commita pergunta antes (Posso commitar?)", () => {
   }
 });
 
-test("settings.example.json: git commit em ask, nunca em allow", () => {
-  const s = JSON.parse(readFileSync(path.join(root, ".claude/settings.example.json"), "utf8"));
+test("adapter Claude: runner usa model haiku sem Edit/Write e settings.example.json mantém git commit em ask", () => {
+  const runnerFm = fmOf(renderedClaude.get(".claude/agents/runner.md"), "claude:runner");
+  assert.match(runnerFm, /^model:\s*haiku$/m);
+  assert.ok(!/\b(Edit|Write)\b/.test(runnerFm), "runner não pode ter Edit/Write");
+  const s = JSON.parse(renderedClaude.get(".claude/settings.example.json"));
   assert.ok(s.permissions.ask.includes("Bash(git commit:*)"), "git commit fora de ask");
   assert.ok(!s.permissions.allow.some((t) => t.startsWith("Bash(git commit")), "git commit em allow");
+});
+
+test("adapter Copilot: gera .agent.md, .github/skills e hooks válidos (runner/reviewer sem edit)", () => {
+  assert.ok(renderedCopilot.has("AGENTS.md"));
+  assert.ok(renderedCopilot.has(".github/copilot-instructions.md"));
+  assert.ok(renderedCopilot.has(".github/skills/jarvis-implement/SKILL.md"));
+  for (const ro of ["runner", "reviewer"]) {
+    const fm = fmOf(renderedCopilot.get(`.github/agents/${ro}.agent.md`), `copilot:${ro}`);
+    assert.ok(!/\bedit\b/.test(fm), `copilot:${ro} não pode incluir tool edit`);
+  }
+  const hooks = JSON.parse(renderedCopilot.get(".github/hooks/specnico.json"));
+  assert.ok(hooks.hooks.preToolUse.length > 0);
+  assert.ok(hooks.hooks.postToolUse.length > 0);
+  assert.ok(hooks.hooks.sessionEnd.length > 0);
+});
+
+test("adapter Gemini (Antigravity + Gemini CLI): gera GEMINI.md, .agents/skills, .gemini/agents e hooks válidos", () => {
+  assert.ok(renderedGemini.has("AGENTS.md"));
+  assert.ok(renderedGemini.has("GEMINI.md"));
+  assert.ok(renderedGemini.has(".agents/skills/jarvis-implement/SKILL.md"));
+  const runnerFm = fmOf(renderedGemini.get(".gemini/agents/runner.md"), "gemini:runner");
+  assert.match(runnerFm, /^model:\s*gemini-2\.5-flash$/m);
+  assert.ok(!/\b(write_file|replace)\b/.test(runnerFm), "gemini:runner não pode editar arquivos");
+  const geminiSettings = JSON.parse(renderedGemini.get(".gemini/settings.example.json"));
+  assert.ok(geminiSettings.hooks.BeforeTool.length > 0);
+  const agyHooks = JSON.parse(renderedGemini.get(".agents/hooks.json"));
+  assert.ok(agyHooks.hooks.PreToolUse.length > 0);
 });

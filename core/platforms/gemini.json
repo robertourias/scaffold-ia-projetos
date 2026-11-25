@@ -1,0 +1,24 @@
+{
+  "agents": {
+    "backend": {
+      "tools": ["read_file", "write_file", "replace", "grep_search", "glob", "run_shell_command"],
+      "model": "inherit"
+    },
+    "frontend": {
+      "tools": ["read_file", "write_file", "replace", "grep_search", "glob", "run_shell_command"],
+      "model": "inherit"
+    },
+    "planner": {
+      "tools": ["read_file", "write_file", "replace", "grep_search", "glob", "run_shell_command"],
+      "model": "inherit"
+    },
+    "reviewer": {
+      "tools": ["read_file", "grep_search", "glob", "run_shell_command"],
+      "model": "inherit"
+    },
+    "runner": {
+      "tools": ["read_file", "grep_search", "glob", "run_shell_command"],
+      "model": "gemini-2.5-flash"
+    }
+  }
+}

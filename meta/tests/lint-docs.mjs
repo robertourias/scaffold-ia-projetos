@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Lint dos docs do harness: frontmatter de skills/agentes e
+// Lint dos docs do harness: frontmatter de skills/agentes canônicos e
 // referências a arquivos (links relativos e caminhos citados em crases).
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
@@ -7,20 +7,20 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SKIP_DIRS = new Set(["node_modules", ".git", "meta", ".superpowers"]);
-// Existem só no projeto do usuário (gerados por comandos) ou são exemplos.
+// Existem só no projeto do usuário (gerados pelo CLI ou comandos) ou são exemplos.
 const IGNORE_PREFIXES = [
   ".specify/state.json",
   ".specify/.specnico-version",
+  ".specify/.specnico-config.json",
   ".specify/memory/projects/",
   ".specify/memory/overview.md",
   "specs/bugs/",
   "specs/legacy/",
-  ".claude/settings.json",
-  ".claude/settings.local.json",
-  ".claude/.scaffold-version",
+  ".claude/",
+  ".gemini/",
+  ".agents/",
+  ".github/",
 ];
-// `{` entra no placeholder pq `.specify/{templates,packs,workflows}` é notação de
-// brace-expansion (múltiplos caminhos), não um caminho literal a validar.
 // Comandos 1.x removidos na 2.0: só podem aparecer sob um `## ` de migração.
 const REMOVED_CMD =
   /(?<![\w.\/-])\/(spec|hands-on|back|front|checkpoint|retomar|groom|recheck|pr-open|pr-merged|init-project|init-app|init-package|backlog|approve|review)(?![\w.-])/;
@@ -37,15 +37,15 @@ const walk = (dir) =>
     return p.endsWith(".md") ? [p] : [];
   });
 
-// 1. Frontmatter
+// 1. Frontmatter canônico (core/agents e core/skills)
 const mdIn = (dir, filter = () => true) =>
   readdirSync(path.join(root, dir))
     .filter((f) => f.endsWith(".md") && filter(f))
     .map((f) => `${dir}/${f}`);
 const fmTargets = [
-  ...mdIn(".claude/agents", (f) => f !== "README.md"),
-  ...readdirSync(path.join(root, ".claude/skills"))
-    .map((d) => `.claude/skills/${d}/SKILL.md`)
+  ...mdIn("core/agents", (f) => f !== "README.md"),
+  ...readdirSync(path.join(root, "core/skills"))
+    .map((d) => `core/skills/${d}/SKILL.md`)
     .filter((f) => existsSync(path.join(root, f))),
 ];
 for (const f of fmTargets) {
@@ -82,7 +82,7 @@ for (const file of walk(root)) {
       const heading = line.match(/^##\s+(.*)$/);
       if (heading) inMigration = MIGRATION_HEADING.test(heading[1]);
       for (const [, cmd] of line.matchAll(/(?<![\w.\/-])\/(jarvis-[a-z]+)(?![\w-])/g)) {
-        if (!existsSync(path.join(root, ".claude/skills", cmd, "SKILL.md"))) {
+        if (!existsSync(path.join(root, "core/skills", cmd, "SKILL.md"))) {
           failures.push(`${rel}:${i + 1}: comando inexistente → /${cmd}`);
         }
       }
@@ -98,11 +98,11 @@ for (const file of walk(root)) {
           failures.push(`${rel}:${i + 1}: link quebrado → ${target}`);
         }
       }
-      for (const [, p] of line.matchAll(/`((?:\.claude|\.specify|specs)\/[^`\s]+)`/g)) {
+      for (const [, p] of line.matchAll(/`((?:\.claude|\.specify|specs|core|\.gemini|\.agents|\.github)\/[^`\s]+)`/g)) {
         const clean = p.split("#")[0].replace(/[):,.]+$/, "");
         if (PLACEHOLDER.test(clean)) continue;
         if (IGNORE_PREFIXES.some((x) => clean.startsWith(x))) continue;
-        if (inMigration) continue; // guia de migração cita caminhos 1.x
+        if (inMigration) continue;
         if (!existsSync(path.join(root, clean))) {
           failures.push(`${rel}:${i + 1}: caminho inexistente → ${p}`);
         }

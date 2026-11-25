@@ -1,7 +1,7 @@
 {
   "name": "specnico",
-  "version": "3.0.0",
-  "description": "Fluxo spec-driven para Claude Code: constituição, specs, gate humano e execução em ondas.",
+  "version": "4.0.0",
+  "description": "Fluxo spec-driven agnóstico (Claude Code, GitHub Copilot e Google AI Pro): constituição, specs, gate humano, subagente runner e execução em ondas.",
   "bin": {
     "specnico": "bin/cli.js"
   },
@@ -15,15 +15,11 @@
   },
   "files": [
     "bin",
-    ".claude/agents",
-    ".claude/hooks",
-    ".claude/skills",
-    ".claude/CLAUDE.md",
-    ".claude/README.md",
-    ".claude/settings.example.json",
+    "core",
     ".specify/templates",
     ".specify/packs",
     ".specify/workflows",
+    ".specify/hooks",
     ".specify/memory",
     "specs/README.md"
   ],
@@ -40,6 +36,10 @@
   },
   "keywords": [
     "claude-code",
+    "github-copilot",
+    "gemini-cli",
+    "antigravity",
+    "agents-md",
     "ai-agents",
     "scaffold",
     "harness",

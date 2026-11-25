@@ -10,9 +10,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 
 const DIRS = [
   "bin",
-  ".claude/agents",
-  ".claude/hooks",
-  ".claude/skills",
+  "core",
+  ".specify/hooks",
   ".specify/memory",
   ".specify/templates",
   ".specify/packs",
@@ -22,9 +21,7 @@ const DIRS = [
 const FILES = [
   "package.json",
   "README.md",
-  ".claude/CLAUDE.md",
-  ".claude/README.md",
-  ".claude/settings.example.json",
+  "CLAUDE.md",
 ];
 
 const relOf = (p) => path.relative(root, p).split(path.sep).join("/");

@@ -44,4 +44,4 @@ pede confirmação); o `tasks.md` é livre.
 
 Os comandos descobrem o trabalho ativo pelo `.specify/state.json`, nunca
 varrendo esta pasta. Specs concluídas, `bugs/` e `legacy/` são referência sob
-demanda (Tier 3 do índice em `.claude/CLAUDE.md`).
+demanda (Tier 3 do índice em `AGENTS.md`).

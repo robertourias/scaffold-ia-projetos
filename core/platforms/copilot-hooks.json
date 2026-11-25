@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "node .specify/hooks/adapters/copilot-hook.mjs spec-gate",
+        "powershell": "node .specify/hooks/adapters/copilot-hook.mjs spec-gate",
+        "timeoutSec": 15
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "node .specify/hooks/adapters/copilot-hook.mjs verify-file",
+        "powershell": "node .specify/hooks/adapters/copilot-hook.mjs verify-file",
+        "timeoutSec": 45
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "node .specify/hooks/adapters/copilot-hook.mjs verify-project",
+        "powershell": "node .specify/hooks/adapters/copilot-hook.mjs verify-project",
+        "timeoutSec": 180
+      }
+    ]
+  }
+}

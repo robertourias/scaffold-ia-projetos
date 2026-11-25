@@ -20,9 +20,11 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const CLI = path.join(root, "bin/cli.js");
 const VERSION = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).version;
-const SRC_SPEC = readFileSync(path.join(root, ".claude/skills/jarvis-specify/SKILL.md"), "utf8");
-
-const { isLegacyInstall, VERSION_FILE, LEGACY_VERSION_FILE } = createRequire(import.meta.url)(CLI);
+const { isLegacyInstall, VERSION_FILE, CONFIG_FILE, LEGACY_VERSION_FILE, renderHarness } =
+  createRequire(import.meta.url)(CLI);
+const SRC_SPEC = renderHarness(root, ["claude"]).find(
+  (f) => f.rel === ".claude/skills/jarvis-specify/SKILL.md",
+).content;
 
 const run = (cwd, ...args) =>
   spawnSync(process.execPath, [CLI, ...args], { cwd, encoding: "utf8", input: "" });
@@ -618,4 +620,68 @@ test("--upgrade remove as skills specnico-* antigas e preserva arquivos do usuá
   assert.equal(read(dir, ".claude/skills/specnico-plan/minha-nota.md"), "MINHA");
   assert.match(r.stdout, /remove\s+\.claude[\/]skills[\/]specnico-spec/);
   assert.ok(existsSync(path.join(dir, ".claude/skills/jarvis-specify/SKILL.md")));
+});
+
+test("--target copilot instala AGENTS.md + .github/* sem criar .claude/", () => {
+  const dir = tmp();
+  const r = run(dir, "--target", "copilot");
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(existsSync(path.join(dir, "AGENTS.md")));
+  assert.ok(existsSync(path.join(dir, ".github/copilot-instructions.md")));
+  assert.ok(existsSync(path.join(dir, ".github/skills/jarvis-implement/SKILL.md")));
+  assert.ok(existsSync(path.join(dir, ".github/agents/runner.agent.md")));
+  assert.ok(existsSync(path.join(dir, ".github/hooks/specnico.json")));
+  assert.ok(existsSync(path.join(dir, ".specify/hooks/adapters/copilot-hook.mjs")));
+  assert.ok(!existsSync(path.join(dir, ".claude")));
+  assert.deepEqual(JSON.parse(read(dir, CONFIG_FILE)).targets, ["copilot"]);
+  assert.equal(run(dir, "--check").status, 0);
+});
+
+test("--target gemini instala AGENTS.md + GEMINI.md + .agents/* + .gemini/* sem criar .claude/", () => {
+  const dir = tmp();
+  const r = run(dir, "--target", "gemini");
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(existsSync(path.join(dir, "AGENTS.md")));
+  assert.ok(existsSync(path.join(dir, "GEMINI.md")));
+  assert.ok(existsSync(path.join(dir, ".agents/skills/jarvis-implement/SKILL.md")));
+  assert.ok(existsSync(path.join(dir, ".agents/hooks.json")));
+  assert.ok(existsSync(path.join(dir, ".gemini/agents/runner.md")));
+  assert.ok(existsSync(path.join(dir, ".gemini/settings.example.json")));
+  assert.ok(!existsSync(path.join(dir, ".claude")));
+  assert.deepEqual(JSON.parse(read(dir, CONFIG_FILE)).targets, ["gemini"]);
+  assert.equal(run(dir, "--check").status, 0);
+});
+
+test("--target all instala os 3 targets e --upgrade --target +copilot adiciona target", () => {
+  const dirAll = tmp();
+  const rAll = run(dirAll, "--target=all");
+  assert.equal(rAll.status, 0, rAll.stderr);
+  assert.ok(existsSync(path.join(dirAll, "AGENTS.md")));
+  assert.ok(existsSync(path.join(dirAll, ".claude/agents/runner.md")));
+  assert.ok(existsSync(path.join(dirAll, ".github/agents/runner.agent.md")));
+  assert.ok(existsSync(path.join(dirAll, ".gemini/agents/runner.md")));
+  assert.deepEqual(JSON.parse(read(dirAll, CONFIG_FILE)).targets, ["claude", "copilot", "gemini"]);
+  assert.equal(run(dirAll, "--check").status, 0);
+
+  // Detecta drift em target não-Claude
+  writeFileSync(path.join(dirAll, ".github/agents/runner.agent.md"), "LOCAL");
+  const drift = run(dirAll, "--check");
+  assert.equal(drift.status, 1);
+  assert.match(drift.stdout, /Drift no harness: 1 arquivo/);
+
+  // Upgrade aditivo: começa só com claude, depois adiciona +copilot
+  const dirAdd = tmp();
+  assert.equal(run(dirAdd).status, 0);
+  assert.ok(!existsSync(path.join(dirAdd, ".github")));
+  const add = run(dirAdd, "--upgrade", "--target", "+copilot");
+  assert.equal(add.status, 0, add.stderr);
+  assert.ok(existsSync(path.join(dirAdd, ".claude/agents/runner.md")));
+  assert.ok(existsSync(path.join(dirAdd, ".github/agents/runner.agent.md")));
+  assert.deepEqual(JSON.parse(read(dirAdd, CONFIG_FILE)).targets, ["claude", "copilot"]);
+});
+
+test("--target inválido falha com exit 1", () => {
+  const r = run(tmp(), "--target", "desconhecido");
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /Target desconhecido/);
 });

@@ -56,6 +56,6 @@ Sem palpite possível, liste as opções encontradas (máx. 5) e peça escolha.
 ## 5. Tiers de contexto
 
 Depois de resolver estado, item e escopo, siga o índice por tiers de
-`.claude/CLAUDE.md`. Comece pelo Tier 1. Leia o Tier 2 apenas quando a tarefa
+`AGENTS.md`. Comece pelo Tier 1. Leia o Tier 2 apenas quando a tarefa
 envolver decisões, arquitetura ou uma stack ativa; consulte o Tier 3 somente
 se houver referência histórica explícita.

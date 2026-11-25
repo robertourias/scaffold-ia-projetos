@@ -1,0 +1,73 @@
+{
+  "agents": {
+    "backend": {
+      "tools": "Read, Write, Edit, Grep, Glob, Bash, Skill",
+      "model": "inherit"
+    },
+    "frontend": {
+      "tools": "Read, Write, Edit, Grep, Glob, Bash, Skill",
+      "model": "inherit"
+    },
+    "planner": {
+      "tools": "Read, Write, Edit, Grep, Glob, Bash, Skill",
+      "model": "inherit"
+    },
+    "reviewer": {
+      "tools": "Read, Grep, Glob, Bash, Skill",
+      "model": "inherit"
+    },
+    "runner": {
+      "tools": "Read, Grep, Glob, Bash",
+      "model": "haiku"
+    }
+  },
+  "skills": {
+    "jarvis-constitution": {
+      "argument-hint": "\"[princípios ou ajuste]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Bash(ls:*), Bash(cat:*), Bash(git log:*), Bash(git status:*), Bash(git add:*)"
+    },
+    "jarvis-onboard": {
+      "argument-hint": "\"[área ou caminho para focar]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Agent, Bash(ls:*), Bash(git log:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git status:*), Bash(git ls-files:*)"
+    },
+    "jarvis-specify": {
+      "argument-hint": "\"[Bnn | requisito em texto livre]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Agent, Bash(ls:*), Bash(git status:*), Bash(git branch --show-current), Bash(git switch:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git rev-parse:*), Bash(git add:*)"
+    },
+    "jarvis-clarify": {
+      "argument-hint": "\"[specs/NNN-slug]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Bash(git status:*), Bash(git add:*)"
+    },
+    "jarvis-plan": {
+      "argument-hint": "\"[specs/NNN-slug]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Agent, Bash(ls:*), Bash(git status:*), Bash(git add:*)"
+    },
+    "jarvis-tasks": {
+      "argument-hint": "\"[specs/NNN-slug]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Agent, Bash(ls:*), Bash(git status:*), Bash(git add:*)"
+    },
+    "jarvis-analyze": {
+      "argument-hint": "\"[specs/NNN-slug]\"",
+      "allowed-tools": "Read, Grep, Glob, Agent",
+      "disallowed-tools": "Edit, Write, MultiEdit, NotebookEdit"
+    },
+    "jarvis-implement": {
+      "disable-model-invocation": true,
+      "argument-hint": "\"[Tnnn[,Tnnn]] [specs/NNN-slug] [--dry-run | --worktree | --serial | --no-review]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git merge-base:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git worktree add:*), Bash(git worktree remove:*), Bash(gh pr create:*)"
+    },
+    "jarvis-converge": {
+      "argument-hint": "\"[specs/NNN-slug] [o que você ajustou manualmente]\"",
+      "allowed-tools": "Read, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git switch:*), Bash(git diff:*), Bash(git log:*), Bash(git merge-base:*), Bash(git add:*)"
+    },
+    "jarvis-review": {
+      "argument-hint": "\"[diff, arquivo ou ref] [specs/NNN-slug] (opcional: apps/<app>)\"",
+      "allowed-tools": "Read, Grep, Glob, Agent, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git show:*), Bash(git merge-base:*), Bash(git symbolic-ref --short refs/remotes/origin/HEAD), Bash(git branch --show-current), Bash(git rev-parse:*)",
+      "disallowed-tools": "Edit, Write, MultiEdit, NotebookEdit"
+    },
+    "jarvis-fix": {
+      "argument-hint": "\"<sintoma do bug> [apps/<app>]\"",
+      "allowed-tools": "Read, Write, Edit, Grep, Glob, Agent, Bash(git status:*), Bash(git branch --show-current), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*)"
+    }
+  }
+}

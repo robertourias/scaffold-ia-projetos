@@ -1,13 +1,29 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const HOOK = path.join(root, ".claude/hooks/spec-gate.mjs");
+const require = createRequire(import.meta.url);
+const { renderHarness } = require(path.join(root, "bin/adapters"));
+
+// Monta um workspace temporário com .specify/hooks/ + adapter Claude renderizado
+// para testar o contrato completo do hook Claude Code.
+const HOOK_ENV = mkdtempSync(path.join(tmpdir(), "spec-gate-env-"));
+cpSync(path.join(root, ".specify/hooks"), path.join(HOOK_ENV, ".specify/hooks"), { recursive: true });
+for (const { rel, content } of renderHarness(root, ["claude"])) {
+  if (!rel.startsWith(".claude/hooks/")) continue;
+  const dest = path.join(HOOK_ENV, rel);
+  mkdirSync(path.dirname(dest), { recursive: true });
+  writeFileSync(dest, content, "utf8");
+}
+const HOOK = path.join(HOOK_ENV, ".claude/hooks/spec-gate.mjs");
+const COPILOT_HOOK = path.join(root, ".specify/hooks/adapters/copilot-hook.mjs");
+const GEMINI_HOOK = path.join(root, ".specify/hooks/adapters/gemini-hook.mjs");
 
 const STATE = {
   versao: 1,
@@ -580,4 +596,63 @@ test("autoaprovação: reason cita /jarvis-implement", () => {
   const cwd = project();
   const r = run(cwd, { file_path: "specs/001-s/spec.md", old_string: "review", new_string: "approved" });
   assert.match(r.out, /\/jarvis-implement/);
+});
+
+test("pastas de harness multi-plataforma (.agents/, .gemini/, .github/agents/, AGENTS.md, GEMINI.md) → sempre libera", () => {
+  const cwd = project();
+  for (const p of [
+    ".agents/skills/jarvis-plan/SKILL.md",
+    ".gemini/agents/runner.md",
+    ".github/agents/runner.agent.md",
+    ".github/skills/jarvis-plan/SKILL.md",
+    ".github/hooks/specnico.json",
+    "AGENTS.md",
+    "GEMINI.md",
+  ]) {
+    assert.equal(run(cwd, { file_path: p, new_string: "x" }).code, 0, p);
+  }
+});
+
+test("adapter Copilot: bloqueia arquivo em review e pede ask ao aprovar Spec", () => {
+  const cwd = project();
+  const block = spawnSync(process.execPath, [COPILOT_HOOK, "spec-gate"], {
+    input: JSON.stringify({ cwd, toolArgs: JSON.stringify({ path: "src/a.ts", content: "x" }) }),
+    encoding: "utf8",
+    env: { ...process.env, SPECNICO_VERIFY: "1", SCAFFOLD_VERIFY: "1" },
+  });
+  assert.equal(block.status, 2);
+  assert.equal(JSON.parse(block.stdout).permissionDecision, "deny");
+
+  const ask = spawnSync(process.execPath, [COPILOT_HOOK, "spec-gate"], {
+    input: JSON.stringify({
+      cwd,
+      toolArgs: { file_path: "specs/001-s/spec.md", old_string: "review", new_string: "approved" },
+    }),
+    encoding: "utf8",
+    env: { ...process.env, SPECNICO_VERIFY: "1", SCAFFOLD_VERIFY: "1" },
+  });
+  assert.equal(ask.status, 0);
+  assert.equal(JSON.parse(ask.stdout).permissionDecision, "ask");
+});
+
+test("adapter Gemini/Antigravity: bloqueia arquivo em review e pede ask ao aprovar Spec", () => {
+  const cwd = project();
+  const block = spawnSync(process.execPath, [GEMINI_HOOK, "spec-gate"], {
+    input: JSON.stringify({ cwd, args: { Path: "src/a.ts", Content: "x" } }),
+    encoding: "utf8",
+    env: { ...process.env, SPECNICO_VERIFY: "1", SCAFFOLD_VERIFY: "1" },
+  });
+  assert.equal(block.status, 2);
+  assert.equal(JSON.parse(block.stdout).decision, "deny");
+
+  const ask = spawnSync(process.execPath, [GEMINI_HOOK, "spec-gate"], {
+    input: JSON.stringify({
+      cwd,
+      tool_input: { Path: "specs/001-s/spec.md", Target: "review", Replacement: "approved" },
+    }),
+    encoding: "utf8",
+    env: { ...process.env, SPECNICO_VERIFY: "1", SCAFFOLD_VERIFY: "1" },
+  });
+  assert.equal(ask.status, 0);
+  assert.equal(JSON.parse(ask.stdout).decision, "ask");
 });

@@ -21,18 +21,22 @@ const listOf = (name) => {
   const match = cli.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\];`));
   return match ? [...match[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : null;
 };
+const coreList = listOf("CORE");
 const harnessList = listOf("HARNESS");
 const dataList = listOf("DATA");
-if (!harnessList) fail("CLI não declara a lista HARNESS");
+if (!coreList) fail("CLI não declara a lista CORE");
+else if (!harnessList) fail("CLI não declara a lista HARNESS");
 else if (!dataList) fail("CLI não declara a lista DATA");
 else {
-  const cliHarness = [...harnessList, ...dataList];
-  for (const entry of cliHarness) {
-    if (!pkg.files.includes(entry)) fail(`HARNESS não está em package.json.files: ${entry}`);
+  const cliEntries = [...coreList, ...harnessList, ...dataList];
+  for (const entry of cliEntries) {
+    if (!pkg.files.includes(entry)) fail(`entrada da CLI não está em package.json.files: ${entry}`);
   }
-  for (const entry of pkg.files.filter((x) => x.startsWith(".claude/") || x.startsWith(".specify/") || x.startsWith("specs/"))) {
-    if (!cliHarness.includes(entry) && entry !== ".claude/settings.example.json") {
-      fail(`entrada .claude não copiada pela CLI: ${entry}`);
+  for (const entry of pkg.files.filter(
+    (x) => x === "core" || x.startsWith(".specify/") || x.startsWith("specs/"),
+  )) {
+    if (!cliEntries.includes(entry)) {
+      fail(`entrada publicada não copiada/renderizada pela CLI: ${entry}`);
     }
   }
 }

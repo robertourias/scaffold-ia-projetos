@@ -46,18 +46,21 @@ aparecerem `[NEEDS CLARIFICATION]`, suba para Rigor com `/jarvis-clarify` e
 
 | Faça | Não faça |
 |------|----------|
+| Delegar `test`, `build`, `lint` e `type-check` na thread principal ao subagente `runner` (modelo econômico) | Rodar suítes e builds verbosos inline, poluindo o contexto principal com milhares de linhas |
+| Disparar 2+ subagentes em paralelo na mesma rodada para rotinas/verificações independentes | Rodar em série checagens ou buscas que não compartilham recurso mutável |
 | Lazy load do papel (só skills do role) | Carregar toda a `.specify/memory/` sem necessidade |
 | Lote de tarefas mecânicas (`/jarvis-implement T003,T004`) | Um comando por checkbox minúsculo |
 | Pular `/jarvis-clarify` e `/jarvis-analyze` quando a Spec está limpa | Rodar todos os passos opcionais por hábito |
 | Confiar no `state.json` para saber o que está ativo | Varrer `specs/` ou colar a sessão inteira no chat “pra lembrar” |
-| Paralelismo só com ondas reais | Orquestrar 1 tarefa sequencial com subagentes |
+| Paralelismo só com ondas reais e sem disputa de recurso mutável (`dist`/`.next`/DB) | Orquestrar 1 tarefa trivial com subagente ou paralelizar 2 builds na mesma pasta |
 | `--no-review` quando as ondas são triviais e de baixo risco (a review final continua rodando) | Usar `--no-review` em toda Spec, sem avaliar o risco onda a onda |
 
 **Checklist “estou economizando?”**
 
+- [ ] Comandos verbosos (`test`/`build`/`lint`/`type-check`) rodaram no `runner` e só o resumo voltou ao contexto principal
 - [ ] Não li `product.md` inteiro em tarefa de CSS / estilo
 - [ ] Agrupei tarefas mecânicas num só `/jarvis-implement Tnnn,Tnnn`
-- [ ] Paralelismo só onde a onda tem 2+ tarefas independentes
+- [ ] Disparei em paralelo tudo que é independente e sem disputa de recurso mutável
 - [ ] Não abri skill fora do papel atual "por precaução"
 
 ---
@@ -146,12 +149,13 @@ modo Rigor (`/jarvis-specify` + `/jarvis-plan` + `/jarvis-tasks` + `/jarvis-impl
 
 ## Anti-padrões caros
 
-1. Carregar todos os skills do harness no mesmo turno “por precaução”.
-2. Brainstorm informal para “adicionar um campo no form” em vez de ir direto ao `/jarvis-specify`.
-3. Um subagente por checkbox de 2 minutos.
-4. Duas instâncias de `/jarvis-implement` rodando ao mesmo tempo na mesma Spec.
-5. Editar o `state.json` à mão sem conferir o Status do `spec.md`.
-6. Implementar com `Status: review` ainda na Spec (sem passar pelo gate do `/jarvis-implement`).
+1. Rodar `npm test`, `build`, `lint` ou `type-check` verbosos direto na thread principal em vez de despachar o subagente `runner`.
+2. Carregar todos os skills do harness no mesmo turno “por precaução”.
+3. Brainstorm informal para “adicionar um campo no form” em vez de ir direto ao `/jarvis-specify`.
+4. Um subagente por comando curto de 1 linha (`git status`, `ls`) ou checkbox de 2 minutos.
+5. Duas instâncias de `/jarvis-implement` rodando ao mesmo tempo na mesma Spec.
+6. Editar o `state.json` à mão sem conferir o Status do `spec.md`.
+7. Implementar com `Status: review` ainda na Spec (sem passar pelo gate do `/jarvis-implement`).
 
 ---
 

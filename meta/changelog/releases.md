@@ -4,6 +4,12 @@
 
 ---
 
+## [4.0.0] - 2026-11-25
+
+Subagente `runner` (economia de tokens), paralelismo sistemático e arquitetura agnóstica para Claude Code, GitHub Copilot e Google AI Pro (Antigravity & Gemini CLI). Ver [2026-11-25-4.0.0](2026-11-25-4.0.0.md).
+
+---
+
 ## [3.0.0] - 2026-11-07
 
 Comandos `/jarvis-*` alinhados ao fluxo do Spec Kit; `/jarvis-tasks` novo; `approve` removido. Ver [2026-11-07-3.0.0](2026-11-07-3.0.0.md).
