@@ -1,12 +1,21 @@
 #!/usr/bin/env node
 /**
  * Adapter de hooks do Specnico para Google AI Pro (Gemini CLI e Antigravity).
- * Uso: node .specify/hooks/adapters/gemini-hook.mjs <spec-gate|verify-file|verify-project>
+ * Uso:
+ *   Gemini CLI (cwd = raiz):    node .specify/hooks/adapters/gemini-hook.mjs <spec-gate|verify-file|verify-project>
+ *   Antigravity (cwd = .agents): node ../.specify/hooks/adapters/gemini-hook.mjs <spec-gate|verify-file>
  */
 import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { evaluateSpecGate } from "../core/spec-gate.mjs";
 import { evaluateVerifyFile } from "../core/verify-file.mjs";
 import { evaluateVerifyProject } from "../core/verify-project.mjs";
+
+const REPO_ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../..",
+);
 
 const ok = () => process.exit(0);
 const kind = process.argv[2];
@@ -19,10 +28,18 @@ try {
   ok();
 }
 
+const isAntigravity = Boolean(payload?.hookEventName || payload?.toolCall);
+
 function extractInput(p) {
-  const args = p?.tool_input ?? p?.tool_args ?? p?.args ?? p?.input ?? {};
+  const args =
+    p?.toolCall?.args ??
+    p?.tool_input ??
+    p?.tool_args ??
+    p?.args ??
+    p?.input ??
+    {};
   return {
-    root: p?.cwd || process.cwd(),
+    root: p?.cwd || p?.workspacePaths?.[0] || REPO_ROOT,
     filePath:
       args?.file_path ??
       args?.Path ??
@@ -58,8 +75,12 @@ if (kind === "spec-gate") {
         reason: res.message.trim(),
       }),
     );
+    if (isAntigravity) ok();
     process.stderr.write(res.message);
     process.exit(2);
+  }
+  if (isAntigravity) {
+    process.stdout.write(JSON.stringify({ decision: "allow" }));
   }
   ok();
 }
@@ -67,9 +88,11 @@ if (kind === "spec-gate") {
 if (kind === "verify-file") {
   const res = evaluateVerifyFile(input);
   if (res.decision === "block") {
+    if (isAntigravity) process.stdout.write("{}");
     process.stderr.write(res.message);
     process.exit(2);
   }
+  if (isAntigravity) process.stdout.write("{}");
   ok();
 }
 

@@ -21,7 +21,8 @@ Testes **não** rodam em hook — são responsabilidade do subagente **`runner`*
 |---|---|---|---|---|
 | **Claude Code** | `.claude/settings.json` → `.claude/hooks/*.mjs` | `PreToolUse`, `PostToolUse`, `Stop` | Nativo (`permissionDecision: "ask"`) | Nativo (`exit 2` + `stderr`) |
 | **GitHub Copilot** | `.github/hooks/specnico.json` → `.specify/hooks/adapters/copilot-hook.mjs` | `preToolUse`, `postToolUse`, `sessionEnd` | `permissionDecision: "ask"` (fallback para aprovação manual caso o cliente trate como `deny`) | `permissionDecision: "deny"` + `exit 2` |
-| **Google AI Pro (Gemini CLI & Antigravity)** | `.gemini/settings.json` / `.agents/hooks.json` → `.specify/hooks/adapters/gemini-hook.mjs` | `BeforeTool`/`PreToolUse`, `AfterTool`/`PostToolUse`, `AfterAgent` | `decision: "ask"` (quando suportado pelo cliente) | `decision: "deny"` + `exit 2` |
+| **Google AI Pro — Gemini CLI** | `.gemini/settings.json` → `node .specify/hooks/adapters/gemini-hook.mjs` | `BeforeTool`, `AfterTool`, `AfterAgent` | `decision: "ask"` (exit 0) | `decision: "deny"` + `exit 2` |
+| **Google AI Pro — Antigravity** | `.agents/hooks.json` → `node ../.specify/hooks/adapters/gemini-hook.mjs` (`cwd = .agents/`) | `PreToolUse`, `PostToolUse` | `{"decision":"ask","reason":"..."}` (exit 0) | `PreToolUse`: `{"decision":"deny","reason":"..."}` (exit 0); `PostToolUse`: `{}` + `exit 2` |
 
 ## Fail open — invariante
 

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .specify/hooks/adapters/gemini-hook.mjs spec-gate",
+            "command": "node ../.specify/hooks/adapters/gemini-hook.mjs spec-gate",
             "timeout": 15
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .specify/hooks/adapters/gemini-hook.mjs verify-file",
+            "command": "node ../.specify/hooks/adapters/gemini-hook.mjs verify-file",
             "timeout": 45
           }
         ]

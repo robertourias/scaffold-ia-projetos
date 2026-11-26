@@ -4,6 +4,12 @@
 
 ---
 
+## [4.0.1] - 2026-11-25
+
+Corrige caminho relativo de `.agents/hooks.json`, leitura de `toolCall.args`/`REPO_ROOT` e contrato JSON dos hooks no Antigravity mantendo compatibilidade com o Gemini CLI. Ver [2026-11-25-4.0.1](2026-11-25-4.0.1.md).
+
+---
+
 ## [4.0.0] - 2026-11-25
 
 Subagente `runner` (economia de tokens), paralelismo sistemático e arquitetura agnóstica para Claude Code, GitHub Copilot e Google AI Pro (Antigravity & Gemini CLI). Ver [2026-11-25-4.0.0](2026-11-25-4.0.0.md).

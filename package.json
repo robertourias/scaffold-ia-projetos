@@ -1,6 +1,6 @@
 {
   "name": "specnico",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Fluxo spec-driven agnóstico (Claude Code, GitHub Copilot e Google AI Pro): constituição, specs, gate humano, subagente runner e execução em ondas.",
   "bin": {
     "specnico": "bin/cli.js"

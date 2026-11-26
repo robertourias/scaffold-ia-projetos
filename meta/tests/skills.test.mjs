@@ -271,7 +271,25 @@ test("adapter Gemini (Antigravity + Gemini CLI): gera GEMINI.md, .agents/skills,
   assert.match(runnerFm, /^model:\s*gemini-2\.5-flash$/m);
   assert.ok(!/\b(write_file|replace)\b/.test(runnerFm), "gemini:runner não pode editar arquivos");
   const geminiSettings = JSON.parse(renderedGemini.get(".gemini/settings.example.json"));
-  assert.ok(geminiSettings.hooks.BeforeTool.length > 0);
+  assert.equal(
+    geminiSettings.hooks.BeforeTool[0].hooks[0].command,
+    "node .specify/hooks/adapters/gemini-hook.mjs spec-gate",
+  );
+  assert.equal(
+    geminiSettings.hooks.AfterTool[0].hooks[0].command,
+    "node .specify/hooks/adapters/gemini-hook.mjs verify-file",
+  );
+  assert.equal(
+    geminiSettings.hooks.AfterAgent[0].hooks[0].command,
+    "node .specify/hooks/adapters/gemini-hook.mjs verify-project",
+  );
   const agyHooks = JSON.parse(renderedGemini.get(".agents/hooks.json"));
-  assert.ok(agyHooks.hooks.PreToolUse.length > 0);
+  assert.equal(
+    agyHooks.hooks.PreToolUse[0].hooks[0].command,
+    "node ../.specify/hooks/adapters/gemini-hook.mjs spec-gate",
+  );
+  assert.equal(
+    agyHooks.hooks.PostToolUse[0].hooks[0].command,
+    "node ../.specify/hooks/adapters/gemini-hook.mjs verify-file",
+  );
 });

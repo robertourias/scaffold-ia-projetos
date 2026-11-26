@@ -635,7 +635,7 @@ test("adapter Copilot: bloqueia arquivo em review e pede ask ao aprovar Spec", (
   assert.equal(JSON.parse(ask.stdout).permissionDecision, "ask");
 });
 
-test("adapter Gemini/Antigravity: bloqueia arquivo em review e pede ask ao aprovar Spec", () => {
+test("adapter Gemini CLI: bloqueia arquivo em review (exit 2), pede ask e libera em silêncio", () => {
   const cwd = project();
   const block = spawnSync(process.execPath, [GEMINI_HOOK, "spec-gate"], {
     input: JSON.stringify({ cwd, args: { Path: "src/a.ts", Content: "x" } }),
@@ -655,4 +655,107 @@ test("adapter Gemini/Antigravity: bloqueia arquivo em review e pede ask ao aprov
   });
   assert.equal(ask.status, 0);
   assert.equal(JSON.parse(ask.stdout).decision, "ask");
+
+  const allow = spawnSync(process.execPath, [GEMINI_HOOK, "spec-gate"], {
+    input: JSON.stringify({
+      cwd,
+      tool_input: { file_path: "src/outro.ts", new_string: "x" },
+    }),
+    encoding: "utf8",
+    env: { ...process.env, SPECNICO_VERIFY: "1", SCAFFOLD_VERIFY: "1" },
+  });
+  assert.equal(allow.status, 0);
+  assert.equal(allow.stdout.trim(), "");
+});
+
+test("adapter Antigravity: executa a partir de .agents/ com toolCall.args e contrato JSON próprio", () => {
+  const cwd = project();
+  const agentsDir = path.join(cwd, ".agents");
+  mkdirSync(agentsDir, { recursive: true });
+  cpSync(path.join(root, ".specify/hooks"), path.join(cwd, ".specify/hooks"), {
+    recursive: true,
+  });
+  const relAdapter = "../.specify/hooks/adapters/gemini-hook.mjs";
+  const env = { ...process.env, SPECNICO_VERIFY: "1", SCAFFOLD_VERIFY: "1" };
+
+  // 1. PreToolUse block (arquivo declarado em review) → exit 0 + {"decision":"deny","reason":...}
+  // Também testa resolução de REPO_ROOT omitindo payload.cwd quando process.cwd() é .agents/
+  const block = spawnSync(process.execPath, [relAdapter, "spec-gate"], {
+    cwd: agentsDir,
+    input: JSON.stringify({
+      hookEventName: "PreToolUse",
+      toolCall: {
+        id: "toolu_01",
+        name: "write_file",
+        args: { Path: path.join(cwd, "src/a.ts"), Content: "export const a = 1;\n" },
+      },
+    }),
+    encoding: "utf8",
+    env,
+  });
+  assert.equal(block.status, 0, block.stderr);
+  const blockJson = JSON.parse(block.stdout);
+  assert.equal(blockJson.decision, "deny");
+  assert.match(blockJson.reason, /\/jarvis-implement/);
+
+  // 2. PreToolUse ask (autoaprovação review → approved via toolCall.args) → exit 0 + {"decision":"ask","reason":...}
+  const ask = spawnSync(process.execPath, [relAdapter, "spec-gate"], {
+    cwd: agentsDir,
+    input: JSON.stringify({
+      hookEventName: "PreToolUse",
+      cwd,
+      workspacePaths: [cwd],
+      toolCall: {
+        id: "toolu_02",
+        name: "edit_file",
+        args: {
+          Path: path.join(cwd, "specs/001-s/spec.md"),
+          Target: "**Status:** review",
+          Replacement: "**Status:** approved",
+        },
+      },
+    }),
+    encoding: "utf8",
+    env,
+  });
+  assert.equal(ask.status, 0, ask.stderr);
+  const askJson = JSON.parse(ask.stdout);
+  assert.equal(askJson.decision, "ask");
+  assert.match(askJson.reason, /\/jarvis-implement/);
+
+  // 3. PreToolUse allow (arquivo não declarado) → exit 0 + {"decision":"allow"}
+  const allow = spawnSync(process.execPath, [relAdapter, "spec-gate"], {
+    cwd: agentsDir,
+    input: JSON.stringify({
+      hookEventName: "PreToolUse",
+      workspacePaths: [cwd],
+      toolCall: {
+        id: "toolu_03",
+        name: "edit_file",
+        args: { Path: path.join(cwd, "README.md"), Target: "a", Replacement: "b" },
+      },
+    }),
+    encoding: "utf8",
+    env,
+  });
+  assert.equal(allow.status, 0, allow.stderr);
+  assert.deepEqual(JSON.parse(allow.stdout), { decision: "allow" });
+
+  // 4. PostToolUse verify-file allow → exit 0 + {}
+  const postAllow = spawnSync(process.execPath, [relAdapter, "verify-file"], {
+    cwd: agentsDir,
+    input: JSON.stringify({
+      hookEventName: "PostToolUse",
+      cwd,
+      toolCall: {
+        id: "toolu_04",
+        name: "edit_file",
+        args: { Path: path.join(cwd, "README.md"), Target: "a", Replacement: "b" },
+      },
+    }),
+    encoding: "utf8",
+    env,
+  });
+  assert.equal(postAllow.status, 0, postAllow.stderr);
+  assert.deepEqual(JSON.parse(postAllow.stdout), {});
 });
